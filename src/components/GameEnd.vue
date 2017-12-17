@@ -1,7 +1,10 @@
 <template>
   <div class="gameend">
   <h1>Game Over!</h1>
-  <router-link to = "/">Restart</router-link>
+  <img src="https://i.imgur.com/qUIxJ0n.png" alt = "Title">
+  <div>
+     <router-link to = "/">Restart</router-link>
+  </div>
   </div>
 </template>
 
