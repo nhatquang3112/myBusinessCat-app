@@ -6,10 +6,10 @@
   <h2 v-else>Waiting for other players...</h2>
 
   <div v-if="inLobby">
-  <input type="text" placeholder = "What is your cat name?" v-model="playerID"></input>
-  <button v-on:click="createNewPlayer()">Go!</button>
+  <button @click="loginFacebook()">Login With Facebook</button>
+  <button>Play as Guest</button>
   </div>
-  
+
   <img v-if="inLobby" src="https://www.iizcat.com/uploads/2017/04/kr490-bc4.jpg" alt = "Title">
 
 
@@ -23,23 +23,24 @@
   </div>
 
   <div class = "vertical-profit" v-if="inLobby === false">
-     <a v-for="profit in profitList" v-on:click="startPropose()">
+     <a v-for="profit in profitList" @click="startPropose()">
         <img src="http://chefspalate.com.au/wp-content/uploads/2016/05/6.png" alt = "Ava">
         <li>Task {{ profit.Order }}</li>
         <li>Profit: {{ profit.value }}</li>
         <li>Stamina: {{ profit.cost }}</li>
     </a>
   </div>
+
   <div v-if="isProposing">
      <input type="text" placeholder = "Which task?" v-model="task_order"></input>
      <input type="text" placeholder = "Player 1: Share" v-model="propose1"></input>
      <input type="text" placeholder = "Player 2: Share" v-model="propose2"></input>
      <input type="text" placeholder = "Player 3: Share" v-model="propose3"></input>
-     <button v-on:click="propose()">Propose!</button>
+     <button @click="propose()">Propose!</button>
   </div>
 
   <div class = "scroll" v-if="inLobby==false">
-     <ul v-for="propose in proposeList" v-on:click="startPropose()">
+     <ul v-for="propose in proposeList" @click="startPropose()">
         <li>Task {{ propose.number }}</li>
         <li>Share1: {{ propose.share1 }}</li>
         <li>Share2: {{ propose.share2 }}</li>
@@ -73,6 +74,8 @@ var config = {
 };
 firebase.initializeApp(config);
 const database = firebase.database();
+const provider = new firebase.auth.FacebookAuthProvider() //for login with facebook
+
 
 //helper functions
 function writeUserData(userId, ingame, score, height) {
@@ -84,18 +87,6 @@ function writeUserData(userId, ingame, score, height) {
   });
 }
 
-//real time update
-var userRef = database.ref().child('users');
-userRef.on('value', (snapshot) => {
-    this.playerList = Object.values(snapshot.val());
-    console.log(Object.values(snapshot.val()));
-});
-
-var proposeRef = database.ref().child('proposes');
-proposeRef.on('value', (snapshot) => {
-    this.proposeList = Object.values(snapshot.val());
-    console.log(Object.values(snapshot.val()));
-});
 
 export default {
   name: 'GameStart',
@@ -135,7 +126,7 @@ export default {
 
      createNewPlayer: function() {
          writeUserData(this.playerID, 'true', '0', this.height);
-         this.inLobby = false;
+         //this.inLobby = false;
      },
 
      byPass: function() {
@@ -146,16 +137,41 @@ export default {
          this.isProposing = !this.isProposing;
      },
 
+     //users login with facebook
+     loginFacebook: function() {
+       this.loginMethod = 'facebook'
+       firebase.auth().signInWithPopup(provider).then(result => {
+       console.log(result)
+       })
+     },
+
+     //check everytime user logged in or logged out
+     updateUserStatus: function() {
+       firebase.auth().onAuthStateChanged((user) => {
+           if (user) {
+             // A user is signed in
+             this.inLobby = false;
+
+           } else {
+             // No user is signed in.
+
+           }
+       });
+     },
+
 
 
 
   },
 
   mounted: function() {
+     this.updateUserStatus();
+     this.logoutUser()
+
      database.ref().child('users').on('value', (snapshot) => {
      this.playerList = Object.values(snapshot.val());
-     this.height = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
      });
+     this.height = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
 
      database.ref().child('profits').on('value', (snapshot) => {
      this.profitList = Object.values(snapshot.val());
@@ -164,6 +180,8 @@ export default {
      database.ref().child('proposes').on('value', (snapshot) => {
      this.proposeList = Object.values(snapshot.val());
      });
+
+
 
 
   },

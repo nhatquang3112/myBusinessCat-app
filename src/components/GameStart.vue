@@ -2,7 +2,7 @@
   <div class="gamestart">
     <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU.jpg" alt = "Title">
     <h1>The Adventure of Business Cats</h1>
-    <router-link to="/gameplay">Game Start!</router-link>
+    <router-link to="/gameplay"><button>Game Start!</button></router-link>
   </div>
 </template>
 
