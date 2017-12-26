@@ -3,7 +3,6 @@
   <h1>This is GamePlay</h1>
 
   <div v-if="inLobby">
-  <input type="text" placeholder = "What is your cat name?" v-model="playerID"></input>
   <button @click = "createNewPlayer()">Play as Guest</button>
   <img src="https://www.iizcat.com/uploads/2017/04/kr490-bc4.jpg" alt = "Title">
   </div>
@@ -13,7 +12,7 @@
   <div class = "vertical-menu">
     <a v-for="player in playerList" v-if="player.ingameStatus">
       <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/0b/0bc3ded6d1c690449dd74dee852f6053517749cb_full.jpg" alt = "Ava">
-      <li>Player: {{ player.username }}</li>
+      <li>Player {{ player.rank }}</li>
       <li>Score: {{ player.highscore }}</li>
       <li>Stamina: {{ player.stamina }}</li>
     </a>
@@ -174,7 +173,7 @@ export default {
             this.playerOrder ++;
             console.log(this.playerOrder);
             this.updateNumPlayer(this.playerOrder);
-            this.writeGuestData(this.playerID, 'true', '0', this.height);
+            this.writeGuestData(this.playerID, 'true', '0', this.height, this.playerOrder);
 
             this.inLobby = false;
 
@@ -184,7 +183,7 @@ export default {
 
      },
 
-     writeGuestData: function(name, ingame, score, height) {
+     writeGuestData: function(name, ingame, score, height, rank) {
        // Get a key for a new guest.
        var newGuestKey = firebase.database().ref().child('users').push().key;
        firebase.database().ref('users/' + newGuestKey).set({
@@ -192,6 +191,7 @@ export default {
          ingameStatus: ingame,
          stamina: height,
          score: score,
+         rank: rank,
        });
      },
 
