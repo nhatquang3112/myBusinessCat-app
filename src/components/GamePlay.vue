@@ -3,13 +3,13 @@
   <h1>This is GamePlay</h1>
 
   <div v-if="inLobby">
-
-  <button @click="loginFacebook()">Login With Facebook</button>
-  <button>Play as Guest</button>
+  <input type="text" placeholder = "What is your cat name?" v-model="playerID"></input>
+  <button @click = "createNewPlayer()">Play as Guest</button>
   <img src="https://www.iizcat.com/uploads/2017/04/kr490-bc4.jpg" alt = "Title">
   </div>
 
   <div v-if="!inLobby">
+  <h2>Your are player {{ playerOrder }}</h2>
   <div class = "vertical-menu">
     <a v-for="player in playerList" v-if="player.ingameStatus">
       <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/0b/0bc3ded6d1c690449dd74dee852f6053517749cb_full.jpg" alt = "Ava">
@@ -20,28 +20,43 @@
   </div>
 
   <div class = "vertical-profit">
+     <h2>{{ notification }}</h2>
      <a v-for="profit in profitList">
         <img @click="startPropose(profit.Order)" src="http://chefspalate.com.au/wp-content/uploads/2016/05/6.png" alt = "Ava">
         <li>Task {{ profit.Order }}</li>
         <li>Profit: {{ profit.value }}</li>
         <li>Stamina: {{ profit.cost }}</li>
         <div v-if="profit.Order === currentPropose">
-
+            <input type="text" placeholder = "Share for player 1" v-model="share1"></input>
+            <input type="text" placeholder = "Share for player 2" v-model="share2"></input>
+            <input type="text" placeholder = "Share for player 3" v-model="share3"></input>
            <button @click="propose(profit.Order)">Propose!</button>
         </div>
     </a>
   </div>
 
+  <h2>History</h2>
   <div class = "scroll">
      <ul v-for="propose in proposeList">
         <li>Task {{ propose.number }}</li>
-        <li>Share1: {{ propose.share1 }}</li>
-        <li>Share2: {{ propose.share2 }}</li>
-        <li>Share3: {{ propose.share3 }}</li>
-        <button>Yes</button>
-        <button>No</button>
+        <li>Player 1: {{ propose.share1 }}</li>
+        <li>Player 2: {{ propose.share2 }}</li>
+        <li>Player 3: {{ propose.share3 }}</li>
+        <li>Result: {{ propose.result }}</li>
     </ul>
   </div>
+
+  <h2>Pending propose</h2>
+  <ul v-for="propose in pendingProposeList" v-if = "propose.show" >
+     <li>Task {{ propose.number }}</li>
+     <li>Share1: {{ propose.share1 }}</li>
+     <li>Share2: {{ propose.share2 }}</li>
+     <li>Share3: {{ propose.share3 }}</li>
+     <button>Yes</button>
+     <button @click = "rejectPropose()">No</button>
+ </ul>
+
+
   <button @click = "logoutUser()">Log out</button>
   <router-link to = "/gameend">End the game?</router-link>
   </div>
@@ -51,7 +66,6 @@
 </template>
 
 <script>
-const axios = require('axios');
 import * as firebase from "firebase";
 var config = {
   apiKey: "AIzaSyBEHPA-ti-TC5m5L5aZD4ZwwOZaNtZo-lk",
@@ -76,10 +90,14 @@ export default {
       playerList: [],
       profitList: [],
       proposeList: [],
-      pendingPropose: [],
+      pendingProposeList: [],
 
       //fill info when proposing
       currentPropose: 0,
+      share1: '',
+      share2: '',
+      share3: '',
+
 
       //view mode
       inLobby: true,
@@ -89,6 +107,12 @@ export default {
       facebookId:'', //retrieved from login to facebook
       height: 0,
       playerOrder: 0, //to classify player and get score
+      playDemo: 0,
+
+      //trivia
+      notification: '',
+
+
 
 
 
@@ -96,113 +120,94 @@ export default {
     }
   },
   methods: {
-    //log out current user
-    logoutUser() {
-      firebase.auth().signOut().then(function() {
-      }).catch(function(error) {
+      //move a propose from pending to history
+      rejectPropose: function() {
+        var newHistoryKey = firebase.database().ref().child('proposes').push().key;
+        firebase.database().ref('proposes/' + newHistoryKey).set({
+          number: this.pendingProposeList[0].number,
+          share1: this.pendingProposeList[0].share1,
+          share2: this.pendingProposeList[0].share2,
+          share3: this.pendingProposeList[0].share3,
+          result: 'Rejected',
         });
-      //reset everything
-      this.inLobby = true
-      //database.ref().child('numPlayer').on('value', (snapshot) => {
-        //this.playerOrder = Object.values(snapshot.val());
-      //});
-      //this.playerOrder --;
-      //updateNumPlayer(this.playerOrder);
-    },
+
+        firebase.database().ref('pendingPros/info').set({
+           number: '',
+           share1: '',
+           share2: '',
+           share3: '',
+           show: false,
+        });
+      },
 
     //update the number of user
     updateNumPlayer: function(newValue) {
-     firebase.database().ref('numPlayer').set(newValue);
-    },
-
-    //write user data to realtime database
-    //userId is facebook id
-    writeUserData: function(userId, ingame, height, name) {
-      firebase.database().ref('users/' + userId).set({
-        username: name,
-        ingameStatus: ingame,
-        stamina: height,
-        id: userId,
-      });
+     firebase.database().ref('numPlayer').set({
+        number: newValue,
+     });
     },
 
     //make a propose to other players
     propose: function(taskOrder) {
-        firebase.database().ref('proposes/' + this.playerID).set({
+        firebase.database().ref('pendingPros/info').set({
            number: taskOrder,
-           share1: this.propose1,
-           share2: this.propose2,
-           share3: this.propose3,
+           share1: this.share1,
+           share2: this.share2,
+           share3: this.share3,
+           show: true,
         });
         this.isProposing = false
-        this.propose1 = ''
-        this.propose2 = ''
-        this.propose3 = ''
+        this.startPropose();
+        this.share1 = ''
+        this.share2 = ''
+        this.share3 = ''
     },
 
 
+     //in case we have to test with non-facebook users
      createNewPlayer: function() {
-         writeUserData(this.playerID, 'true', '0', this.height);
-         //this.inLobby = false;
+         this.height = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
+
+         //update the number of player in the database
+         database.ref().child('numPlayer').once('value', (snapshot) => {
+            this.playerOrder = Object.values(snapshot.val())[0];
+            this.playerOrder ++;
+            console.log(this.playerOrder);
+            this.updateNumPlayer(this.playerOrder);
+            this.writeGuestData(this.playerID, 'true', '0', this.height);
+
+            this.inLobby = false;
+
+         });
+
+         ////////////////////////////////////////////////////////
+
      },
 
-
-     startPropose: function(order) {
-        if (this.currentPropose === 0) this.currentPropose = order;
-        else this.currentPropose = 0;
-     },
-
-     //users login with facebook
-     loginFacebook: function() {
-       this.loginMethod = 'facebook'
-       firebase.auth().signInWithPopup(provider).then(result => {
-       console.log(result)
-       })
-     },
-
-
-
-     //check everytime user logged in or logged out
-     updateUserStatus: function() {
-       firebase.auth().onAuthStateChanged((user) => {
-           if (user) {
-             // A user is signed in
-             this.inLobby = false;
-             this.height = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
-             this.facebookId = user.providerData[0].uid;
-             this.playerID = user.providerData[0].displayName;
-
-             database.ref().child('numPlayer').on('value', (snapshot) => {
-             this.playerOrder = Object.values(snapshot.val());
-             });
-             this.playerOrder ++;
-
-             console.log(this.playerOrder);
-
-
-             database.ref().child('users').on('value', (snapshot) => {
-             this.playerList = Object.values(snapshot.val());
-             });
-
-             database.ref().child('profits').on('value', (snapshot) => {
-             this.profitList = Object.values(snapshot.val());
-             });
-
-             database.ref().child('proposes').on('value', (snapshot) => {
-             this.proposeList = Object.values(snapshot.val());
-             });
-
-             this.writeUserData(this.facebookId, true, this.height, this.playerID)
-             this.updateNumPlayer(this.playerOrder);
-
-           } else {
-             // No user is signed in.
-             // reset everything
-
-
-           }
+     writeGuestData: function(name, ingame, score, height) {
+       // Get a key for a new guest.
+       var newGuestKey = firebase.database().ref().child('users').push().key;
+       firebase.database().ref('users/' + newGuestKey).set({
+         username: name,
+         ingameStatus: ingame,
+         stamina: height,
+         score: score,
        });
      },
+
+
+
+     //to decide which propose input to show
+     startPropose: function(order) {
+        if (!this.pendingProposeList[0].show) {
+          if (this.currentPropose === 0) this.currentPropose = order;
+          else this.currentPropose = 0;
+        } else {
+          this.notification = 'Please wait for the current propose to finish'
+          setTimeout(()=>{ this.notification = ''; }, 2500);
+        }
+     },
+
 
 
 
@@ -210,8 +215,26 @@ export default {
   },
 
   mounted: function() {
-     this.updateUserStatus();
-     this.logoutUser()
+     //this.updateUserStatus();
+     //this.logoutUser()
+
+     //the following code is for non-facebook test/////////////
+     database.ref().child('users').on('value', (snapshot) => {
+     this.playerList = Object.values(snapshot.val());
+     });
+
+     database.ref().child('profits').on('value', (snapshot) => {
+     this.profitList = Object.values(snapshot.val());
+     });
+
+     database.ref().child('proposes').on('value', (snapshot) => {
+     this.proposeList = Object.values(snapshot.val());
+     });
+
+     database.ref().child('pendingPros').on('value', (snapshot) => {
+     this.pendingProposeList = Object.values(snapshot.val());
+     });
+     //end////////////////////////////////////////////////////
   },
 }
 </script>
