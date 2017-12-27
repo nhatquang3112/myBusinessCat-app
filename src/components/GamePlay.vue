@@ -51,7 +51,7 @@
      <li>Share1: {{ propose.share1 }}</li>
      <li>Share2: {{ propose.share2 }}</li>
      <li>Share3: {{ propose.share3 }}</li>
-     <button>Yes</button>
+     <button @click = "submitYes()">Yes</button>
      <button @click = "rejectPropose()">No</button>
  </ul>
 
@@ -119,6 +119,10 @@ export default {
     }
   },
   methods: {
+      //submit yes to a propose
+      submitYes: function() {
+        
+      },
       //move a propose from pending to history
       rejectPropose: function() {
         var newHistoryKey = firebase.database().ref().child('proposes').push().key;
