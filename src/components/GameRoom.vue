@@ -1,11 +1,13 @@
 <template>
-  <div class="gameend">
-    <h1>Game Over!</h1>
-    <button @click="toGameStart">Restart the Game</button>
+  <div class="gamestart">
+    <h1>This is Game Room</h1>
+    <button @click="toGameEnd">Game End</button>
+
   </div>
 </template>
 
 <script>
+import firebase from '@/config/firebase'
 export default {
   name: 'GameStart',
   data () {
@@ -15,9 +17,9 @@ export default {
   },
 
   methods: {
-    toGameStart () {
+    toGameEnd () {
       this.$router.push({
-        path: '/gameStart',
+        path: '/gameEnd',
       })
     },
   },

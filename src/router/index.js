@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 // import HelloWorld from '@/components/HelloWorld'
 import GameStart from '@/components/GameStart'
-import GamePlay from '@/components/GamePlay'
+import GameRoom from '@/components/GameRoom'
 import GameEnd from '@/components/GameEnd'
 
 Vue.use(Router)
@@ -15,12 +15,17 @@ export default new Router({
       component: GameStart
     },
     {
-      path: '/gameplay',
-      name: 'GamePlay',
-      component: GamePlay
+      path: '/gameStart',
+      name: 'GameStart',
+      component: GameStart
     },
     {
-      path: '/gameend',
+      path: '/gameRoom',
+      name: 'GameRoom',
+      component: GameRoom
+    },
+    {
+      path: '/gameEnd',
       name: 'GameEnd',
       component: GameEnd
     },
