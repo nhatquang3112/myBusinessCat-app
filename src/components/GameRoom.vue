@@ -2,12 +2,16 @@
   <div class="gamestart">
     <h1>This is Game Room</h1>
     <button @click="toGameEnd">Game End</button>
+    <button @click="writeData">Write Test</button>
 
   </div>
 </template>
 
 <script>
 import firebase from '@/config/firebase'
+//Constants
+const database = firebase.firestore(); //store data in firestore
+
 export default {
   name: 'GameStart',
   data () {
@@ -22,6 +26,18 @@ export default {
         path: '/gameEnd',
       })
     },
+    async writeData () {
+      var data = {
+        content: 'hello world'
+      }
+      var usersRef = database.collection('users');
+      try {
+        await usersRef.add(data);
+        console.log('send data done')
+      } catch (err) {
+        console.log('Error sending data: ', err);
+      }
+    }
   },
 }
 </script>

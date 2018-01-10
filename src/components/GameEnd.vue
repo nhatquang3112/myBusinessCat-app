@@ -17,7 +17,7 @@ export default {
   methods: {
     toGameStart () {
       this.$router.push({
-        path: '/gameStart',
+        path: '/',
       })
     },
   },
