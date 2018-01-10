@@ -3,11 +3,13 @@
     <h1>This is Game Room</h1>
     <button @click="toGameEnd">Game End</button>
     <button @click="writeData">Write Test</button>
+    <i class="fas fa-home"></i>
 
   </div>
 </template>
 
 <script>
+//import
 import firebase from '@/config/firebase'
 //Constants
 const database = firebase.firestore(); //store data in firestore
