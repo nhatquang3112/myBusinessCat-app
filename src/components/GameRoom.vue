@@ -1,9 +1,23 @@
 <template>
-  <div class="gamestart">
-    <h1>This is Game Room</h1>
-    <button @click="toGameEnd">Game End</button>
-    <button @click="writeData">Write Test</button>
-    <i class="fas fa-home"></i>
+  <div class="container">
+
+    <div class="userInfo">
+      <p>userInfo</p>
+    </div>
+
+    <div class="gamePlay">
+
+      <div class="userList">
+        <p>userList</p>
+      </div>
+      <div class="profitList">
+        <p>profitList</p>
+      </div>
+      <div class="proposeList">
+        <p>proposeList</p>
+      </div>
+
+    </div>
 
   </div>
 </template>
@@ -18,7 +32,14 @@ export default {
   name: 'GameStart',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      userList: [ //hardcoded for testing
+        {name: 'Player 1',stamina: '1',score: '10',},
+        {name: 'Player 1',stamina: '1',score: '10',},
+        {name: 'Player 1',stamina: '1',score: '10',},
+        {name: 'Player 1',stamina: '1',score: '10',},
+        {name: 'Player 1',stamina: '1',score: '10',},
+      ],
     }
   },
 
@@ -46,6 +67,32 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+.userInfo {
+  background-color: #4286f4;
+  color: #ffffff;
+}
+.gamePlay {
+  display: flex;
+  flex-direction: row;
+}
+.userList {
+  background-color: #e85537;
+  color: #ffffff;
+}
+.profitList {
+  background-color: #e8d336;
+  color: #ffffff;
+}
+.proposeList {
+  background-color: #94e835;
+  color: #ffffff;
+}
 h1, h2 {
   font-weight: normal;
 }
