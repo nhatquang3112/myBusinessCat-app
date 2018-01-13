@@ -80,6 +80,10 @@ export default {
 .gamePlay {
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+
 }
 .userList {
   background-color: #e85537;
