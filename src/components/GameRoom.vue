@@ -3,18 +3,51 @@
 
     <div class="userInfo">
       <p>userInfo</p>
+      <div class = "userBio">
+        <span>{{ userName }}</span>
+        <span>{{ userStamina }}</span>
+      </div>
     </div>
 
     <div class="gamePlay">
-
       <div class="userList">
         <p>userList</p>
+        <a
+          v-for="(user, index) in userList"
+          :key="index"
+          class = "user"
+          v-if="user.name!==userName"
+        >
+          <span class = "userProfilePic"></span>
+          <div class = "userBio">
+            <span>{{ user.name }}</span>
+            <span>Stamina: {{ user.stamina }}</span>
+          </div>
+        </a>
       </div>
+
       <div class="profitList">
         <p>profitList</p>
+        <div class="profits">
+          <a
+            v-for="(profit, index) in profitList"
+            :key="index"
+            class = "profit"
+          >
+            <span class = "profitPic"></span>
+            <div class = "profitBio">
+              <span>Value: {{ profit.value }}</span>
+              <span>Need: {{ profit.stamina }}</span>
+            </div>
+          </a>
       </div>
-      <div class="proposeList">
-        <p>proposeList</p>
+        <div class="pendingPropose">
+          <p>{{ pendingPropose }}</p>
+        </div>
+      </div>
+
+      <div class="proposeHistory">
+        <p>proposeHistory</p>
       </div>
 
     </div>
@@ -33,13 +66,29 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
+      userName: 'Player 1',
+      userStamina: '1',
+      userScore: '0',
       userList: [ //hardcoded for testing
         {name: 'Player 1',stamina: '1',score: '10',},
-        {name: 'Player 1',stamina: '1',score: '10',},
-        {name: 'Player 1',stamina: '1',score: '10',},
-        {name: 'Player 1',stamina: '1',score: '10',},
-        {name: 'Player 1',stamina: '1',score: '10',},
+        {name: 'Player 2',stamina: '2',score: '20',},
+        {name: 'Player 3',stamina: '3',score: '30',},
+        {name: 'Player 4',stamina: '4',score: '40',},
+        {name: 'Player 5',stamina: '5',score: '50',},
       ],
+      profitList: [ //hardcoded for testing
+        {name: 'Profit 1',stamina: '10',value: '10',},
+        {name: 'Profit 2',stamina: '20',value: '20',},
+        {name: 'Profit 3',stamina: '30',value: '30',},
+      ],
+      proposeHistory: [ //hardcoded for testing
+        {name: 'Profit 1',status: 'fail',score: '10',},
+        {name: 'Profit 2',status: 'fail',score: '10',},
+        {name: 'Profit 3',status: 'fail',score: '10',},
+        {name: 'Profit 4',status: 'fail',score: '10',},
+        {name: 'Profit 5',status: 'fail',score: '10',},
+      ],
+      pendingPropose: 'There are currently no propose',
     }
   },
 
@@ -74,11 +123,15 @@ export default {
   height: 100%;
 }
 .userInfo {
+  display: flex;
+  flex: 1 1 11%;
+  justify-content: center;
   background-color: #4286f4;
   color: #ffffff;
 }
 .gamePlay {
   display: flex;
+  flex: 1 1 88%;
   flex-direction: row;
   justify-content: center;
   width: 100%;
@@ -88,14 +141,25 @@ export default {
 .userList {
   background-color: #e85537;
   color: #ffffff;
+  flex: 1 1 15%;
 }
 .profitList {
   background-color: #e8d336;
   color: #ffffff;
+  flex: 1 1 69%;
+  display: flex;
+  flex-flow: column;
 }
-.proposeList {
+.profits {
+  flex: 1 1 88%;
+}
+.pendingPropose {
+  flex: 1 1 11%;
+}
+.proposeHistory {
   background-color: #94e835;
   color: #ffffff;
+  flex: 1 1 15%;
 }
 h1, h2 {
   font-weight: normal;
