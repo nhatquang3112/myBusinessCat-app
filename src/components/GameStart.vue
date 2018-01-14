@@ -12,6 +12,8 @@
 
 <script>
 import firebase from '@/config/firebase'
+// Constants
+const db = firebase.firestore() // firestore
 
 export default {
   name: 'GameStart',
@@ -28,34 +30,53 @@ export default {
     toGameRoom () {
       this.$router.push(`/gameRoom/${this.uid}`)
     },
+    //user already exists
     signInUser () {
-      firebase.auth().signInWithEmailAndPassword(this.pendingEmail, this.pendingPassword).catch((error) => {
+      firebase.auth().signInWithEmailAndPassword(this.pendingEmail, this.pendingPassword)
+      .catch((error) => {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log(errorCode + ': ' + errorMessage)
       });
     },
-
-    signUpUser () {
-      firebase.auth().createUserWithEmailAndPassword(this.pendingEmail, this.pendingPassword).catch((error) => {
+    //user has not existed
+    async signUpUser () {
+      firebase.auth().createUserWithEmailAndPassword(this.pendingEmail, this.pendingPassword)
+      .then((user) => {
+        //write user data to database
+        db.collection('users').doc(user.uid).set({
+          name: user.email,
+          stamina: '1', //hardcoded for testing
+          uid: user.uid,
+        })
+        .then(() => {
+          console.log('Write user data successful')
+        })
+        .catch((err) => {
+          console.log('Error writing user data: ', err)
+        })
+      })
+      .catch((error) => {
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log(errorCode + ': ' + errorMessage)
       });
+
+
     },
   },
 
   async mounted () {
-    //set user data observer
-    try { //sign out current user first
+    try {
+      //sign out current user first
       await firebase.auth().signOut()
       console.log('current user signed out')
+      //set user data observer
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           this.uid = user.uid
-          console.log(this.uid)
           this.toGameRoom()
         } else {
           console.log('No user currently signed in')
@@ -64,8 +85,6 @@ export default {
     } catch (err) {
       console.log('Error signing out user: ', err)
     }
-
-
   },
 }
 </script>
