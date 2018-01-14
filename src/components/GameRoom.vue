@@ -57,7 +57,22 @@
         </div>
 
         <div class="pendingPropose">
-          <p>{{ pendingPropose }}</p>
+          <p>Pending propose</p>
+          <a
+            v-for="(pendingTarget, index) in pendingPropose"
+            :key="index"
+            v-show="showPendingPropose"
+          >
+          <span>{{ pendingTarget.name }}</span>
+          <span>Share: {{ pendingTarget.share }}</span>
+          <span>Response: {{ pendingTarget.response }}</span>
+          </a>
+          <div class="responseOption">
+            <button>Yes</button>
+            <button>No</button>
+          </div>
+
+
         </div>
       </div>
 
@@ -101,7 +116,14 @@ export default {
         {name: 'Profit 4',status: 'fail',score: '10',},
         {name: 'Profit 5',status: 'fail',score: '10',},
       ],
-      pendingPropose: 'There are currently no propose',
+      pendingPropose: [],
+
+    }
+  },
+
+  computed: {
+    showPendingPropose () {
+      return this.pendingPropose.length > 0
     }
   },
 
@@ -110,17 +132,6 @@ export default {
     sendPropose () {
       console.log(this.proposeWindowList)
       var pendingProposeRef = database.collection('pendingPropose')
-      // for (var i = 0; i < this.proposeWindowList.length; i++) {
-      //   console.log(i)
-      //   await batch.set(pendingProposeRef.doc(this.proposeWindowList[i].uid), {
-      //     name: this.proposeWindowList[i].name,
-      //     share: this.proposeWindowList[i].share,
-      //     response: 'Not yet',
-      //     taskName: this.currentTaskName,
-      //     uid: this.proposeWindowList[i].uid,
-      //   })
-      // }
-
       var batch = database.batch()
       this.proposeWindowList.forEach(proposeTarget => {
         console.log(proposeTarget)
@@ -135,6 +146,7 @@ export default {
       })
       batch.commit()
       console.log('batch wrote successful')
+      this.showProposeWindow = !this.showProposeWindow
     },
 
     //open window to start proposing
@@ -162,7 +174,7 @@ export default {
   },
 
   async mounted () {
-    //get list of users from database
+    //get list of users from database, also and observer
     var usersRef = database.collection('users')
     usersRef.onSnapshot((querySnapshot) => {
       var users = querySnapshot.docs.map(doc => ({
@@ -172,6 +184,19 @@ export default {
       }))
       this.userList = users
       this.proposeWindowList = users
+    })
+
+    //get current pending propose
+    var pendingProposeRef = database.collection('pendingPropose')
+    pendingProposeRef.onSnapshot((querySnapshot) => {
+      var pendingPropose = querySnapshot.docs.map(doc => ({
+        name: doc.data().name,
+        uid: doc.data().uid,
+        share: doc.data().share,
+        response: doc.data().response,
+      }))
+      this.pendingPropose = pendingPropose
+      console.log(this.pendingPropose)
     })
 
     try {
@@ -203,6 +228,15 @@ export default {
   width: 100%;
   height: 100%;
 }
+.class {
+  display: flex;
+}
+.pendingPropose {
+  display: flex;
+  flex-flow: column;
+  background-color: #7742f4;
+  flex: 1 1 33%;
+}
 .userInfo {
   display: flex;
   flex: 1 1 11%;
@@ -232,7 +266,7 @@ export default {
   flex-flow: column;
 }
 .profits {
-  flex: 1 1 88%;
+  flex: 1 1 66%;
 }
 .pendingPropose {
   flex: 1 1 11%;
