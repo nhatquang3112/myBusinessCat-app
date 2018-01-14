@@ -36,11 +36,26 @@
           >
             <span class = "profitPic"></span>
             <div class = "profitBio">
+              <span>Name: {{ profit.name }}</span>
               <span>Value: {{ profit.value }}</span>
               <span>Need: {{ profit.stamina }}</span>
+              <button @click = "makePropose(profit.value, profit.stamina, profit.name)">Propose</button>
             </div>
           </a>
-      </div>
+        </div>
+
+        <div class="proposeWindow" v-show="showProposeWindow">
+          <span>{{ currentTaskName }}</span>
+          <a
+            v-for="(proposeTarget, index) in proposeWindowList"
+            :key="index"
+          >
+          <span>{{ proposeTarget.name }}</span>
+          <span>Share: <input type="text" v-model="proposeTarget.share"></span>
+          </a>
+          <button @click="sendPropose()">Submit</button>
+        </div>
+
         <div class="pendingPropose">
           <p>{{ pendingPropose }}</p>
         </div>
@@ -70,7 +85,10 @@ export default {
       userName: 'Player 1',
       userStamina: '1',
       userScore: '0',
+      showProposeWindow: false,
+      currentTaskName: '',
       userList: [],
+      proposeWindowList: [],
       profitList: [ //hardcoded for testing
         {name: 'Profit 1',stamina: '10',value: '10',},
         {name: 'Profit 2',stamina: '20',value: '20',},
@@ -88,6 +106,36 @@ export default {
   },
 
   methods: {
+    //send propose info to database to become pending propose
+    sendPropose () {
+      console.log(this.proposeWindowList)
+      var pendingProposeRef = database.collection('pendingPropose')
+      // for (var i = 0; i < this.proposeWindowList.length; i++) {
+      //   console.log(i)
+      //   await batch.set(pendingProposeRef.doc(this.proposeWindowList[i].uid), {
+      //     name: this.proposeWindowList[i].name,
+      //     share: this.proposeWindowList[i].share,
+      //     response: 'Not yet',
+      //     taskName: this.currentTaskName,
+      //     uid: this.proposeWindowList[i].uid,
+      //   })
+      // }
+
+      var batch = database.batch()
+      this.proposeWindowList.forEach(proposeTarget => {
+        console.log(proposeTarget)
+        var ref = pendingProposeRef.doc(proposeTarget.uid)
+        batch.set(ref, proposeTarget)
+      })
+      batch.commit()
+      console.log('batch wrote successful')
+    },
+
+    //open window to start proposing
+    makePropose(value, stamina, taskName) {
+      this.currentTaskName = taskName
+      this.showProposeWindow = !this.showProposeWindow
+    },
     toGameEnd () {
       this.$router.push({
         path: '/gameEnd',
@@ -117,6 +165,7 @@ export default {
         stamina: doc.data().stamina,
       }))
       this.userList = users
+      this.proposeWindowList = users
     })
 
     try {
