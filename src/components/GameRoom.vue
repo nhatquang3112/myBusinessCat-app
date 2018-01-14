@@ -70,13 +70,7 @@ export default {
       userName: 'Player 1',
       userStamina: '1',
       userScore: '0',
-      userList: [ //hardcoded for testing
-        {name: 'Player 1',stamina: '1',score: '10',},
-        {name: 'Player 2',stamina: '2',score: '20',},
-        {name: 'Player 3',stamina: '3',score: '30',},
-        {name: 'Player 4',stamina: '4',score: '40',},
-        {name: 'Player 5',stamina: '5',score: '50',},
-      ],
+      userList: [],
       profitList: [ //hardcoded for testing
         {name: 'Profit 1',stamina: '10',value: '10',},
         {name: 'Profit 2',stamina: '20',value: '20',},
@@ -112,6 +106,37 @@ export default {
       }
     }
   },
+
+  async mounted () {
+    //get list of users from database
+    var usersRef = database.collection('users')
+    usersRef.onSnapshot((querySnapshot) => {
+      var users = querySnapshot.docs.map(doc => ({
+        name: doc.data().name,
+        uid: doc.data().uid,
+        stamina: doc.data().stamina,
+      }))
+      this.userList = users
+    })
+
+    try {
+      //get info of current logged in user
+      var userInfoRef = database.collection('users').doc(this.uid)
+      var doc = await userInfoRef.get()
+      if (doc.exists) {
+        this.userName = doc.data().name
+        this.userStamina = doc.data().stamina
+      } else {
+        console.log('user info not exist')
+      }
+    } catch (err) {
+      console.log('error gettting user info: ', err)
+    }
+
+
+
+
+  }
 }
 </script>
 

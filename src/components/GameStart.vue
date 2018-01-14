@@ -13,7 +13,7 @@
 <script>
 import firebase from '@/config/firebase'
 // Constants
-const db = firebase.firestore() // firestore
+const database = firebase.firestore() // firestore
 
 export default {
   name: 'GameStart',
@@ -33,6 +33,10 @@ export default {
     //user already exists
     signInUser () {
       firebase.auth().signInWithEmailAndPassword(this.pendingEmail, this.pendingPassword)
+      .then((user) => {
+        this.uid = user.uid
+        this.toGameRoom()
+      })
       .catch((error) => {
         // Handle Errors here.
         var errorCode = error.code;
@@ -44,8 +48,9 @@ export default {
     async signUpUser () {
       firebase.auth().createUserWithEmailAndPassword(this.pendingEmail, this.pendingPassword)
       .then((user) => {
+        this.uid = user.uid
         //write user data to database
-        db.collection('users').doc(user.uid).set({
+        database.collection('users').doc(user.uid).set({
           name: user.email,
           stamina: '1', //hardcoded for testing
           uid: user.uid,
