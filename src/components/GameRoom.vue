@@ -63,6 +63,7 @@ const database = firebase.firestore(); //store data in firestore
 
 export default {
   name: 'GameStart',
+  props: ['uid'],
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',

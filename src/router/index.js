@@ -15,9 +15,10 @@ export default new Router({
       component: GameStart
     },
     {
-      path: '/gameRoom',
+      path: '/gameRoom/:uid',
       name: 'GameRoom',
-      component: GameRoom
+      component: GameRoom,
+      props: true
     },
     {
       path: '/gameEnd',
