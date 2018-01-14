@@ -52,6 +52,7 @@ export default {
         })
         .then(() => {
           console.log('Write user data successful')
+          this.toGameRoom()
         })
         .catch((err) => {
           console.log('Error writing user data: ', err)
@@ -77,7 +78,6 @@ export default {
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
           this.uid = user.uid
-          this.toGameRoom()
         } else {
           console.log('No user currently signed in')
         }
