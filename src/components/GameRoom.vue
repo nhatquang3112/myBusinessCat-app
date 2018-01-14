@@ -68,8 +68,8 @@
           <span>Response: {{ pendingTarget.response }}</span>
           </a>
           <div class="responseOption">
-            <button>Yes</button>
-            <button>No</button>
+            <button @click="acceptPropose()">Yes</button>
+            <button @click="rejectPropose()">No</button>
           </div>
 
 
@@ -128,6 +128,27 @@ export default {
   },
 
   methods: {
+    async rejectPropose () {
+      try {
+        await database.collection('pendingPropose').doc(this.uid).update({
+          response: 'No'
+        })
+        console.log('reject propose success')
+      } catch (err) {
+        console.log('Error rejecting propose: ', err)
+      }
+    },
+
+    async acceptPropose () {
+      try {
+        await database.collection('pendingPropose').doc(this.uid).update({
+          response: 'Yes'
+        })
+        console.log('accept propose success')
+      } catch (err) {
+        console.log('Error accepting propose: ', err)
+      }
+    },
     //send propose info to database to become pending propose
     sendPropose () {
       console.log(this.proposeWindowList)
