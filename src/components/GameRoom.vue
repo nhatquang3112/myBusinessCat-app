@@ -57,7 +57,7 @@
         </div>
 
         <div class="pendingPropose">
-          <p>Pending propose</p>
+          <p>Pending propose: {{ this.pendingTaskName }}</p>
           <a
             v-for="(pendingTarget, index) in pendingPropose"
             :key="index"
@@ -102,6 +102,7 @@ export default {
       userScore: '0',
       showProposeWindow: false,
       currentTaskName: '',
+      pendingTaskName: '',
       userList: [],
       proposeWindowList: [],
       profitList: [ //hardcoded for testing
@@ -109,13 +110,7 @@ export default {
         {name: 'Profit 2',stamina: '20',value: '20',},
         {name: 'Profit 3',stamina: '30',value: '30',},
       ],
-      proposeHistory: [ //hardcoded for testing
-        {name: 'Profit 1',status: 'fail',score: '10',},
-        {name: 'Profit 2',status: 'fail',score: '10',},
-        {name: 'Profit 3',status: 'fail',score: '10',},
-        {name: 'Profit 4',status: 'fail',score: '10',},
-        {name: 'Profit 5',status: 'fail',score: '10',},
-      ],
+      proposeHistory: [],
       pendingPropose: [],
 
     }
@@ -130,10 +125,19 @@ export default {
   methods: {
     async rejectPropose () {
       try {
+        //change the response status
         await database.collection('pendingPropose').doc(this.uid).update({
           response: 'No'
         })
         console.log('reject propose success')
+        //write to propose History
+        var currentTime = new Date().getTime()
+        database.collection('proposeHistory').doc(currentTime).set({
+          taskName: this.pendingPropose[0].taskName,
+
+        })
+
+
       } catch (err) {
         console.log('Error rejecting propose: ', err)
       }
@@ -215,8 +219,10 @@ export default {
         uid: doc.data().uid,
         share: doc.data().share,
         response: doc.data().response,
+        taskName: doc.data().taskName,
       }))
       this.pendingPropose = pendingPropose
+      this.pendingTaskName = this.pendingPropose[0].taskName
       console.log(this.pendingPropose)
     })
 
