@@ -125,7 +125,13 @@ export default {
       this.proposeWindowList.forEach(proposeTarget => {
         console.log(proposeTarget)
         var ref = pendingProposeRef.doc(proposeTarget.uid)
-        batch.set(ref, proposeTarget)
+        batch.set(ref, {
+          name: proposeTarget.name,
+          share: proposeTarget.share,
+          response: 'None',
+          taskName: this.currentTaskName,
+          uid: proposeTarget.uid
+        })
       })
       batch.commit()
       console.log('batch wrote successful')
