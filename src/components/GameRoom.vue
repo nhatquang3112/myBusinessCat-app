@@ -68,7 +68,7 @@
             <span>Share: {{ pendingTarget.share }}</span>
             <span>Response: {{ pendingTarget.response }}</span>
           </a>
-          <div class="responseOption">
+          <div class="responseOption" v-show="showPendingPropose">
             <button @click="acceptPropose()">Yes</button>
             <button @click="rejectPropose()">No</button>
           </div>
@@ -139,6 +139,15 @@ export default {
     },
     showProposeHistory () {
       return this.proposeHistory.length > 0
+    },
+    isEndGame () {
+      var ans = true
+      this.pendingPropose.forEach(userInfo => {
+        if (userInfo.response !== 'Yes') {
+          ans = false
+        }
+      })
+      return ans
     }
   },
 
