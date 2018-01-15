@@ -59,7 +59,8 @@
         </div>
 
         <div class="pendingPropose">
-          <p>Pending propose: {{ this.pendingTaskName }}</p>
+          <p>Pending propose</p>
+          <span v-show="showPendingPropose">{{ this.pendingTaskName }}</span>
           <span v-show="!showPendingPropose">There is currently no propose</span>
           <a
             v-for="(pendingTarget, index) in pendingPropose"
