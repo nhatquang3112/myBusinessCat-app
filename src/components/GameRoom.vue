@@ -78,6 +78,22 @@
 
       <div class="proposeHistory">
         <p>proposeHistory</p>
+        <a
+          v-for="(propose, index) in proposeHistory"
+          :key="index"
+          v-if="showProposeHistory"
+          class="history"
+        >
+          <span>{{ propose.taskName }}</span>
+          <a
+            v-for="(info, index) in propose.history"
+            :key="index"
+          >
+          <span>{{ info.name }}</span>
+          <span>Share: {{ info.share }}</span>
+          </a>
+          <span>{{ propose.result }}</span>
+        </a>
       </div>
 
     </div>
@@ -119,6 +135,9 @@ export default {
   computed: {
     showPendingPropose () {
       return this.pendingPropose.length > 0
+    },
+    showProposeHistory () {
+      return this.proposeHistory.length > 0
     }
   },
 
@@ -134,6 +153,8 @@ export default {
         var currentTime = '' + new Date().getTime()
         database.collection('proposeHistory').doc(currentTime).set({
           history: this.pendingPropose,
+          taskName: this.pendingPropose[0].taskName,
+          result: 'Rejected',
         })
         console.log('write to propose history success')
       } catch (err) {
@@ -197,7 +218,7 @@ export default {
   },
 
   async mounted () {
-    //get list of users from database, also and observer
+    //get list of users from database, also data observer
     var usersRef = database.collection('users')
     usersRef.onSnapshot((querySnapshot) => {
       var users = querySnapshot.docs.map(doc => ({
@@ -222,6 +243,18 @@ export default {
       this.pendingPropose = pendingPropose
       this.pendingTaskName = this.pendingPropose[0].taskName
       console.log(this.pendingPropose)
+    })
+
+    //get current propose History
+    var proposeHistoryRef = database.collection('proposeHistory')
+    proposeHistoryRef.onSnapshot((querySnapshot) => {
+      var proposeHistory = querySnapshot.docs.map(doc => ({
+        history: doc.data().history,
+        taskName: doc.data().taskName,
+        result: doc.data().result
+      }))
+      this.proposeHistory = proposeHistory
+      console.log(this.proposeHistory)
     })
 
     try {
@@ -281,7 +314,7 @@ export default {
 .userList {
   background-color: #e85537;
   color: #ffffff;
-  flex: 1 1 15%;
+  flex: 1 1 10%;
 }
 .profitList {
   background-color: #e8d336;
@@ -299,7 +332,13 @@ export default {
 .proposeHistory {
   background-color: #94e835;
   color: #ffffff;
-  flex: 1 1 15%;
+  flex: 1 1 20%;
+  display: flex;
+  flex-flow: column;
+}
+.history {
+  display: flex;
+  flex-flow: column;
 }
 h1, h2 {
   font-weight: normal;
