@@ -162,12 +162,34 @@ export default {
             ans = userInfo.share
           }
         })
+        this.writeSuccessPropose()
       }
       return ans
     }
   },
 
   methods: {
+    async writeSuccessPropose () {
+      try {
+        var batch = database.batch()
+        //write to propose History
+        var currentTime = '' + new Date().getTime()
+        batch.set(database.collection('proposeHistory').doc(currentTime), {
+          history: this.pendingPropose,
+          taskName: this.pendingPropose[0].taskName,
+          result: 'Accepted',
+        })
+        //delete all documents in pendingPropose collection
+        this.userList.forEach(user => {
+          batch.delete(database.collection('pendingPropose').doc(user.uid))
+        })
+        //commit the batch
+        await batch.commit()
+        console.log('update, write propose History, delete pending propose success')
+      } catch (err) {
+        console.log('Error write success propose: ', err)
+      }
+    },
     async rejectPropose () {
       try {
         var batch = database.batch()
