@@ -5,7 +5,9 @@
       <p>userInfo</p>
       <div class = "userBio">
         <span>{{ userName }}</span>
-        <span>{{ userStamina }}</span>
+        <span>Stamina: {{ userStamina }}</span>
+        <span>Score: {{ userScore }}</span>
+        <span>Is end game: {{ isEndGame }}</span>
       </div>
     </div>
 
@@ -90,8 +92,8 @@
             v-for="(info, index) in propose.history"
             :key="index"
           >
-          <span>{{ info.name }}</span>
-          <span>Share: {{ info.share }}</span>
+            <span>{{ info.name }}</span>
+            <span>Share: {{ info.share }}</span>
           </a>
           <span>{{ propose.result }}</span>
         </a>
@@ -116,7 +118,6 @@ export default {
       msg: 'Welcome to Your Vue.js App',
       userName: '',
       userStamina: '',
-      userScore: '0',
       showProposeWindow: false,
       currentTaskName: '',
       pendingTaskName: '',
@@ -147,6 +148,20 @@ export default {
           ans = false
         }
       })
+      if (this.pendingPropose.length <= 0) {
+        ans = false
+      }
+      return ans
+    },
+    userScore () {
+      var ans = '0'
+      if (this.isEndGame) {
+        this.pendingPropose.forEach(userInfo => {
+          if (userInfo.uid===this.uid) {
+            ans = userInfo.share
+          }
+        })
+      }
       return ans
     }
   },
@@ -297,6 +312,10 @@ export default {
   flex-direction: column;
   width: 100%;
   height: 100%;
+}
+.userBio {
+  display: flex;
+  flex-flow: column;
 }
 .class {
   display: flex;
