@@ -58,14 +58,15 @@
 
         <div class="pendingPropose">
           <p>Pending propose: {{ this.pendingTaskName }}</p>
+          <span v-show="!showPendingPropose">There is currently no propose</span>
           <a
             v-for="(pendingTarget, index) in pendingPropose"
             :key="index"
             v-show="showPendingPropose"
           >
-          <span>{{ pendingTarget.name }}</span>
-          <span>Share: {{ pendingTarget.share }}</span>
-          <span>Response: {{ pendingTarget.response }}</span>
+            <span>{{ pendingTarget.name }}</span>
+            <span>Share: {{ pendingTarget.share }}</span>
+            <span>Response: {{ pendingTarget.response }}</span>
           </a>
           <div class="responseOption">
             <button @click="acceptPropose()">Yes</button>
@@ -144,19 +145,21 @@ export default {
   methods: {
     async rejectPropose () {
       try {
-        //change the response status
-        await database.collection('pendingPropose').doc(this.uid).update({
+        var batch = database.batch()
+        //update the response status
+        batch.update(database.collection('pendingPropose').doc(this.uid), {
           response: 'No'
         })
-        console.log('reject propose success')
         //write to propose History
         var currentTime = '' + new Date().getTime()
-        database.collection('proposeHistory').doc(currentTime).set({
+        batch.set(database.collection('proposeHistory').doc(currentTime), {
           history: this.pendingPropose,
           taskName: this.pendingPropose[0].taskName,
           result: 'Rejected',
         })
-        console.log('write to propose history success')
+        //commit the batch
+        await batch.commit()
+        console.log('update and write propose History success')
       } catch (err) {
         console.log('Error rejecting propose: ', err)
       }
@@ -270,10 +273,6 @@ export default {
     } catch (err) {
       console.log('error gettting user info: ', err)
     }
-
-
-
-
   }
 }
 </script>
