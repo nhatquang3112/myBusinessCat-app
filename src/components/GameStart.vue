@@ -2,7 +2,7 @@
   <div class="gamestart">
     <h1>The Adventure of Business Cats</h1>
     <input type="text" placeholder="Email" v-model="pendingEmail">
-    <input type="text" placeholder="Password" v-model="pendingPassword">
+    <input type="password" placeholder="Password" v-model="pendingPassword">
     <button @click="signInUser">Login</button>
     <button @click="signUpUser">Sign Up</button>
 

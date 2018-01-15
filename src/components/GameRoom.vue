@@ -131,13 +131,11 @@ export default {
         })
         console.log('reject propose success')
         //write to propose History
-        var currentTime = new Date().getTime()
+        var currentTime = '' + new Date().getTime()
         database.collection('proposeHistory').doc(currentTime).set({
-          taskName: this.pendingPropose[0].taskName,
-
+          history: this.pendingPropose,
         })
-
-
+        console.log('write to propose history success')
       } catch (err) {
         console.log('Error rejecting propose: ', err)
       }
