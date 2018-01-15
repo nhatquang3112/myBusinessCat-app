@@ -114,8 +114,8 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
-      userName: 'Player 1',
-      userStamina: '1',
+      userName: '',
+      userStamina: '',
       userScore: '0',
       showProposeWindow: false,
       currentTaskName: '',
@@ -157,9 +157,13 @@ export default {
           taskName: this.pendingPropose[0].taskName,
           result: 'Rejected',
         })
+        //delete all documents in pendingPropose collection
+        this.userList.forEach(user => {
+          batch.delete(database.collection('pendingPropose').doc(user.uid))
+        })
         //commit the batch
         await batch.commit()
-        console.log('update and write propose History success')
+        console.log('update, write propose History, delete pending propose success')
       } catch (err) {
         console.log('Error rejecting propose: ', err)
       }
