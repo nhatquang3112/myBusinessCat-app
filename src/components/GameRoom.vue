@@ -114,7 +114,7 @@ import firebase from '@/config/firebase'
 const database = firebase.firestore(); //store data in firestore
 
 export default {
-  name: 'GameStart',
+  name: 'GameRoom',
   props: ['uid'],
   data () {
     return {
@@ -154,6 +154,8 @@ export default {
         })
         if (!this.isEndGame) {
           this.userScore = '0'
+        } else {
+          this.toEndGame()
         }
       }
     }
@@ -166,22 +168,12 @@ export default {
     showProposeHistory () {
       return this.proposeHistory.length > 0
     },
-    // isEndGame () {
-    //   var ans = true
-    //   if (this.pendingPropose.length > 0) {
-    //     this.pendingPropose.forEach(userInfo => {
-    //       if (userInfo.response !== 'Yes') {
-    //         ans = false
-    //       }
-    //     })
-    //   } else {
-    //     ans = false
-    //   }
-    //   return ans
-    // },
   },
 
   methods: {
+    toEndGame () {
+      this.$router.push(`/gameEnd/${this.userScore}`)
+    },
     async writeSuccessPropose () {
       try {
         var batch = database.batch()

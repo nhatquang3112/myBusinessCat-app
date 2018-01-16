@@ -1,13 +1,16 @@
 <template>
   <div class="gameend">
     <h1>Game Over!</h1>
+    <h2>Your score is {{ score }}!</h2>
+
     <button @click="toGameStart">Restart the Game</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'GameStart',
+  name: 'GameEnd',
+  props: ['score'],
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'

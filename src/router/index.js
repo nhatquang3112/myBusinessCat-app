@@ -21,9 +21,10 @@ export default new Router({
       props: true
     },
     {
-      path: '/gameEnd',
+      path: '/gameEnd/:score',
       name: 'GameEnd',
-      component: GameEnd
+      component: GameEnd,
+      props: true
     },
     // {
     //   path: '/',
