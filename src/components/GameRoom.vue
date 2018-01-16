@@ -6,8 +6,8 @@
       <div class = "userBio">
         <span>{{ userName }}</span>
         <span>Stamina: {{ userStamina }}</span>
-        <span>Score: {{ userScore }}</span>
         <span>Is end game: {{ isEndGame }}</span>
+        <span>Score: {{ userScore }}</span>
       </div>
     </div>
 
@@ -82,22 +82,24 @@
 
       <div class="proposeHistory">
         <p>proposeHistory</p>
-        <a
-          v-for="(propose, index) in proposeHistory"
-          :key="index"
-          v-if="showProposeHistory"
-          class="history"
-        >
-          <span>{{ propose.taskName }}</span>
+        <div class="proposeHistoryList">
           <a
-            v-for="(info, index) in propose.history"
+            v-for="(propose, index) in proposeHistory"
             :key="index"
+            v-if="showProposeHistory"
+            class="history"
           >
-            <span>{{ info.name }}</span>
-            <span>Share: {{ info.share }}</span>
+            <span>{{ propose.taskName }}</span>
+            <a
+              v-for="(info, index) in propose.history"
+              :key="index"
+            >
+              <span>{{ info.name }}</span>
+              <span>Share: {{ info.share }}</span>
+            </a>
+            <span>{{ propose.result }}</span>
           </a>
-          <span>{{ propose.result }}</span>
-        </a>
+      </div>
       </div>
 
     </div>
@@ -119,6 +121,8 @@ export default {
       msg: 'Welcome to Your Vue.js App',
       userName: '',
       userStamina: '',
+      userScore: '0',
+      isEndGame: false,
       showProposeWindow: false,
       currentTaskName: '',
       pendingTaskName: '',
@@ -135,6 +139,26 @@ export default {
     }
   },
 
+  watch: {
+    pendingPropose () {
+      console.log('watcher for pendingPropose called')
+      if (this.pendingPropose.length > 0) {
+        this.isEndGame = true
+        this.pendingPropose.forEach(userInfo => {
+          if (userInfo.response !== 'Yes') {
+            this.isEndGame = false
+          }
+          if (userInfo.uid === this.uid) {
+            this.userScore = userInfo.share
+          }
+        })
+        if (!this.isEndGame) {
+          this.userScore = '0'
+        }
+      }
+    }
+  },
+
   computed: {
     showPendingPropose () {
       return this.pendingPropose.length > 0
@@ -142,29 +166,19 @@ export default {
     showProposeHistory () {
       return this.proposeHistory.length > 0
     },
-    isEndGame () {
-      var ans = true
-      this.pendingPropose.forEach(userInfo => {
-        if (userInfo.response !== 'Yes') {
-          ans = false
-        }
-      })
-      // if (this.pendingPropose.length <= 0) {
-      //   ans = false
-      // }
-      return ans
-    },
-    userScore () {
-      var ans = '0'
-      if (this.isEndGame) {
-        this.pendingPropose.forEach(userInfo => {
-          if (userInfo.uid===this.uid) {
-            ans = userInfo.share
-          }
-        })
-      }
-      return ans
-    }
+    // isEndGame () {
+    //   var ans = true
+    //   if (this.pendingPropose.length > 0) {
+    //     this.pendingPropose.forEach(userInfo => {
+    //       if (userInfo.response !== 'Yes') {
+    //         ans = false
+    //       }
+    //     })
+    //   } else {
+    //     ans = false
+    //   }
+    //   return ans
+    // },
   },
 
   methods: {
@@ -254,23 +268,12 @@ export default {
       this.currentTaskName = taskName
       this.showProposeWindow = !this.showProposeWindow
     },
+
     toGameEnd () {
       this.$router.push({
         path: '/gameEnd',
       })
     },
-    async writeData () {
-      var data = {
-        content: 'hello world'
-      }
-      var usersRef = database.collection('users');
-      try {
-        await usersRef.add(data);
-        console.log('send data done')
-      } catch (err) {
-        console.log('Error sending data: ', err);
-      }
-    }
   },
 
   async mounted () {
@@ -337,6 +340,11 @@ export default {
   flex-direction: column;
   width: 100%;
   height: 100%;
+}
+.proposeHistoryList {
+  display: flex;
+  flex-flow: column;
+  overflow-y: scroll;
 }
 .userBio {
   display: flex;
