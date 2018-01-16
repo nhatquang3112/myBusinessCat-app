@@ -149,9 +149,9 @@ export default {
           ans = false
         }
       })
-      if (this.pendingPropose.length <= 0) {
-        ans = false
-      }
+      // if (this.pendingPropose.length <= 0) {
+      //   ans = false
+      // }
       return ans
     },
     userScore () {
@@ -162,7 +162,6 @@ export default {
             ans = userInfo.share
           }
         })
-        this.writeSuccessPropose()
       }
       return ans
     }
@@ -222,6 +221,9 @@ export default {
           response: 'Yes'
         })
         console.log('accept propose success')
+        if (this.isEndGame) {
+          this.writeSuccessPropose()
+        }
       } catch (err) {
         console.log('Error accepting propose: ', err)
       }
