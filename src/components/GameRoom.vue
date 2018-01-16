@@ -56,7 +56,8 @@
           <span>{{ proposeTarget.name }}</span>
           <span>Share: <input type="text" v-model="proposeTarget.share"></span>
           </a>
-          <button @click="sendPropose()">Submit</button>
+          <button v-if="!showPendingPropose" @click="sendPropose()">Submit</button>
+          <span v-if="showPendingPropose">Cannot make propose now</span>
         </div>
 
         <div class="pendingPropose">
@@ -73,8 +74,10 @@
             <span>Response: {{ pendingTarget.response }}</span>
           </a>
           <div class="responseOption" v-show="showPendingPropose">
-            <button @click="acceptPropose()">Yes</button>
-            <button @click="rejectPropose()">No</button>
+            <button @click="acceptPropose()" v-show="canMakeDecision && !hasDecided">Yes</button>
+            <button @click="rejectPropose()" v-show="canMakeDecision && !hasDecided">No</button>
+            <span v-show="!canMakeDecision">You cannot make decision</span>
+            <span v-show="hasDecided">You have decided!</span>
           </div>
 
 
@@ -155,8 +158,10 @@ export default {
         })
         if (!this.isEndGame) {
           this.userScore = '0'
-        } else {
+        } else if (this.canMakeDecision) {
           this.toEndGame()
+        } else {
+          this.isEndGame = false
         }
       }
     }
@@ -169,6 +174,25 @@ export default {
     showProposeHistory () {
       return this.proposeHistory.length > 0
     },
+    canMakeDecision () {
+      var ans = false
+      this.pendingPropose.forEach(userInfo => {
+        if (userInfo.uid === this.uid) {
+          ans = true
+        }
+      })
+      return ans
+    },
+    hasDecided () {
+      var ans = false
+      this.pendingPropose.forEach(userInfo => {
+        if (userInfo.uid === this.uid && userInfo.response!=='None') {
+          ans = true
+        }
+      })
+      return ans
+    }
+
   },
 
   methods: {
@@ -251,15 +275,16 @@ export default {
       var pendingProposeRef = database.collection('pendingPropose')
       var batch = database.batch()
       this.proposeWindowList.forEach(proposeTarget => {
-        console.log(proposeTarget)
-        var ref = pendingProposeRef.doc(proposeTarget.uid)
-        batch.set(ref, {
-          name: proposeTarget.name,
-          share: proposeTarget.share,
-          response: 'None',
-          taskName: this.currentTaskName,
-          uid: proposeTarget.uid
-        })
+        if (proposeTarget.share!=='0') {
+          var ref = pendingProposeRef.doc(proposeTarget.uid)
+          batch.set(ref, {
+            name: proposeTarget.name,
+            share: proposeTarget.share,
+            response: 'None',
+            taskName: this.currentTaskName,
+            uid: proposeTarget.uid
+          })
+        }
       })
       batch.commit()
       console.log('batch wrote successful')
@@ -272,11 +297,6 @@ export default {
       this.showProposeWindow = !this.showProposeWindow
     },
 
-    toGameEnd () {
-      this.$router.push({
-        path: '/gameEnd',
-      })
-    },
   },
 
   async mounted () {
@@ -396,6 +416,7 @@ export default {
 }
 .pendingPropose {
   flex: 1 1 11%;
+  overflow-y: scroll;
 }
 .proposeHistory {
   background-color: #94e835;
