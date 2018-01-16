@@ -24,6 +24,7 @@
           <div class = "userBio">
             <span>{{ user.name }}</span>
             <span>Stamina: {{ user.stamina }}</span>
+            <span>Score: {{ user.score }}</span>
           </div>
         </a>
       </div>
@@ -171,8 +172,18 @@ export default {
   },
 
   methods: {
-    toEndGame () {
-      this.$router.push(`/gameEnd/${this.userScore}`)
+    async toEndGame () {
+      try {
+        //update user score
+        if (this.userScore !== '0') {
+          await database.collection('users').doc(this.uid).update({
+            score: this.userScore
+          })
+        }
+        this.$router.push(`/gameEnd/${this.userScore}`)
+      } catch (err) {
+        console.log('Error update score:', err)
+      }
     },
     async writeSuccessPropose () {
       try {
@@ -276,6 +287,7 @@ export default {
         name: doc.data().name,
         uid: doc.data().uid,
         stamina: doc.data().stamina,
+        score: doc.data().score,
       }))
       this.userList = users
       this.proposeWindowList = users
