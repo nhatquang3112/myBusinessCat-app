@@ -3,11 +3,17 @@
 
     <div class="userInfo">
       <p>userInfo</p>
+
       <div class = "userBio">
         <span>{{ userName }}</span>
         <span>Stamina: {{ userStamina }}</span>
-        <span>Is end game: {{ isEndGame }}</span>
-        <span>Score: {{ userScore }}</span>
+        <!-- <span>Is end game: {{ isEndGame }}</span>
+        <span>Score: {{ userScore }}</span> -->
+        <span>Time:
+          <span id="myProgress">
+            <span id="myBar"></span>
+          </span>
+        </span>
       </div>
     </div>
 
@@ -117,6 +123,14 @@ import firebase from '@/config/firebase'
 //Constants
 const database = firebase.firestore(); //store data in firestore
 
+//helper method for time bar
+// var timeleft = 60000 //1 minute
+// var downloadTimer = setInterval(function(){
+//   document.getElementById("progressBar").value = 60000 - --timeleft;
+//   if(timeleft <= 0) clearInterval(downloadTimer);
+// },1000)
+// setTimeout(console.log('End game'), 6000)
+
 export default {
   name: 'GameRoom',
   props: ['uid'],
@@ -196,6 +210,18 @@ export default {
   },
 
   methods: {
+    startTimer () {
+      var elem = document.getElementById("myBar");
+      var width = 0;
+      var id = setInterval(frame, 1000);
+      function frame() {
+        if (width < 100) {
+          width++;
+          elem.style.width = width + '%';
+          elem.innerHTML = width * 1  + '%';
+        }
+      }
+    },
     async toEndGame () {
       try {
         //update user score
@@ -353,12 +379,32 @@ export default {
     } catch (err) {
       console.log('error gettting user info: ', err)
     }
+
+    //set time for game to end
+    this.startTimer()
+    //setTimeout(() => { this.toEndGame() }, 3000)
   }
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+#myProgress {
+  max-width: 100%;
+  max-height: 100%;
+  background-color: #ddd;
+  display: flex;
+  justify-content: flex-start;
+}
+
+#myBar {
+  width: 0%;
+  max-weight: 100%;
+  max-height: 100%;
+  background-color: #4CAF50;
+  text-align: center;
+  color: white;
+}
 .container {
   display: flex;
   flex-direction: column;
