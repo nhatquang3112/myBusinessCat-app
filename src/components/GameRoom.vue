@@ -66,11 +66,11 @@
 
         <div class="pendingPropose">
           <p>Pending propose</p>
-          <!-- <span>Time:
+          <span v-show="showPendingPropose">Time:
             <span id="proposeProgress">
               <span id="proposeBar"></span>
             </span>
-          </span> -->
+          </span>
           <span v-show="showPendingPropose">{{ this.pendingTaskName }}</span>
           <span v-show="!showPendingPropose">There is currently no propose</span>
           <a
@@ -127,8 +127,8 @@ import firebase from '@/config/firebase'
 const database = firebase.firestore(); //store data in firestore
 //global variables
 var proposeTimer
-var gameBar
-var proposeBar
+var gameBar //loading bar for game timer
+var proposeBar //loading bar propose timer
 
 export default {
   name: 'GameRoom',
@@ -157,6 +157,17 @@ export default {
   },
 
   watch: {
+    showPendingPropose () {
+      if (this.showPendingPropose) {
+        //start the propose bar
+        this.startProposeBar()
+        console.log('propose bar called')
+      } else {
+        //stop the propose bar
+        clearInterval(proposeBar)
+        console.log('propose bar stopped')
+      }
+    },
     pendingPropose () {
       console.log('watcher for pendingPropose called')
       if (this.pendingPropose.length > 0) {
@@ -178,7 +189,6 @@ export default {
         }
       } else {
         clearTimeout(proposeTimer)
-        // clearInterval(proposeBar)
         console.log('clear propose timer called')
       }
     }
@@ -213,7 +223,7 @@ export default {
   },
 
   methods: {
-    startGameTimer () {
+    startGameBar () {
       console.log('game timer called')
       var elem = document.getElementById("gameBar");
       var width = 0;
@@ -226,7 +236,7 @@ export default {
         }
       }
     },
-    startProposeTimer () {
+    startProposeBar () {
       console.log('propose timer called')
       var elem = document.getElementById("proposeBar");
       var width = 0;
@@ -428,7 +438,7 @@ export default {
     }
 
     //set time for game to end
-    this.startGameTimer()
+    this.startGameBar()
     setTimeout(() => { this.toEndGame() }, 300000) //5 minutes
   }
 }
