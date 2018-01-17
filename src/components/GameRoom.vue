@@ -213,12 +213,12 @@ export default {
     startTimer () {
       var elem = document.getElementById("myBar");
       var width = 0;
-      var id = setInterval(frame, 1000);
+      var id = setInterval(frame, 1000); //increase timer bar every 1 second
       function frame() {
-        if (width < 100) {
+        if (width < 300) { //5 minutes
           width++;
-          elem.style.width = width + '%';
-          elem.innerHTML = width * 1  + '%';
+          elem.style.width = (width/3) + '%';
+          elem.innerHTML = width * 1;
         }
       }
     },
@@ -382,7 +382,7 @@ export default {
 
     //set time for game to end
     this.startTimer()
-    //setTimeout(() => { this.toEndGame() }, 3000)
+    setTimeout(() => { this.toEndGame() }, 300000) //5 minutes
   }
 }
 </script>
