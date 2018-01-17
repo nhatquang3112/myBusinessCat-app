@@ -4,7 +4,7 @@ import Router from 'vue-router'
 import GameStart from '@/components/GameStart'
 import GameRoom from '@/components/GameRoom'
 import GameEnd from '@/components/GameEnd'
-
+import HelloWorld from '@/components/HelloWorld'
 Vue.use(Router)
 
 export default new Router({
@@ -26,11 +26,11 @@ export default new Router({
       component: GameEnd,
       props: true
     },
-    // {
-    //   path: '/',
-    //   name: 'HelloWorld',
-    //   component: HelloWorld
-    // },
+    {
+      path: '/hello',
+      name: 'HelloWorld',
+      component: HelloWorld
+    },
 
   ]
 })
