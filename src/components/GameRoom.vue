@@ -7,11 +7,9 @@
       <div class = "userBio">
         <span>{{ userName }}</span>
         <span>Stamina: {{ userStamina }}</span>
-        <!-- <span>Is end game: {{ isEndGame }}</span>
-        <span>Score: {{ userScore }}</span> -->
         <span>Time:
-          <span id="myProgress">
-            <span id="myBar"></span>
+          <span id="gameProgress">
+            <span id="gameBar"></span>
           </span>
         </span>
       </div>
@@ -68,6 +66,11 @@
 
         <div class="pendingPropose">
           <p>Pending propose</p>
+          <!-- <span>Time:
+            <span id="proposeProgress">
+              <span id="proposeBar"></span>
+            </span>
+          </span> -->
           <span v-show="showPendingPropose">{{ this.pendingTaskName }}</span>
           <span v-show="!showPendingPropose">There is currently no propose</span>
           <a
@@ -122,14 +125,10 @@
 import firebase from '@/config/firebase'
 //Constants
 const database = firebase.firestore(); //store data in firestore
-
-//helper method for time bar
-// var timeleft = 60000 //1 minute
-// var downloadTimer = setInterval(function(){
-//   document.getElementById("progressBar").value = 60000 - --timeleft;
-//   if(timeleft <= 0) clearInterval(downloadTimer);
-// },1000)
-// setTimeout(console.log('End game'), 6000)
+//global variables
+var proposeTimer
+var gameBar
+var proposeBar
 
 export default {
   name: 'GameRoom',
@@ -177,6 +176,10 @@ export default {
         } else {
           this.isEndGame = false
         }
+      } else {
+        clearTimeout(proposeTimer)
+        // clearInterval(proposeBar)
+        console.log('clear propose timer called')
       }
     }
   },
@@ -210,14 +213,28 @@ export default {
   },
 
   methods: {
-    startTimer () {
-      var elem = document.getElementById("myBar");
+    startGameTimer () {
+      console.log('game timer called')
+      var elem = document.getElementById("gameBar");
       var width = 0;
-      var id = setInterval(frame, 1000); //increase timer bar every 1 second
+      gameBar = setInterval(frame, 1000); //increase timer bar every 1 second
       function frame() {
         if (width < 300) { //5 minutes
           width++;
           elem.style.width = (width/3) + '%';
+          elem.innerHTML = width * 1;
+        }
+      }
+    },
+    startProposeTimer () {
+      console.log('propose timer called')
+      var elem = document.getElementById("proposeBar");
+      var width = 0;
+      proposeBar = setInterval(frame, 1000); //increase timer bar every 1 second
+      function frame() {
+        if (width < 30) { //30 seconds
+          width++;
+          elem.style.width = ((width*10)/3) + '%';
           elem.innerHTML = width * 1;
         }
       }
@@ -296,7 +313,7 @@ export default {
       }
     },
     //send propose info to database to become pending propose
-    sendPropose () {
+    async sendPropose () {
       console.log(this.proposeWindowList)
       var pendingProposeRef = database.collection('pendingPropose')
       var batch = database.batch()
@@ -312,9 +329,39 @@ export default {
           })
         }
       })
-      batch.commit()
-      console.log('batch wrote successful')
-      this.showProposeWindow = !this.showProposeWindow
+      try {
+        await batch.commit()
+        console.log('batch wrote successful')
+        this.setTimeToDeletePropose() //delete propose incase no response is received in 30 seconds
+      } catch (err) {
+        console.log('Error sending propose: ', err)
+      }
+
+      this.showProposeWindow = !this.showProposeWindow //close propose window after sending the propose
+    },
+
+    setTimeToDeletePropose () {
+      console.log('propose timer called')
+      proposeTimer = setTimeout(async () => {
+        try {
+          var batch = database.batch()
+          //write to propose History
+          var currentTime = '' + new Date().getTime()
+          batch.set(database.collection('proposeHistory').doc(currentTime), {
+            history: this.pendingPropose,
+            taskName: this.pendingPropose[0].taskName,
+            result: 'Out of Date',
+          })
+          //delete all documents in pendingPropose collection
+          this.userList.forEach(user => {
+            batch.delete(database.collection('pendingPropose').doc(user.uid))
+          })
+          //commit the batch
+          await batch.commit()
+        } catch (err) {
+          console.log('Error deleting out-of-date propose: ', err)
+        }
+      }, 30000) //30 seconds
     },
 
     //open window to start proposing
@@ -381,7 +428,7 @@ export default {
     }
 
     //set time for game to end
-    this.startTimer()
+    this.startGameTimer()
     setTimeout(() => { this.toEndGame() }, 300000) //5 minutes
   }
 }
@@ -389,7 +436,7 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-#myProgress {
+#gameProgress {
   max-width: 100%;
   max-height: 100%;
   background-color: #ddd;
@@ -397,7 +444,24 @@ export default {
   justify-content: flex-start;
 }
 
-#myBar {
+#gameBar {
+  width: 0%;
+  max-weight: 100%;
+  max-height: 100%;
+  background-color: #4CAF50;
+  text-align: center;
+  color: white;
+}
+
+#proposeProgress {
+  max-width: 100%;
+  max-height: 100%;
+  background-color: #ddd;
+  display: flex;
+  justify-content: flex-start;
+}
+
+#proposeBar {
   width: 0%;
   max-weight: 100%;
   max-height: 100%;
