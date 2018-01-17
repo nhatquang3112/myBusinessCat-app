@@ -29,6 +29,7 @@
             <span>{{ user.name }}</span>
             <span>Stamina: {{ user.stamina }}</span>
             <span>Score: {{ user.score }}</span>
+            <span>Status: {{ user.status }}</span>
           </div>
         </a>
       </div>
@@ -251,12 +252,12 @@ export default {
     },
     async toEndGame () {
       try {
-        //update user score
-        if (this.userScore !== '0') {
-          await database.collection('users').doc(this.uid).update({
-            score: this.userScore
-          })
-        }
+        //update user score and in game status
+        await database.collection('users').doc(this.uid).update({
+          score: this.userScore,
+          status: 'outPlay'
+        })
+
         this.$router.push(`/gameEnd/${this.userScore}`)
       } catch (err) {
         console.log('Error update score:', err)
@@ -340,7 +341,7 @@ export default {
         }
       })
       try {
-        await batch.commit()
+        batch.commit()
         console.log('batch wrote successful')
         this.setTimeToDeletePropose() //delete propose incase no response is received in 30 seconds
       } catch (err) {
@@ -391,6 +392,7 @@ export default {
         uid: doc.data().uid,
         stamina: doc.data().stamina,
         score: doc.data().score,
+        status: doc.data().status,
       }))
       this.userList = users
       this.proposeWindowList = users

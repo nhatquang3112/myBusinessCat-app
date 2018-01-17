@@ -55,6 +55,7 @@ export default {
           stamina: '1', //hardcoded for testing
           uid: user.uid,
           score: '0',
+          status: 'inPlay',
         })
         .then(() => {
           console.log('Write user data successful')
