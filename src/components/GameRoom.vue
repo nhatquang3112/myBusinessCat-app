@@ -147,12 +147,14 @@ export default {
       userList: [],
       proposeWindowList: [],
       profitList: [ //hardcoded for testing
-        {name: 'Profit 1',stamina: '10',value: '10',},
-        {name: 'Profit 2',stamina: '20',value: '20',},
-        {name: 'Profit 3',stamina: '30',value: '30',},
+        {name: 'Profit 1',stamina: 10 ,value: 10,},
+        {name: 'Profit 2',stamina: 20 ,value: 20,},
+        {name: 'Profit 3',stamina: 30 ,value: 30,},
       ],
       proposeHistory: [],
       pendingPropose: [],
+      minStamina: 999,
+      totalPlayerStamina: 0,
 
     }
   },
@@ -160,13 +162,19 @@ export default {
   watch: {
     userList () {
       var numPlayer = 0
+      this.totalPlayerStamina = 0
       this.userList.forEach(user => {
         if (user.status === 'inPlay') {
           numPlayer++
+          this.totalPlayerStamina += user.stamina
         }
       })
       if (numPlayer === 1) {
         console.log('End game because of number player = 1')
+        this.toEndGame()
+      }
+      if (this.totalPlayerStamina < this.minStamina) {
+        console.log('End game because of inefficient stamina')
         this.toEndGame()
       }
     },
@@ -346,7 +354,7 @@ export default {
           var ref = pendingProposeRef.doc(proposeTarget.uid)
           batch.set(ref, {
             name: proposeTarget.name,
-            share: proposeTarget.share,
+            share: Number(proposeTarget.share),
             response: 'None',
             taskName: this.currentTaskName,
             uid: proposeTarget.uid
@@ -409,6 +417,12 @@ export default {
       }))
       this.userList = users
       this.proposeWindowList = users
+      //update minStamina
+      this.profitList.forEach(profit => {
+        if (this.minStamina > profit.stamina) {
+          this.minStamina = profit.stamina
+        }
+      })
     })
 
     //get current pending propose

@@ -52,9 +52,9 @@ export default {
         //write user data to database
         database.collection('users').doc(user.uid).set({
           name: user.email,
-          stamina: '1', //hardcoded for testing
+          stamina: 9, //hardcoded for testing
           uid: user.uid,
-          score: '0',
+          score: 0,
           status: 'inPlay',
         })
         .then(() => {
