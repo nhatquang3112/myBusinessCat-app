@@ -158,6 +158,18 @@ export default {
   },
 
   watch: {
+    userList () {
+      var numPlayer = 0
+      this.userList.forEach(user => {
+        if (user.status === 'inPlay') {
+          numPlayer++
+        }
+      })
+      if (numPlayer === 1) {
+        console.log('End game because of number player = 1')
+        this.toEndGame()
+      }
+    },
     showPendingPropose () {
       if (this.showPendingPropose) {
         //start the propose bar
@@ -184,6 +196,7 @@ export default {
         if (!this.isEndGame) {
           this.userScore = '0'
         } else if (this.canMakeDecision) {
+          console.log('End game because all yes')
           this.toEndGame()
         } else {
           this.isEndGame = false
@@ -219,7 +232,7 @@ export default {
         }
       })
       return ans
-    }
+    },
 
   },
 
@@ -441,7 +454,10 @@ export default {
 
     //set time for game to end
     this.startGameBar()
-    setTimeout(() => { this.toEndGame() }, 300000) //5 minutes
+    setTimeout(() => {
+      console.log('End game because of time out')
+      this.toEndGame()
+    }, 300000) //5 minutes
   }
 }
 </script>
