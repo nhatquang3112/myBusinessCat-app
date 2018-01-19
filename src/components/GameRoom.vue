@@ -2,16 +2,20 @@
   <div class="container">
 
     <div class="userInfo">
-      <p>userInfo</p>
+      <span class="avatar">
+        <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
+        alt="Avatar"/>
+      </span>
 
       <div class = "userBio">
         <span>{{ userName }}</span>
         <span>Stamina: {{ userStamina }}</span>
-        <span>Time:
+        <div class="timer">
+          <span>Timer </span>
           <span id="gameProgress">
             <span id="gameBar"></span>
           </span>
-        </span>
+        </div>
       </div>
     </div>
 
@@ -147,7 +151,7 @@ export default {
       userList: [],
       proposeWindowList: [],
       profitList: [ //hardcoded for testing
-        {name: 'Profit 1',stamina: 10 ,value: 10,},
+        {name: 'Profit 1',stamina: 3 ,value: 10,},
         {name: 'Profit 2',stamina: 20 ,value: 20,},
         {name: 'Profit 3',stamina: 30 ,value: 30,},
       ],
@@ -248,11 +252,11 @@ export default {
     startGameBar () {
       console.log('game timer called')
       var elem = document.getElementById("gameBar");
-      var width = 0;
+      var width = 300;
       gameBar = setInterval(frame, 1000); //increase timer bar every 1 second
       function frame() {
-        if (width < 300) { //5 minutes
-          width++;
+        if (width > 0) { //5 minutes
+          width--;
           elem.style.width = (width/3) + '%';
           elem.innerHTML = width * 1;
         }
@@ -261,11 +265,11 @@ export default {
     startProposeBar () {
       console.log('propose timer called')
       var elem = document.getElementById("proposeBar");
-      var width = 0;
+      var width = 30;
       proposeBar = setInterval(frame, 1000); //increase timer bar every 1 second
       function frame() {
-        if (width < 30) { //30 seconds
-          width++;
+        if (width > 0) { //30 seconds
+          width--;
           elem.style.width = ((width*10)/3) + '%';
           elem.innerHTML = width * 1;
         }
@@ -479,15 +483,16 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #gameProgress {
-  max-width: 100%;
+  width: 150px;
   max-height: 100%;
   background-color: #ddd;
   display: flex;
   justify-content: flex-start;
+  margin-left: 10px;
 }
 
 #gameBar {
-  width: 0%;
+  width: 100%;
   max-weight: 100%;
   max-height: 100%;
   background-color: #4CAF50;
@@ -504,9 +509,9 @@ export default {
 }
 
 #proposeBar {
-  width: 0%;
+  width: 100%;
   max-weight: 100%;
-  max-height: 100%;
+  max-height: 50%;
   background-color: #4CAF50;
   text-align: center;
   color: white;
@@ -522,12 +527,14 @@ export default {
   flex-flow: column;
   overflow-y: scroll;
 }
-.userBio {
-  display: flex;
-  flex-flow: column;
-}
+
 .class {
   display: flex;
+}
+
+.timer {
+  display: flex;
+
 }
 .pendingPropose {
   display: flex;
@@ -539,8 +546,21 @@ export default {
   display: flex;
   flex: 1 1 11%;
   justify-content: center;
-  background-color: #4286f4;
+  align-items: center;
+  /* background-color: #4286f4; */
   color: #ffffff;
+}
+.avatar img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+.userBio {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  margin-left: 12px;
+  color: #1aaaba;
 }
 .gamePlay {
   display: flex;
