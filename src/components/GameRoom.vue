@@ -2,57 +2,62 @@
   <div class="container">
 
     <div class="userInfo">
-      <span class="avatar">
-        <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
-        alt="Avatar"/>
-      </span>
+      <div class="userBox">
+        <span class="avatar">
+          <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
+          alt="Avatar"/>
+        </span>
 
-      <div class = "userBio">
-        <span>{{ userName }}</span>
-        <span>Stamina: {{ userStamina }}</span>
-        <div class="timer">
-          <span>Timer </span>
-          <span id="gameProgress">
-            <span id="gameBar"></span>
-          </span>
+        <div class = "userBio">
+          <span>{{ userName }}</span>
+          <span>Stamina: {{ userStamina }}</span>
+          <div class="timer">
+            <span>Timer </span>
+            <span id="gameProgress">
+              <span id="gameBar"></span>
+            </span>
+          </div>
         </div>
       </div>
     </div>
 
     <div class="gamePlay">
       <div class="userList">
-        <p>userList</p>
         <a
           v-for="(user, index) in userList"
           :key="index"
-          class = "user"
           v-if="user.name!==userName"
         >
-          <span class = "userProfilePic"></span>
           <div class = "userBio">
-            <span>{{ user.name }}</span>
-            <span>Stamina: {{ user.stamina }}</span>
-            <span>Score: {{ user.score }}</span>
-            <span>Status: {{ user.status }}</span>
+            <div class="userBox">
+              <span class="avatar">
+                <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
+                alt="Avatar"/>
+              </span>
+
+              <div class = "userBio">
+                <span>{{ user.name }}</span>
+                <span>Stamina: {{ user.stamina }}</span>
+                <span>Score: {{ user.score }}</span>
+              </div>
+            </div>
           </div>
         </a>
       </div>
 
       <div class="profitList">
-        <p>profitList</p>
         <div class="profits">
           <a
             v-for="(profit, index) in profitList"
             :key="index"
             class = "profit"
           >
-            <span class = "profitPic"></span>
-            <div class = "profitBio">
-              <span>Name: {{ profit.name }}</span>
-              <span>Value: {{ profit.value }}</span>
-              <span>Need: {{ profit.stamina }}</span>
-              <button @click = "makePropose(profit.value, profit.stamina, profit.name)">Propose</button>
-            </div>
+            <span><img src="https://d30y9cdsu7xlg0.cloudfront.net/png/53189-200.png" alt="ProfitIMG"></span>  
+            <span>Name: {{ profit.name }}</span>
+            <span>Value: {{ profit.value }}</span>
+            <span>Need: {{ profit.stamina }}</span>
+            <button @click = "makePropose(profit.value, profit.stamina, profit.name)">Propose</button>
+
           </a>
         </div>
 
@@ -413,7 +418,7 @@ export default {
     var usersRef = database.collection('users')
     usersRef.onSnapshot((querySnapshot) => {
       var users = querySnapshot.docs.map(doc => ({
-        name: doc.data().name,
+        name: doc.data().name.substring(0, doc.data().name.lastIndexOf("@")),
         uid: doc.data().uid,
         stamina: doc.data().stamina,
         score: doc.data().score,
@@ -461,7 +466,7 @@ export default {
       var userInfoRef = database.collection('users').doc(this.uid)
       var doc = await userInfoRef.get()
       if (doc.exists) {
-        this.userName = doc.data().name
+        this.userName = doc.data().name.substring(0, doc.data().name.lastIndexOf("@"))
         this.userStamina = doc.data().stamina
       } else {
         console.log('user info not exist')
@@ -489,6 +494,7 @@ export default {
   display: flex;
   justify-content: flex-start;
   margin-left: 10px;
+  border-radius: .3em;
 }
 
 #gameBar {
@@ -498,6 +504,7 @@ export default {
   background-color: #4CAF50;
   text-align: center;
   color: white;
+  border-radius: .3em;
 }
 
 #proposeProgress {
@@ -506,6 +513,7 @@ export default {
   background-color: #ddd;
   display: flex;
   justify-content: flex-start;
+  border-radius: .3em;
 }
 
 #proposeBar {
@@ -515,6 +523,7 @@ export default {
   background-color: #4CAF50;
   text-align: center;
   color: white;
+  border-radius: .3em;
 }
 .container {
   display: flex;
@@ -526,10 +535,6 @@ export default {
   display: flex;
   flex-flow: column;
   overflow-y: scroll;
-}
-
-.class {
-  display: flex;
 }
 
 .timer {
@@ -549,6 +554,17 @@ export default {
   align-items: center;
   /* background-color: #4286f4; */
   color: #ffffff;
+}
+.userBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: .3em;
+  padding: 0.5rem;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+  width: 300px;
 }
 .avatar img {
   width: 60px;
@@ -572,7 +588,6 @@ export default {
 
 }
 .userList {
-  background-color: #e85537;
   color: #ffffff;
   flex: 1 1 10%;
 }
@@ -585,7 +600,17 @@ export default {
 }
 .profits {
   flex: 1 1 66%;
+  display: flex;
+  flex-flow: row;
 }
+
+.profit {
+  display: flex;
+  flex-flow: column;
+  flex: 1 1 33%;
+  justify-content: flex-end;
+}
+
 .pendingPropose {
   flex: 1 1 11%;
   overflow-y: scroll;
