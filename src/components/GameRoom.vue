@@ -10,7 +10,9 @@
 
         <div class = "userBio">
           <span>{{ userName }}</span>
-          <span>Stamina: {{ userStamina }}</span>
+
+          <span class="staminaBar" v-bind:style="{width: this.userStamina + '%'}">{{ userStamina }}</span>
+
           <div class="timer">
             <span>Timer </span>
             <span id="gameProgress">
@@ -37,7 +39,7 @@
 
               <div class = "userBio">
                 <span>{{ user.name }}</span>
-                <span>Stamina: {{ user.stamina }}</span>
+                <span class="staminaBar" v-bind:style="{width: user.stamina + '%'}">{{ user.stamina }}</span>
                 <span>Score: {{ user.score }}</span>
               </div>
             </div>
@@ -84,7 +86,6 @@
 
 
         <div class="pendingPropose">
-          <p>Pending propose</p>
           <span v-show="showPendingPropose">Time:
             <span id="proposeProgress">
               <span id="proposeBar"></span>
@@ -436,6 +437,7 @@ export default {
         stamina: doc.data().stamina,
         score: doc.data().score,
         status: doc.data().status,
+        share: '',
       }))
       this.userList = users
       this.proposeWindowList = users
@@ -552,13 +554,26 @@ export default {
 
 .timer {
   display: flex;
-
 }
 .pendingPropose {
   display: flex;
   flex-flow: column;
   background-color: #7742f4;
   flex: 1 1 33%;
+  justify-content: center;
+  align-items: center;
+}
+.staminaBar {
+  display: flex;
+  flex-flow: row;
+  border-radius: .3em;
+  background-color: #ffa621;
+  justify-content: center;
+  align-items: center;
+}
+.staminaProcess {
+  display: flex;
+  flex-flow: row;
 }
 .userInfo {
   display: flex;
@@ -686,7 +701,7 @@ export default {
 
 .pendingPropose {
   flex: 1 1 11%;
-  overflow-y: scroll;
+
 }
 .proposeHistory {
   background-color: #94e835;
