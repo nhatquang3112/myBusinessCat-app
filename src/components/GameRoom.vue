@@ -51,27 +51,28 @@
             v-for="(profit, index) in profitList"
             :key="index"
             class="profit"
-            @click = "makePropose(profit.value, profit.stamina, profit.name)"
           >
-
-            <span>Value: {{ profit.value }}</span>
-            <span><img src="https://d30y9cdsu7xlg0.cloudfront.net/png/53189-200.png" alt="ProfitIMG"></span>
-            <span class="ladder" v-bind:style="{height: profit.stamina + '%'}">
-              <span>{{ profit.stamina }}</span>
-            </span>
-            <span>{{ profit.name }}</span>
+            <div class="profitInfo" @click = "makePropose(profit.value, profit.stamina, profit.name)">
+              <span>Value: {{ profit.value }}</span>
+              <span><img src="https://d30y9cdsu7xlg0.cloudfront.net/png/53189-200.png" alt="ProfitIMG"></span>
+              <span class="ladder" v-bind:style="{height: profit.stamina + '%'}">
+                <span>{{ profit.stamina }}</span>
+              </span>
+              <span>{{ profit.name }}</span>
+            </div>
 
 
             <div class="proposeWindow" v-show="currentTaskName===profit.name">
-              <span>{{ currentTaskName }}</span>
               <a
                 v-for="(proposeTarget, index) in proposeWindowList"
                 :key="index"
               >
-              <span>{{ proposeTarget.name }}</span>
-              <span>Share: <input type="text" v-model="proposeTarget.share"></span>
+              <div class="proposeWindowElement">
+                <span>{{ proposeTarget.name }}</span>
+                <span><input type="text" v-model="proposeTarget.share" placeholder="Share"></span>
+              </div>
               </a>
-              <button v-if="!showPendingPropose" @click="sendPropose()">Submit</button>
+              <span><button v-if="!showPendingPropose" @click="sendPropose()">Submit</button></span>
               <span v-if="showPendingPropose">Cannot make propose now</span>
             </div>
           </a>
@@ -609,15 +610,20 @@ export default {
 }
 
 .profit {
-  display: flex;
-  flex-flow: column;
   flex: 1 1 33%;
-  justify-content: center;
-  align-items: center;
-  transition: all .2s ease-in-out;
 }
 
-.profit:hover {
+.profitInfo {
+  width: 100%;
+  height: 77%;
+  justify-content: flex-end;
+  align-items: center;
+  transition: all .2s ease-in-out;
+  display: flex;
+  flex-flow: column;
+}
+
+.profitInfo:hover {
   transform: scale(1.1);
 }
 .profit img {
@@ -633,6 +639,25 @@ export default {
   flex-flow: column;
   justify-content: center;
   align-items: center;
+}
+
+.proposeWindow {
+  height: 22%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: .3em;
+  padding: 0.5rem;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+
+}
+
+.proposeWindowElement {
+  display: flex;
+  flex-flow: row;
 }
 
 
