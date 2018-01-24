@@ -66,13 +66,15 @@
               <a
                 v-for="(proposeTarget, index) in proposeWindowList"
                 :key="index"
+                v-show="proposeTarget.share!=='0'"
               >
               <div class="proposeWindowElement">
                 <span>{{ proposeTarget.name }}</span>
                 <span><input type="text" v-model="proposeTarget.share" placeholder="Share"></span>
+                <button @click="proposeTarget.share='0'"><i class="fas fa-times-circle"></i></button>
               </div>
               </a>
-              <span><button v-if="!showPendingPropose" @click="sendPropose()">Submit</button></span>
+              <span><button class="button"v-if="!showPendingPropose" @click="sendPropose()">Submit</button></span>
               <span v-if="showPendingPropose">Cannot make propose now</span>
             </div>
           </a>
@@ -410,6 +412,9 @@ export default {
 
     //open window to start proposing
     makePropose(value, stamina, taskName) {
+      this.proposeWindowList.forEach(user => {
+        user.share = '';
+      })
       if (this.currentTaskName===taskName) {
         this.currentTaskName = ''
       } else {
@@ -658,6 +663,13 @@ export default {
 .proposeWindowElement {
   display: flex;
   flex-flow: row;
+}
+
+.button {
+  background-color: #36e27e;
+  border: none;
+  border-radius: .2em;
+  border: solid 1px #1cbc5f ;
 }
 
 
