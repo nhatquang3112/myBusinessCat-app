@@ -50,31 +50,33 @@
           <a
             v-for="(profit, index) in profitList"
             :key="index"
-            class = "profit"
+            class="profit"
+            @click = "makePropose(profit.value, profit.stamina, profit.name)"
           >
+
             <span>Value: {{ profit.value }}</span>
             <span><img src="https://d30y9cdsu7xlg0.cloudfront.net/png/53189-200.png" alt="ProfitIMG"></span>
             <span class="ladder" v-bind:style="{height: profit.stamina + '%'}">
               <span>{{ profit.stamina }}</span>
             </span>
             <span>{{ profit.name }}</span>
-            <button @click = "makePropose(profit.value, profit.stamina, profit.name)">Propose</button>
 
+
+            <div class="proposeWindow" v-show="currentTaskName===profit.name">
+              <span>{{ currentTaskName }}</span>
+              <a
+                v-for="(proposeTarget, index) in proposeWindowList"
+                :key="index"
+              >
+              <span>{{ proposeTarget.name }}</span>
+              <span>Share: <input type="text" v-model="proposeTarget.share"></span>
+              </a>
+              <button v-if="!showPendingPropose" @click="sendPropose()">Submit</button>
+              <span v-if="showPendingPropose">Cannot make propose now</span>
+            </div>
           </a>
         </div>
 
-        <div class="proposeWindow" v-show="showProposeWindow">
-          <span>{{ currentTaskName }}</span>
-          <a
-            v-for="(proposeTarget, index) in proposeWindowList"
-            :key="index"
-          >
-          <span>{{ proposeTarget.name }}</span>
-          <span>Share: <input type="text" v-model="proposeTarget.share"></span>
-          </a>
-          <button v-if="!showPendingPropose" @click="sendPropose()">Submit</button>
-          <span v-if="showPendingPropose">Cannot make propose now</span>
-        </div>
 
         <div class="pendingPropose">
           <p>Pending propose</p>
@@ -152,7 +154,6 @@ export default {
       userStamina: '',
       userScore: '0',
       isEndGame: false,
-      showProposeWindow: false,
       currentTaskName: '',
       pendingTaskName: '',
       userList: [],
@@ -379,7 +380,7 @@ export default {
         console.log('Error sending propose: ', err)
       }
 
-      this.showProposeWindow = !this.showProposeWindow //close propose window after sending the propose
+      this.currentTaskName = '' //close propose window after sending the propose
     },
 
     setTimeToDeletePropose () {
@@ -408,8 +409,11 @@ export default {
 
     //open window to start proposing
     makePropose(value, stamina, taskName) {
-      this.currentTaskName = taskName
-      this.showProposeWindow = !this.showProposeWindow
+      if (this.currentTaskName===taskName) {
+        this.currentTaskName = ''
+      } else {
+        this.currentTaskName = taskName
+      }
     },
 
   },
@@ -608,8 +612,13 @@ export default {
   display: flex;
   flex-flow: column;
   flex: 1 1 33%;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
+  transition: all .2s ease-in-out;
+}
+
+.profit:hover {
+  transform: scale(1.1);
 }
 .profit img {
   width: 100px;
