@@ -66,12 +66,14 @@
               <a
                 v-for="(proposeTarget, index) in proposeWindowList"
                 :key="index"
-                v-show="proposeTarget.share!=='0'"
               >
               <div class="proposeWindowElement">
                 <span>{{ proposeTarget.name }}</span>
-                <span><input type="text" v-model="proposeTarget.share" placeholder="Share"></span>
-                <button @click="proposeTarget.share='0'"><i class="fas fa-times-circle"></i></button>
+                <div class="inputBox" v-show="proposeTarget.share!=='0'">
+                  <span><input type="text" v-model="proposeTarget.share" placeholder="Share"></span>
+                  <span class="closeButton" @click="proposeTarget.share='0'"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <span v-show="proposeTarget.share==='0'" @click="proposeTarget.share=''"><i class="fas fa-plus-circle"></i></span>
               </div>
               </a>
               <span><button class="button"v-if="!showPendingPropose" @click="sendPropose()">Submit</button></span>
@@ -412,9 +414,9 @@ export default {
 
     //open window to start proposing
     makePropose(value, stamina, taskName) {
-      this.proposeWindowList.forEach(user => {
-        user.share = '';
-      })
+      // this.proposeWindowList.forEach(user => {
+      //   user.share = '';
+      // })
       if (this.currentTaskName===taskName) {
         this.currentTaskName = ''
       } else {
@@ -663,6 +665,7 @@ export default {
 .proposeWindowElement {
   display: flex;
   flex-flow: row;
+  margin: 0.3rem;
 }
 
 .button {
@@ -670,6 +673,14 @@ export default {
   border: none;
   border-radius: .2em;
   border: solid 1px #1cbc5f ;
+}
+
+.inputBox {
+  display: flex;
+  flex-flow: row;
+  border-radius: .2em;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
 }
 
 
@@ -681,7 +692,8 @@ export default {
   background-color: #94e835;
   color: #ffffff;
   flex: 1 1 20%;
-  display: flex;
+  /* display: flex; */
+  display: none;
   flex-flow: column;
 }
 .history {
