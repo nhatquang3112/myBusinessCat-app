@@ -52,10 +52,12 @@
             :key="index"
             class = "profit"
           >
-            <span><img src="https://d30y9cdsu7xlg0.cloudfront.net/png/53189-200.png" alt="ProfitIMG"></span>  
-            <span>Name: {{ profit.name }}</span>
             <span>Value: {{ profit.value }}</span>
-            <span>Need: {{ profit.stamina }}</span>
+            <span><img src="https://d30y9cdsu7xlg0.cloudfront.net/png/53189-200.png" alt="ProfitIMG"></span>
+            <span class="ladder" v-bind:style="{height: profit.stamina + '%'}">
+              <span>{{ profit.stamina }}</span>
+            </span>
+            <span>{{ profit.name }}</span>
             <button @click = "makePropose(profit.value, profit.stamina, profit.name)">Propose</button>
 
           </a>
@@ -156,7 +158,7 @@ export default {
       userList: [],
       proposeWindowList: [],
       profitList: [ //hardcoded for testing
-        {name: 'Profit 1',stamina: 3 ,value: 10,},
+        {name: 'Profit 1',stamina: 50 ,value: 10,},
         {name: 'Profit 2',stamina: 20 ,value: 20,},
         {name: 'Profit 3',stamina: 30 ,value: 30,},
       ],
@@ -164,7 +166,6 @@ export default {
       pendingPropose: [],
       minStamina: 999,
       totalPlayerStamina: 0,
-
     }
   },
 
@@ -592,7 +593,6 @@ export default {
   flex: 1 1 10%;
 }
 .profitList {
-  background-color: #e8d336;
   color: #ffffff;
   flex: 1 1 69%;
   display: flex;
@@ -609,7 +609,23 @@ export default {
   flex-flow: column;
   flex: 1 1 33%;
   justify-content: flex-end;
+  align-items: center;
 }
+.profit img {
+  width: 100px;
+  height: 100px;
+}
+
+.ladder {
+  background-color: #ffa621;
+  border-radius: .3em;
+  width: 50px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
 
 .pendingPropose {
   flex: 1 1 11%;
