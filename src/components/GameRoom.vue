@@ -86,7 +86,7 @@
 
 
         <div class="pendingPropose">
-          <span v-show="showPendingPropose">Time:
+          <!-- <span v-show="showPendingPropose">
             <span id="proposeProgress">
               <span id="proposeBar"></span>
             </span>
@@ -107,9 +107,61 @@
             <button @click="rejectPropose()" v-show="canMakeDecision && !hasDecided">No</button>
             <span v-show="!canMakeDecision">You cannot make decision</span>
             <span v-show="hasDecided">You have decided!</span>
+          </div> -->
+          <div class="pendingProposeInfo" v-show="showPendingPropose">
+            <div class="taskNameAndTimer">
+              <span class="taskName">{{ pendingTaskName }}</span>
+              <span class="clockIcon"><i class="far fa-clock"></i></span>
+              <span class="timer">
+                <span id="proposeProgress">
+                  <span id="proposeBar"></span>
+                </span>
+            </span>
+            </div>
+
+            <div class="infoColumns">
+              <span class="nameColumn">
+                <span
+                  v-for="(pendingTarget, index) in pendingPropose"
+                  :key="index"
+                  class="itemInColumn"
+                  >
+                  {{ pendingTarget.name }}
+                </span>
+              </span>
+              <span class="shareColumn">
+                <span
+                  v-for="(pendingTarget, index) in pendingPropose"
+                  :key="index"
+                  class="shareBar"
+                  v-bind:style="{width: pendingTarget.share + '%'}"
+                  >
+                  {{ pendingTarget.share }}
+                </span>
+              </span>
+              <span class="responseColumn">
+                <span
+                  v-for="(pendingTarget, index) in pendingPropose"
+                  :key="index"
+                  class="itemInColumn"
+                  >
+                  <span v-show="pendingTarget.response==='Yes'"><i class="fas fa-check"></i></span>
+                  <span v-show="pendingTarget.response==='None'">Waiting for response</span>
+                </span>
+              </span>
+            </div>
+
+            <div class="responseOption">
+              <span v-show="canMakeDecision && !hasDecided"><button class="button" @click="acceptPropose()">Yes</button></span>
+              <span v-show="canMakeDecision && !hasDecided"><button class="button" @click="rejectPropose()">No</button></span>
+              <span v-show="!canMakeDecision">You cannot make decision</span>
+              <span v-show="hasDecided">You have decided!</span>
+            </div>
           </div>
 
-
+          <span class="pendingProposePlaceHolder" v-show="!showPendingPropose">
+            There is currently no propose
+          </span>
         </div>
       </div>
 
@@ -381,7 +433,7 @@ export default {
       try {
         batch.commit()
         console.log('batch wrote successful')
-        this.setTimeToDeletePropose() //delete propose incase no response is received in 30 seconds
+        //this.setTimeToDeletePropose() //delete propose incase no response is received in 30 seconds
       } catch (err) {
         console.log('Error sending propose: ', err)
       }
@@ -492,10 +544,10 @@ export default {
 
     //set time for game to end
     this.startGameBar()
-    setTimeout(() => {
-      console.log('End game because of time out')
-      this.toEndGame()
-    }, 300000) //5 minutes
+    // setTimeout(() => {
+    //   console.log('End game because of time out')
+    //   this.toEndGame()
+    // }, 300000) //5 minutes
   }
 }
 </script>
@@ -521,25 +573,6 @@ export default {
   color: white;
   border-radius: .3em;
 }
-
-#proposeProgress {
-  max-width: 100%;
-  max-height: 100%;
-  background-color: #ddd;
-  display: flex;
-  justify-content: flex-start;
-  border-radius: .3em;
-}
-
-#proposeBar {
-  width: 100%;
-  max-weight: 100%;
-  max-height: 50%;
-  background-color: #4CAF50;
-  text-align: center;
-  color: white;
-  border-radius: .3em;
-}
 .container {
   display: flex;
   flex-direction: column;
@@ -555,14 +588,7 @@ export default {
 .timer {
   display: flex;
 }
-.pendingPropose {
-  display: flex;
-  flex-flow: column;
-  background-color: #7742f4;
-  flex: 1 1 33%;
-  justify-content: center;
-  align-items: center;
-}
+
 .staminaBar {
   display: flex;
   flex-flow: row;
@@ -698,11 +724,134 @@ export default {
   border: solid 1px #e0e0e0;
 }
 
-
 .pendingPropose {
+  display: flex;
   flex: 1 1 11%;
-
+  justify-content: center;
+  align-items: center;
 }
+.pendingProposeInfo {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  border-radius: .2em;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+}
+.taskNameAndTimer {
+  width: 100%;
+  height: 15%;
+  display: flex;
+}
+.taskName {
+  width: 30%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.clockIcon {
+  width: 10%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.timer {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+#proposeProgress {
+  width: 100%;
+  height: 70%;
+  background-color: #ddd;
+  display: flex;
+  justify-content: flex-start;
+  border-radius: .3em;
+}
+
+#proposeBar {
+  width: 100%;
+  height: 100%;
+  background-color: #4CAF50;
+  text-align: center;
+  color: white;
+  border-radius: .3em;
+}
+
+.infoColumns {
+  width: 100%;
+  height: 70%;
+  display: flex;
+}
+
+.nameColumn {
+  width: 31%;
+  height: 100%;
+  padding-left: 1%;
+  padding-right: 1%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.shareColumn {
+  width: 31%;
+  height: 100%;
+  padding-left: 1%;
+  padding-right: 1%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.shareBar {
+  width: 100%;
+  height: 18%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: .3em;
+  background-color: #ffb711;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.itemInColumn {
+  width: 100%;
+  height: 18%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+.responseColumn {
+  width: 31%;
+  height: 100%;
+  padding-left: 1%;
+  padding-right: 1%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.responseOption {
+  width: 98%;
+  height: 13%;
+  margin: 1%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .proposeHistory {
   background-color: #94e835;
   color: #ffffff;
@@ -726,7 +875,7 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-a {
+span {
   color: #42b983;
 }
 </style>
