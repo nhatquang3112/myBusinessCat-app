@@ -642,12 +642,17 @@ export default {
 
 }
 .userList {
+  height: 100%;
+  width: 20%;
+  display: flex;
+  flex-flow: column;
   color: #ffffff;
   flex: 1 1 10%;
 }
 .profitList {
   color: #ffffff;
-  flex: 1 1 69%;
+  height: 100%;
+  width: 60%;
   display: flex;
   flex-flow: column;
 }
@@ -855,9 +860,10 @@ export default {
 .proposeHistory {
   background-color: #94e835;
   color: #ffffff;
-  flex: 1 1 20%;
-  /* display: flex; */
-  display: none;
+  height: 100%;
+  width: 20%;
+  display: flex;
+  /* display: none; */
   flex-flow: column;
 }
 .history {
