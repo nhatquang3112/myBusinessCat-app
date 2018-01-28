@@ -166,24 +166,24 @@
       </div>
 
       <div class="proposeHistory">
-        <p>proposeHistory</p>
+        <span class="proposeHistoryBar">Propose History</span>
         <div class="proposeHistoryList">
-          <a
+          <span
             v-for="(propose, index) in proposeHistory"
             :key="index"
             v-if="showProposeHistory"
             class="history"
           >
             <span>{{ propose.taskName }}</span>
-            <a
+            <span
               v-for="(info, index) in propose.history"
               :key="index"
             >
               <span>{{ info.name }}</span>
               <span>Share: {{ info.share }}</span>
-            </a>
+            </span>
             <span>{{ propose.result }}</span>
-          </a>
+          </span>
       </div>
       </div>
 
@@ -579,11 +579,6 @@ export default {
   width: 100%;
   height: 100%;
 }
-.proposeHistoryList {
-  display: flex;
-  flex-flow: column;
-  overflow-y: scroll;
-}
 
 .timer {
   display: flex;
@@ -858,7 +853,6 @@ export default {
 }
 
 .proposeHistory {
-  background-color: #94e835;
   color: #ffffff;
   height: 100%;
   width: 20%;
@@ -866,9 +860,62 @@ export default {
   /* display: none; */
   flex-flow: column;
 }
+
+.proposeHistoryList {
+  display: flex;
+  flex-flow: column;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+  border-radius: .3em;
+  width: 100%;
+  height: 94%;
+  overflow-y: scroll;
+  align-items: center;
+
+}
+
+.proposeHistoryBar {
+  display: flex;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+  border-radius: .3em;
+  width: 100%;
+  height: 5%;
+  justify-content: center;
+  align-items: center;
+}
+
 .history {
   display: flex;
   flex-flow: column;
+  width: 90%;
+  height: 200px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+  border-radius: .3em;
+  background-color: #cdcecc;
+  overflow-y: scroll;
+  align-items: flex-start;
+  margin: 1px;
+  padding: 3px;
+}
+
+::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #D62929;
+}
+::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: #F5F5F5;
+}
+::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
 }
 h1, h2 {
   font-weight: normal;
