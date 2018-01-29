@@ -2,7 +2,7 @@
   <div class="container">
 
     <div class="userInfo">
-      <div class="userBox">
+      <div class="mainUserBox">
         <span class="avatar">
           <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
           alt="Avatar"/>
@@ -13,8 +13,8 @@
 
           <span class="staminaBar" v-bind:style="{width: this.userStamina + '%'}">{{ userStamina }}</span>
 
-          <div class="timer">
-            <span>Timer </span>
+          <div class="gameTimer">
+            <span>Time</span>
             <span id="gameProgress">
               <span id="gameBar"></span>
             </span>
@@ -25,26 +25,23 @@
 
     <div class="gamePlay">
       <div class="userList">
-        <a
+        <div
           v-for="(user, index) in userList"
           :key="index"
           v-if="user.name!==userName"
+          class = "userBox"
         >
-          <div class = "userBio">
-            <div class="userBox">
-              <span class="avatar">
-                <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
-                alt="Avatar"/>
-              </span>
+          <span class="avatar">
+            <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
+            alt="Avatar"/>
+          </span>
 
-              <div class = "userBio">
-                <span>{{ user.name }}</span>
-                <span class="staminaBar" v-bind:style="{width: user.stamina + '%'}">{{ user.stamina }}</span>
-                <span>Score: {{ user.score }}</span>
-              </div>
-            </div>
+          <div class = "userBio">
+            <span>{{ user.name }}</span>
+            <span class="staminaBar" v-bind:style="{width: user.stamina + '%'}">{{ user.stamina }}</span>
+            <span>Score: {{ user.score }}</span>
           </div>
-        </a>
+        </div>
       </div>
 
       <div class="profitList">
@@ -166,8 +163,12 @@
       </div>
 
       <div class="proposeHistory">
-        <span class="proposeHistoryBar">Propose History</span>
-        <div class="proposeHistoryList">
+        <div class="proposeHistoryBar">
+          <span>Propose History</span>
+          <span v-show="!isHistoryHidden" @click="toggleHistoryVisibility()"><i class="fas fa-chevron-up"></i></span>
+          <span v-show="isHistoryHidden" @click="toggleHistoryVisibility()"><i class="fas fa-chevron-down"></i></span>
+        </div>
+        <div id="proposeHistoryList" v-show="!isHistoryHidden">
           <span
             v-for="(propose, index) in proposeHistory"
             :key="index"
@@ -225,6 +226,7 @@ export default {
       pendingPropose: [],
       minStamina: 999,
       totalPlayerStamina: 0,
+      isHistoryHidden: true,
     }
   },
 
@@ -314,6 +316,16 @@ export default {
   },
 
   methods: {
+    toggleHistoryVisibility () {
+      var proposeHistoryClass = document.getElementById('proposeHistoryList')
+      if (proposeHistoryClass.style.visibility === 'hidden') {
+        proposeHistoryClass.style.visibility = 'visible'
+        this.isHistoryHidden = false
+      } else {
+        proposeHistoryClass.style.visibility = 'hidden'
+        this.isHistoryHidden = true
+      }
+    },
     startGameBar () {
       console.log('game timer called')
       var elem = document.getElementById("gameBar");
@@ -433,7 +445,7 @@ export default {
       try {
         batch.commit()
         console.log('batch wrote successful')
-        //this.setTimeToDeletePropose() //delete propose incase no response is received in 30 seconds
+        this.setTimeToDeletePropose() //delete propose incase no response is received in 30 seconds
       } catch (err) {
         console.log('Error sending propose: ', err)
       }
@@ -555,8 +567,8 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #gameProgress {
-  width: 150px;
-  max-height: 100%;
+  width: 90%;
+  height: 90%;
   background-color: #ddd;
   display: flex;
   justify-content: flex-start;
@@ -580,18 +592,24 @@ export default {
   height: 100%;
 }
 
-.timer {
+.gameTimer {
   display: flex;
+  width: 100%;
+  height: 33%;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .staminaBar {
   display: flex;
-  flex-flow: row;
   border-radius: .3em;
   background-color: #ffa621;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 33%;
 }
+
 .staminaProcess {
   display: flex;
   flex-flow: row;
@@ -613,7 +631,20 @@ export default {
   padding: 0.5rem;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
   border: solid 1px #e0e0e0;
-  width: 300px;
+  width: 100%;
+  height: 10%;
+}
+.mainUserBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: .3em;
+  padding: 0.5rem;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+  width: 20%;
+  height: 85%;
 }
 .avatar img {
   width: 60px;
@@ -624,8 +655,10 @@ export default {
   display: flex;
   flex-flow: column;
   align-items: flex-start;
-  margin-left: 12px;
+  margin-left: 4%;
   color: #1aaaba;
+  width: 50%;
+  height: 90%;
 }
 .gamePlay {
   display: flex;
@@ -861,7 +894,7 @@ export default {
   flex-flow: column;
 }
 
-.proposeHistoryList {
+#proposeHistoryList {
   display: flex;
   flex-flow: column;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
@@ -871,6 +904,7 @@ export default {
   height: 94%;
   overflow-y: scroll;
   align-items: center;
+  visibility: visible;
 
 }
 
@@ -904,7 +938,7 @@ export default {
 {
 	border-radius: 10px;
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-	background-color: #D62929;
+	background-color: #d8d8d8;
 }
 ::-webkit-scrollbar
 {
