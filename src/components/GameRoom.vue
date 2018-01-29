@@ -75,7 +75,8 @@
                 <span v-show="proposeTarget.share==='0'" @click="proposeTarget.share=''"><i class="fas fa-plus-circle"></i></span>
               </div>
               </a>
-              <span><button class="button"v-if="!showPendingPropose" @click="sendPropose()">Submit</button></span>
+              <span><button class="button"v-if="!showPendingPropose" @click="checkPropose()">Submit</button></span>
+              <span>{{ errorMessage }}</span>
               <span v-if="showPendingPropose">Cannot make propose now</span>
             </div>
           </a>
@@ -227,6 +228,7 @@ export default {
       minStamina: 999,
       totalPlayerStamina: 0,
       isHistoryHidden: true,
+      errorMessage: '',
     }
   },
 
@@ -316,6 +318,32 @@ export default {
   },
 
   methods: {
+    checkPropose () {
+      var value = 0
+      var neededStamina = 0
+      this.profitList.forEach(profit => {
+        if (profit.name === this.currentTaskName) {
+          value = profit.value
+          neededStamina = profit.stamina
+        }
+      })
+      this.proposeWindowList.forEach(element => {
+        if (!isNaN(element.share)) {
+          value = value - Number(element.share)
+          if (Number(element.share) !== 0) {
+            neededStamina = neededStamina - Number(element.stamina)
+          }
+        }
+      })
+      if (value !== 0) {
+        this.errorMessage = 'Incorrect share value!'
+      } else if (neededStamina > 0) {
+        this.errorMessage = 'Inefficient stamina!'
+      } else {
+        this.errorMessage = ''
+        this.sendPropose()
+      }
+    },
     toggleHistoryVisibility () {
       var proposeHistoryClass = document.getElementById('proposeHistoryList')
       if (proposeHistoryClass.style.visibility === 'hidden') {
