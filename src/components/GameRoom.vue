@@ -610,7 +610,6 @@ export default {
   margin-left: 10px;
   border-radius: .3em;
 }
-
 #gameBar {
   width: 100%;
   max-weight: 100%;
@@ -626,7 +625,6 @@ export default {
   width: 100%;
   height: 100%;
 }
-
 .gameTimer {
   display: flex;
   width: 100%;
@@ -634,7 +632,6 @@ export default {
   justify-content: flex-start;
   align-items: center;
 }
-
 .staminaBar {
   display: flex;
   border-radius: .3em;
@@ -643,11 +640,6 @@ export default {
   align-items: center;
   width: 100%;
   height: 33%;
-}
-
-.staminaProcess {
-  display: flex;
-  flex-flow: row;
 }
 .userInfo {
   display: flex;
@@ -724,11 +716,9 @@ export default {
   display: flex;
   flex-flow: row;
 }
-
 .profit {
   flex: 1 1 33%;
 }
-
 .profitInfo {
   width: 100%;
   height: 77%;
@@ -738,7 +728,6 @@ export default {
   display: flex;
   flex-flow: column;
 }
-
 .profitInfo:hover {
   transform: scale(1.1);
 }
@@ -746,7 +735,6 @@ export default {
   width: 100px;
   height: 100px;
 }
-
 .ladder {
   background-color: #ffa621;
   border-radius: .3em;
@@ -756,7 +744,6 @@ export default {
   justify-content: center;
   align-items: center;
 }
-
 .proposeWindow {
   height: 22%;
   display: flex;
@@ -768,22 +755,18 @@ export default {
   padding: 0.5rem;
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
   border: solid 1px #e0e0e0;
-
 }
-
 .proposeWindowElement {
   display: flex;
   flex-flow: row;
   margin: 0.3rem;
 }
-
 .button {
   background-color: #36e27e;
   border: none;
   border-radius: .2em;
   border: solid 1px #1cbc5f ;
 }
-
 .inputBox {
   display: flex;
   flex-flow: row;
@@ -985,6 +968,44 @@ export default {
 	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
 	border-radius: 10px;
 	background-color: #F5F5F5;
+}
+
+@media screen and (max-width: 531px) {
+  .proposeHistory {
+    display: none;
+  }
+  .gamePlay {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+  }
+  .userList {
+    flex-direction: row;
+  }
+  .profitList {
+    background-color: red;
+    width: 100%;
+  }
+  .userList {
+    background-color: green;
+    width: 100%;
+    overflow-x: scroll;
+  }
+  .pendingPropose {
+    background-color: purple;
+  }
+  .avatar img {
+    width: 40px;
+    height: 40px;
+  }
+  .mainUserBox {
+    width: 90%;
+  }
+  .userBox {
+    height: 100%;
+  }
+
 }
 h1, h2 {
   font-weight: normal;
