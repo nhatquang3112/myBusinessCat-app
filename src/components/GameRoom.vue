@@ -370,7 +370,11 @@ export default {
     startProposeBar () {
       console.log('propose timer called')
       var elem = document.getElementById("proposeBar");
-      var width = 30;
+      var currentTime = Number(new Date().getTime())
+      var timeCreated = Number(this.pendingPropose[0].timeCreated);
+      var width = 30 - Math.round(((currentTime - timeCreated)/1000));
+      console.log('currentTime:', currentTime)
+      console.log('timeCreated:', timeCreated)
       proposeBar = setInterval(frame, 1000); //increase timer bar every 1 second
       function frame() {
         if (width > 0) { //30 seconds
@@ -458,6 +462,7 @@ export default {
       console.log(this.proposeWindowList)
       var pendingProposeRef = database.collection('pendingPropose')
       var batch = database.batch()
+      var timeCreated = '' + new Date().getTime()
       this.proposeWindowList.forEach(proposeTarget => {
         if (proposeTarget.share!=='0') {
           var ref = pendingProposeRef.doc(proposeTarget.uid)
@@ -466,7 +471,8 @@ export default {
             share: Number(proposeTarget.share),
             response: 'None',
             taskName: this.currentTaskName,
-            uid: proposeTarget.uid
+            uid: proposeTarget.uid,
+            timeCreated: timeCreated
           })
         }
       })
@@ -550,6 +556,7 @@ export default {
         share: doc.data().share,
         response: doc.data().response,
         taskName: doc.data().taskName,
+        timeCreated: doc.data().timeCreated,
       }))
       this.pendingPropose = pendingPropose
       this.pendingTaskName = this.pendingPropose[0].taskName
