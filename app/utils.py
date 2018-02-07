@@ -42,5 +42,5 @@ def get_game(userid):
             u'num_players': firestore.DELETE_FIELD,
             u'assigned_players' : firestore.DELETE_FIELD}
             db.collection(u'games').document(u'waiting_game').update(data)
-            db.collection(u'games').document(gameid).update({u'status' : active})
+            db.collection(u'games').document(gameid).update({u'status' : u'active'})
         return gameid, rank
