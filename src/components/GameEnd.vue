@@ -1,21 +1,29 @@
 <template>
   <div class="gameend">
-  <h1>Game Over!</h1>
-  <img src="https://i.imgur.com/qUIxJ0n.png" alt = "Title">
-  <div>
-     <router-link to = "/">Restart</router-link>
-  </div>
+    <h1>Game Over!</h1>
+    <h2>Your score is {{ score }}!</h2>
+
+    <button @click="toGameStart">Restart the Game</button>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'GameStart',
+  name: 'GameEnd',
+  props: ['score'],
   data () {
     return {
       msg: 'Welcome to Your Vue.js App'
     }
-  }
+  },
+
+  methods: {
+    toGameStart () {
+      this.$router.push({
+        path: '/',
+      })
+    },
+  },
 }
 </script>
 

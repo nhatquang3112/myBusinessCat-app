@@ -1,67 +1,70 @@
 <template>
-
   <div class="gameplay">
   <h1>This is GamePlay</h1>
-  <h2 v-if="isHappening">Let's get down to business!</h2>
-  <h2 v-else>Waiting for other players...</h2>
 
   <div v-if="inLobby">
-  <input type="text" placeholder = "What is your cat name?" v-model="playerID"></input>
-  <button v-on:click="createNewPlayer()">Go!</button>
+  <button @click = "createNewPlayer()">Play as Guest</button>
+  <img src="https://www.iizcat.com/uploads/2017/04/kr490-bc4.jpg" alt = "Title">
   </div>
-  
-  <img v-if="inLobby" src="https://www.iizcat.com/uploads/2017/04/kr490-bc4.jpg" alt = "Title">
 
-
-  <div class = "vertical-menu" v-else>
-    <a v-for="player in playerList">
+  <div v-if="!inLobby">
+  <h2>Your are player {{ playerOrder }}</h2>
+  <div class = "vertical-menu">
+    <a v-for="player in playerList" v-if="player.ingameStatus">
       <img src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/0b/0bc3ded6d1c690449dd74dee852f6053517749cb_full.jpg" alt = "Ava">
-      <li>Player: {{ player.username }}</li>
+      <li>Player {{ player.rank }}</li>
       <li>Score: {{ player.highscore }}</li>
-      <li>Stamina: {{ player.strength }}</li>
+      <li>Stamina: {{ player.stamina }}</li>
     </a>
   </div>
 
-  <div class = "vertical-profit" v-if="inLobby === false">
-     <a v-for="profit in profitList" v-on:click="startPropose()">
-        <img src="http://chefspalate.com.au/wp-content/uploads/2016/05/6.png" alt = "Ava">
+  <div class = "vertical-profit">
+     <h2>{{ notification }}</h2>
+     <a v-for="profit in profitList">
+        <img @click="startPropose(profit.Order)" src="http://chefspalate.com.au/wp-content/uploads/2016/05/6.png" alt = "Ava">
         <li>Task {{ profit.Order }}</li>
         <li>Profit: {{ profit.value }}</li>
         <li>Stamina: {{ profit.cost }}</li>
+        <div v-if="profit.Order === currentPropose">
+            <input type="text" placeholder = "Share for player 1" v-model="share1"></input>
+            <input type="text" placeholder = "Share for player 2" v-model="share2"></input>
+            <input type="text" placeholder = "Share for player 3" v-model="share3"></input>
+           <button @click="propose(profit.Order)">Propose!</button>
+        </div>
     </a>
   </div>
-  <div v-if="isProposing">
-     <input type="text" placeholder = "Which task?" v-model="task_order"></input>
-     <input type="text" placeholder = "Player 1: Share" v-model="propose1"></input>
-     <input type="text" placeholder = "Player 2: Share" v-model="propose2"></input>
-     <input type="text" placeholder = "Player 3: Share" v-model="propose3"></input>
-     <button v-on:click="propose()">Propose!</button>
-  </div>
 
-  <div class = "scroll" v-if="inLobby==false">
-     <ul v-for="propose in proposeList" v-on:click="startPropose()">
+  <h2>History</h2>
+  <div class = "scroll">
+     <ul v-for="propose in proposeList">
         <li>Task {{ propose.number }}</li>
-        <li>Share1: {{ propose.share1 }}</li>
-        <li>Share2: {{ propose.share2 }}</li>
-        <li>Share3: {{ propose.share3 }}</li>
-        <button>Yes</button>
-        <button>No</button>
+        <li>Player 1: {{ propose.share1 }}</li>
+        <li>Player 2: {{ propose.share2 }}</li>
+        <li>Player 3: {{ propose.share3 }}</li>
+        <li>Result: {{ propose.result }}</li>
     </ul>
   </div>
 
+  <h2>Pending propose</h2>
+  <ul v-for="propose in pendingProposeList" v-if = "propose.show" >
+     <li>Task {{ propose.number }}</li>
+     <li>Share1: {{ propose.share1 }}</li>
+     <li>Share2: {{ propose.share2 }}</li>
+     <li>Share3: {{ propose.share3 }}</li>
+     <button @click = "submitYes()">Yes</button>
+     <button @click = "rejectPropose()">No</button>
+ </ul>
 
 
+  <button @click = "logoutUser()">Log out</button>
+  <router-link to = "/gameend">End the game?</router-link>
+  </div>
 
 
-
-
-
-  <router-link to = "/gameend" v-if="inLobby==false">End the game?</router-link>
   </div>
 </template>
 
 <script>
-const axios = require('axios');
 import * as firebase from "firebase";
 var config = {
   apiKey: "AIzaSyBEHPA-ti-TC5m5L5aZD4ZwwOZaNtZo-lk",
@@ -73,78 +76,142 @@ var config = {
 };
 firebase.initializeApp(config);
 const database = firebase.database();
+const provider = new firebase.auth.FacebookAuthProvider() //for login with facebook
 
-//helper functions
-function writeUserData(userId, ingame, score, height) {
-  firebase.database().ref('users/' + userId).set({
-    username: userId,
-    ingameStatus: ingame,
-    highscore: score,
-    strength: height,
-  });
-}
 
-//real time update
-var userRef = database.ref().child('users');
-userRef.on('value', (snapshot) => {
-    this.playerList = Object.values(snapshot.val());
-    console.log(Object.values(snapshot.val()));
-});
-
-var proposeRef = database.ref().child('proposes');
-proposeRef.on('value', (snapshot) => {
-    this.proposeList = Object.values(snapshot.val());
-    console.log(Object.values(snapshot.val()));
-});
 
 export default {
   name: 'GameStart',
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
+      //the game three main list
       playerList: [],
       profitList: [],
       proposeList: [],
-      isHappening: true,
-      playerID:'',
+      pendingProposeList: [],
+
+      //fill info when proposing
+      currentPropose: 0,
+      share1: '',
+      share2: '',
+      share3: '',
+
+
+      //view mode
       inLobby: true,
+
+      //user info
+      playerID:'', //the name of the player
+      facebookId:'', //retrieved from login to facebook
       height: 0,
-      isProposing: false,
-      task_order: '',
-      propose1: '',
-      propose2: '',
-      propose3: '',
+      playerOrder: 0, //to classify player and get score
+      playDemo: 0,
+
+      //trivia
+      notification: '',
+
+
+
+
+
 
     }
   },
   methods: {
-    propose: function() {
-        firebase.database().ref('proposes/' + this.playerID).set({
-           number: this.task_order,
-           share1: this.propose1,
-           share2: this.propose2,
-           share3: this.propose3,
+      //submit yes to a propose
+      submitYes: function() {
+        
+      },
+      //move a propose from pending to history
+      rejectPropose: function() {
+        var newHistoryKey = firebase.database().ref().child('proposes').push().key;
+        firebase.database().ref('proposes/' + newHistoryKey).set({
+          number: this.pendingProposeList[0].number,
+          share1: this.pendingProposeList[0].share1,
+          share2: this.pendingProposeList[0].share2,
+          share3: this.pendingProposeList[0].share3,
+          result: 'Rejected',
+        });
+
+        firebase.database().ref('pendingPros/info').set({
+           number: '',
+           share1: '',
+           share2: '',
+           share3: '',
+           show: false,
+        });
+      },
+
+    //update the number of user
+    updateNumPlayer: function(newValue) {
+     firebase.database().ref('numPlayer').set({
+        number: newValue,
+     });
+    },
+
+    //make a propose to other players
+    propose: function(taskOrder) {
+        firebase.database().ref('pendingPros/info').set({
+           number: taskOrder,
+           share1: this.share1,
+           share2: this.share2,
+           share3: this.share3,
+           show: true,
         });
         this.isProposing = false
-        this.task_order =  ''
-        this.propose1 = ''
-        this.propose2 = ''
-        this.propose3 = ''
+        this.startPropose();
+        this.share1 = ''
+        this.share2 = ''
+        this.share3 = ''
     },
 
 
+     //in case we have to test with non-facebook users
      createNewPlayer: function() {
-         writeUserData(this.playerID, 'true', '0', this.height);
-         this.inLobby = false;
+         this.height = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
+
+         //update the number of player in the database
+         database.ref().child('numPlayer').once('value', (snapshot) => {
+            this.playerOrder = Object.values(snapshot.val())[0];
+            this.playerOrder ++;
+            console.log(this.playerOrder);
+            this.updateNumPlayer(this.playerOrder);
+            this.writeGuestData(this.playerID, 'true', '0', this.height, this.playerOrder);
+
+            this.inLobby = false;
+
+         });
+
+         ////////////////////////////////////////////////////////
+
      },
 
-     byPass: function() {
-         this.inLobby = false;
+     writeGuestData: function(name, ingame, score, height, rank) {
+       // Get a key for a new guest.
+       var newGuestKey = firebase.database().ref().child('users').push().key;
+       firebase.database().ref('users/' + newGuestKey).set({
+         username: name,
+         ingameStatus: ingame,
+         stamina: height,
+         score: score,
+         rank: rank,
+       });
      },
 
-     startPropose: function() {
-         this.isProposing = !this.isProposing;
+
+
+     //to decide which propose input to show
+     startPropose: function(order) {
+        if (!this.pendingProposeList[0].show) {
+          if (this.currentPropose === 0) this.currentPropose = order;
+          else this.currentPropose = 0;
+        } else {
+          this.notification = 'Please wait for the current propose to finish'
+          setTimeout(()=>{ this.notification = ''; }, 2500);
+        }
      },
+
 
 
 
@@ -152,9 +219,12 @@ export default {
   },
 
   mounted: function() {
+     //this.updateUserStatus();
+     //this.logoutUser()
+
+     //the following code is for non-facebook test/////////////
      database.ref().child('users').on('value', (snapshot) => {
      this.playerList = Object.values(snapshot.val());
-     this.height = Math.floor(Math.random() * (5 - 1 + 1)) + 1;
      });
 
      database.ref().child('profits').on('value', (snapshot) => {
@@ -165,7 +235,10 @@ export default {
      this.proposeList = Object.values(snapshot.val());
      });
 
-
+     database.ref().child('pendingPros').on('value', (snapshot) => {
+     this.pendingProposeList = Object.values(snapshot.val());
+     });
+     //end////////////////////////////////////////////////////
   },
 }
 </script>
