@@ -36,11 +36,12 @@ def get_game(userid):
             return gameid, assigned_players.index(userid)
         rank = len(assigned_players)
         assigned_players.append(userid)
-        db.collection(u'games').document(u'waiting_game').update({u'assigned_players' : assigned_players})
         if len(assigned_players) == num_players:
             data = {u'id' : firestore.DELETE_FIELD,
             u'num_players': firestore.DELETE_FIELD,
             u'assigned_players' : firestore.DELETE_FIELD}
             db.collection(u'games').document(u'waiting_game').update(data)
             db.collection(u'games').document(gameid).update({u'status' : u'active'})
+        else:
+            db.collection(u'games').document(u'waiting_game').update({u'assigned_players' : assigned_players})
         return gameid, rank
