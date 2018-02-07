@@ -1,7 +1,7 @@
 <template>
   <div class="gamestart">
     <h1>The Adventure of Business Cats</h1>
-    <input type="text" placeholder="Email" v-model="pendingEmail">
+    <input type="text" placeholder="Name" v-model="pendingName">
     <input type="password" placeholder="Password" v-model="pendingPassword">
     <button @click="signInUser">Login</button>
     <button @click="signUpUser">Sign Up</button>
@@ -20,10 +20,17 @@ export default {
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
-      pendingEmail: '',
+      pendingName: '',
       pendingPassword: '',
       uid: '',
     }
+  },
+
+  computed: {
+    pendingEmail () {
+      return this.pendingName + '@gmail.com'
+    }
+
   },
 
   methods: {

@@ -2,72 +2,89 @@
   <div class="container">
 
     <div class="userInfo">
-      <p>userInfo</p>
-
-      <div class = "userBio">
-        <span>{{ userName }}</span>
-        <span>Stamina: {{ userStamina }}</span>
-        <span>Time:
-          <span id="gameProgress">
-            <span id="gameBar"></span>
-          </span>
+      <div class="mainUserBox">
+        <span class="avatar">
+          <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
+          alt="Avatar"/>
         </span>
+
+        <div class = "userBio">
+          <span>{{ userName }}</span>
+
+          <span class="staminaBar" v-bind:style="{width: this.userStamina + '%'}">{{ userStamina }}</span>
+
+          <div class="gameTimer">
+            <span>Time</span>
+            <span id="gameProgress">
+              <span id="gameBar"></span>
+            </span>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="gamePlay">
       <div class="userList">
-        <p>userList</p>
-        <a
+        <div
           v-for="(user, index) in userList"
           :key="index"
-          class = "user"
           v-if="user.name!==userName"
+          class = "userBox"
         >
-          <span class = "userProfilePic"></span>
+          <span class="avatar">
+            <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
+            alt="Avatar"/>
+          </span>
+
           <div class = "userBio">
             <span>{{ user.name }}</span>
-            <span>Stamina: {{ user.stamina }}</span>
+            <span class="staminaBar" v-bind:style="{width: user.stamina + '%'}">{{ user.stamina }}</span>
             <span>Score: {{ user.score }}</span>
-            <span>Status: {{ user.status }}</span>
           </div>
-        </a>
+        </div>
       </div>
 
       <div class="profitList">
-        <p>profitList</p>
         <div class="profits">
           <a
             v-for="(profit, index) in profitList"
             :key="index"
-            class = "profit"
+            class="profit"
           >
-            <span class = "profitPic"></span>
-            <div class = "profitBio">
-              <span>Name: {{ profit.name }}</span>
+            <div class="profitInfo" @click = "makePropose(profit.value, profit.stamina, profit.name)">
               <span>Value: {{ profit.value }}</span>
-              <span>Need: {{ profit.stamina }}</span>
-              <button @click = "makePropose(profit.value, profit.stamina, profit.name)">Propose</button>
+              <span><img src="https://d30y9cdsu7xlg0.cloudfront.net/png/53189-200.png" alt="ProfitIMG"></span>
+              <span class="ladder" v-bind:style="{height: profit.stamina + '%'}">
+                <span>{{ profit.stamina }}</span>
+              </span>
+              <span>{{ profit.name }}</span>
+            </div>
+
+
+            <div class="proposeWindow" v-show="currentTaskName===profit.name">
+              <a
+                v-for="(proposeTarget, index) in proposeWindowList"
+                :key="index"
+              >
+              <div class="proposeWindowElement">
+                <span>{{ proposeTarget.name }}</span>
+                <div class="inputBox" v-show="proposeTarget.share!=='0'">
+                  <span><input type="text" v-model="proposeTarget.share" placeholder="Share"></span>
+                  <span class="closeButton" @click="proposeTarget.share='0'"><i class="fas fa-times-circle"></i></span>
+                </div>
+                <span v-show="proposeTarget.share==='0'" @click="proposeTarget.share=''"><i class="fas fa-plus-circle"></i></span>
+              </div>
+              </a>
+              <span><button class="button"v-if="!showPendingPropose" @click="checkPropose()">Submit</button></span>
+              <span>{{ errorMessage }}</span>
+              <span v-if="showPendingPropose">Cannot make propose now</span>
             </div>
           </a>
         </div>
 
-        <div class="proposeWindow" v-show="showProposeWindow">
-          <span>{{ currentTaskName }}</span>
-          <a
-            v-for="(proposeTarget, index) in proposeWindowList"
-            :key="index"
-          >
-          <span>{{ proposeTarget.name }}</span>
-          <span>Share: <input type="text" v-model="proposeTarget.share"></span>
-          </a>
-          <button v-if="!showPendingPropose" @click="sendPropose()">Submit</button>
-          <span v-if="showPendingPropose">Cannot make propose now</span>
-        </div>
 
         <div class="pendingPropose">
-          <p>Pending propose</p>
-          <span v-show="showPendingPropose">Time:
+          <!-- <span v-show="showPendingPropose">
             <span id="proposeProgress">
               <span id="proposeBar"></span>
             </span>
@@ -88,31 +105,87 @@
             <button @click="rejectPropose()" v-show="canMakeDecision && !hasDecided">No</button>
             <span v-show="!canMakeDecision">You cannot make decision</span>
             <span v-show="hasDecided">You have decided!</span>
+          </div> -->
+          <div class="pendingProposeInfo" v-show="showPendingPropose">
+            <div class="taskNameAndTimer">
+              <span class="taskName">{{ pendingTaskName }}</span>
+              <span class="clockIcon"><i class="far fa-clock"></i></span>
+              <span class="timer">
+                <span id="proposeProgress">
+                  <span id="proposeBar"></span>
+                </span>
+            </span>
+            </div>
+
+            <div class="infoColumns">
+              <span class="nameColumn">
+                <span
+                  v-for="(pendingTarget, index) in pendingPropose"
+                  :key="index"
+                  class="itemInColumn"
+                  >
+                  {{ pendingTarget.name }}
+                </span>
+              </span>
+              <span class="shareColumn">
+                <span
+                  v-for="(pendingTarget, index) in pendingPropose"
+                  :key="index"
+                  class="shareBar"
+                  v-bind:style="{width: pendingTarget.share + '%'}"
+                  >
+                  {{ pendingTarget.share }}
+                </span>
+              </span>
+              <span class="responseColumn">
+                <span
+                  v-for="(pendingTarget, index) in pendingPropose"
+                  :key="index"
+                  class="itemInColumn"
+                  >
+                  <span v-show="pendingTarget.response==='Yes'"><i class="fas fa-check"></i></span>
+                  <span v-show="pendingTarget.response==='None'">Waiting for response</span>
+                </span>
+              </span>
+            </div>
+
+            <div class="responseOption">
+              <span v-show="canMakeDecision && !hasDecided"><button class="button" @click="acceptPropose()">Yes</button></span>
+              <span v-show="canMakeDecision && !hasDecided"><button class="button" @click="rejectPropose()">No</button></span>
+              <span v-show="!canMakeDecision">You cannot make decision</span>
+              <span v-show="hasDecided">You have decided!</span>
+            </div>
           </div>
 
-
+          <span class="pendingProposePlaceHolder" v-show="!showPendingPropose">
+            There is currently no propose
+          </span>
         </div>
       </div>
 
       <div class="proposeHistory">
-        <p>proposeHistory</p>
-        <div class="proposeHistoryList">
-          <a
+        <div class="proposeHistoryBar">
+          <span>Propose History</span>
+          <span v-show="!isHistoryHidden" @click="toggleHistoryVisibility()"><i class="fas fa-chevron-up"></i></span>
+          <span v-show="isHistoryHidden" @click="toggleHistoryVisibility()"><i class="fas fa-chevron-down"></i></span>
+        </div>
+        <div id="proposeHistoryList" v-show="!isHistoryHidden">
+          <span
             v-for="(propose, index) in proposeHistory"
             :key="index"
             v-if="showProposeHistory"
             class="history"
           >
             <span>{{ propose.taskName }}</span>
-            <a
+            <span
               v-for="(info, index) in propose.history"
               :key="index"
             >
               <span>{{ info.name }}</span>
               <span>Share: {{ info.share }}</span>
-            </a>
+            </span>
             <span>{{ propose.result }}</span>
-          </a>
+          </span>
       </div>
       </div>
 
@@ -141,13 +214,12 @@ export default {
       userStamina: '',
       userScore: '0',
       isEndGame: false,
-      showProposeWindow: false,
       currentTaskName: '',
       pendingTaskName: '',
       userList: [],
       proposeWindowList: [],
       profitList: [ //hardcoded for testing
-        {name: 'Profit 1',stamina: 10 ,value: 10,},
+        {name: 'Profit 1',stamina: 50 ,value: 10,},
         {name: 'Profit 2',stamina: 20 ,value: 20,},
         {name: 'Profit 3',stamina: 30 ,value: 30,},
       ],
@@ -155,7 +227,8 @@ export default {
       pendingPropose: [],
       minStamina: 999,
       totalPlayerStamina: 0,
-
+      isHistoryHidden: true,
+      errorMessage: '',
     }
   },
 
@@ -245,14 +318,50 @@ export default {
   },
 
   methods: {
+    checkPropose () {
+      var value = 0
+      var neededStamina = 0
+      this.profitList.forEach(profit => {
+        if (profit.name === this.currentTaskName) {
+          value = profit.value
+          neededStamina = profit.stamina
+        }
+      })
+      this.proposeWindowList.forEach(element => {
+        if (!isNaN(element.share)) {
+          value = value - Number(element.share)
+          if (Number(element.share) !== 0) {
+            neededStamina = neededStamina - Number(element.stamina)
+          }
+        }
+      })
+      if (value !== 0) {
+        this.errorMessage = 'Incorrect share value!'
+      } else if (neededStamina > 0) {
+        this.errorMessage = 'Inefficient stamina!'
+      } else {
+        this.errorMessage = ''
+        this.sendPropose()
+      }
+    },
+    toggleHistoryVisibility () {
+      var proposeHistoryClass = document.getElementById('proposeHistoryList')
+      if (proposeHistoryClass.style.visibility === 'hidden') {
+        proposeHistoryClass.style.visibility = 'visible'
+        this.isHistoryHidden = false
+      } else {
+        proposeHistoryClass.style.visibility = 'hidden'
+        this.isHistoryHidden = true
+      }
+    },
     startGameBar () {
       console.log('game timer called')
       var elem = document.getElementById("gameBar");
-      var width = 0;
+      var width = 300;
       gameBar = setInterval(frame, 1000); //increase timer bar every 1 second
       function frame() {
-        if (width < 300) { //5 minutes
-          width++;
+        if (width > 0) { //5 minutes
+          width--;
           elem.style.width = (width/3) + '%';
           elem.innerHTML = width * 1;
         }
@@ -261,11 +370,15 @@ export default {
     startProposeBar () {
       console.log('propose timer called')
       var elem = document.getElementById("proposeBar");
-      var width = 0;
+      var currentTime = Number(new Date().getTime())
+      var timeCreated = Number(this.pendingPropose[0].timeCreated);
+      var width = 30 - Math.round(((currentTime - timeCreated)/1000));
+      console.log('currentTime:', currentTime)
+      console.log('timeCreated:', timeCreated)
       proposeBar = setInterval(frame, 1000); //increase timer bar every 1 second
       function frame() {
-        if (width < 30) { //30 seconds
-          width++;
+        if (width > 0) { //30 seconds
+          width--;
           elem.style.width = ((width*10)/3) + '%';
           elem.innerHTML = width * 1;
         }
@@ -349,6 +462,7 @@ export default {
       console.log(this.proposeWindowList)
       var pendingProposeRef = database.collection('pendingPropose')
       var batch = database.batch()
+      var timeCreated = '' + new Date().getTime()
       this.proposeWindowList.forEach(proposeTarget => {
         if (proposeTarget.share!=='0') {
           var ref = pendingProposeRef.doc(proposeTarget.uid)
@@ -357,7 +471,8 @@ export default {
             share: Number(proposeTarget.share),
             response: 'None',
             taskName: this.currentTaskName,
-            uid: proposeTarget.uid
+            uid: proposeTarget.uid,
+            timeCreated: timeCreated
           })
         }
       })
@@ -369,7 +484,7 @@ export default {
         console.log('Error sending propose: ', err)
       }
 
-      this.showProposeWindow = !this.showProposeWindow //close propose window after sending the propose
+      this.currentTaskName = '' //close propose window after sending the propose
     },
 
     setTimeToDeletePropose () {
@@ -398,8 +513,14 @@ export default {
 
     //open window to start proposing
     makePropose(value, stamina, taskName) {
-      this.currentTaskName = taskName
-      this.showProposeWindow = !this.showProposeWindow
+      // this.proposeWindowList.forEach(user => {
+      //   user.share = '';
+      // })
+      if (this.currentTaskName===taskName) {
+        this.currentTaskName = ''
+      } else {
+        this.currentTaskName = taskName
+      }
     },
 
   },
@@ -409,11 +530,12 @@ export default {
     var usersRef = database.collection('users')
     usersRef.onSnapshot((querySnapshot) => {
       var users = querySnapshot.docs.map(doc => ({
-        name: doc.data().name,
+        name: doc.data().name.substring(0, doc.data().name.lastIndexOf("@")),
         uid: doc.data().uid,
         stamina: doc.data().stamina,
         score: doc.data().score,
         status: doc.data().status,
+        share: '',
       }))
       this.userList = users
       this.proposeWindowList = users
@@ -434,6 +556,7 @@ export default {
         share: doc.data().share,
         response: doc.data().response,
         taskName: doc.data().taskName,
+        timeCreated: doc.data().timeCreated,
       }))
       this.pendingPropose = pendingPropose
       this.pendingTaskName = this.pendingPropose[0].taskName
@@ -457,7 +580,7 @@ export default {
       var userInfoRef = database.collection('users').doc(this.uid)
       var doc = await userInfoRef.get()
       if (doc.exists) {
-        this.userName = doc.data().name
+        this.userName = doc.data().name.substring(0, doc.data().name.lastIndexOf("@"))
         this.userStamina = doc.data().stamina
       } else {
         console.log('user info not exist')
@@ -468,10 +591,10 @@ export default {
 
     //set time for game to end
     this.startGameBar()
-    setTimeout(() => {
-      console.log('End game because of time out')
-      this.toEndGame()
-    }, 300000) //5 minutes
+    // setTimeout(() => {
+    //   console.log('End game because of time out')
+    //   this.toEndGame()
+    // }, 300000) //5 minutes
   }
 }
 </script>
@@ -479,37 +602,22 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 #gameProgress {
-  max-width: 100%;
-  max-height: 100%;
+  width: 90%;
+  height: 90%;
   background-color: #ddd;
   display: flex;
   justify-content: flex-start;
+  margin-left: 10px;
+  border-radius: .3em;
 }
-
 #gameBar {
-  width: 0%;
+  width: 100%;
   max-weight: 100%;
   max-height: 100%;
   background-color: #4CAF50;
   text-align: center;
   color: white;
-}
-
-#proposeProgress {
-  max-width: 100%;
-  max-height: 100%;
-  background-color: #ddd;
-  display: flex;
-  justify-content: flex-start;
-}
-
-#proposeBar {
-  width: 0%;
-  max-weight: 100%;
-  max-height: 100%;
-  background-color: #4CAF50;
-  text-align: center;
-  color: white;
+  border-radius: .3em;
 }
 .container {
   display: flex;
@@ -517,30 +625,67 @@ export default {
   width: 100%;
   height: 100%;
 }
-.proposeHistoryList {
+.gameTimer {
   display: flex;
-  flex-flow: column;
-  overflow-y: scroll;
+  width: 100%;
+  height: 33%;
+  justify-content: flex-start;
+  align-items: center;
 }
-.userBio {
+.staminaBar {
   display: flex;
-  flex-flow: column;
-}
-.class {
-  display: flex;
-}
-.pendingPropose {
-  display: flex;
-  flex-flow: column;
-  background-color: #7742f4;
-  flex: 1 1 33%;
+  border-radius: .3em;
+  background-color: #ffa621;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 33%;
 }
 .userInfo {
   display: flex;
   flex: 1 1 11%;
   justify-content: center;
-  background-color: #4286f4;
+  align-items: center;
+  /* background-color: #4286f4; */
   color: #ffffff;
+}
+.userBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: .3em;
+  padding: 0.5rem;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+  width: 100%;
+  height: 10%;
+}
+.mainUserBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: .3em;
+  padding: 0.5rem;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+  width: 20%;
+  height: 85%;
+}
+.avatar img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+.userBio {
+  display: flex;
+  flex-flow: column;
+  align-items: flex-start;
+  margin-left: 4%;
+  color: #1aaaba;
+  width: 50%;
+  height: 90%;
 }
 .gamePlay {
   display: flex;
@@ -552,34 +697,315 @@ export default {
 
 }
 .userList {
-  background-color: #e85537;
+  height: 100%;
+  width: 20%;
+  display: flex;
+  flex-flow: column;
   color: #ffffff;
   flex: 1 1 10%;
 }
 .profitList {
-  background-color: #e8d336;
   color: #ffffff;
-  flex: 1 1 69%;
+  height: 100%;
+  width: 60%;
   display: flex;
   flex-flow: column;
 }
 .profits {
   flex: 1 1 66%;
+  display: flex;
+  flex-flow: row;
 }
-.pendingPropose {
-  flex: 1 1 11%;
-  overflow-y: scroll;
+.profit {
+  flex: 1 1 33%;
 }
-.proposeHistory {
-  background-color: #94e835;
-  color: #ffffff;
-  flex: 1 1 20%;
+.profitInfo {
+  width: 100%;
+  height: 77%;
+  justify-content: flex-end;
+  align-items: center;
+  transition: all .2s ease-in-out;
   display: flex;
   flex-flow: column;
 }
+.profitInfo:hover {
+  transform: scale(1.1);
+}
+.profit img {
+  width: 100px;
+  height: 100px;
+}
+.ladder {
+  background-color: #ffa621;
+  border-radius: .3em;
+  width: 50px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+.proposeWindow {
+  height: 22%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: .3em;
+  padding: 0.5rem;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+}
+.proposeWindowElement {
+  display: flex;
+  flex-flow: row;
+  margin: 0.3rem;
+}
+.button {
+  background-color: #36e27e;
+  border: none;
+  border-radius: .2em;
+  border: solid 1px #1cbc5f ;
+}
+.inputBox {
+  display: flex;
+  flex-flow: row;
+  border-radius: .2em;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+}
+
+.pendingPropose {
+  display: flex;
+  flex: 1 1 11%;
+  justify-content: center;
+  align-items: center;
+}
+.pendingProposeInfo {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  border-radius: .2em;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+}
+.taskNameAndTimer {
+  width: 100%;
+  height: 15%;
+  display: flex;
+}
+.taskName {
+  width: 30%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.clockIcon {
+  width: 10%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.timer {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+#proposeProgress {
+  width: 100%;
+  height: 70%;
+  background-color: #ddd;
+  display: flex;
+  justify-content: flex-start;
+  border-radius: .3em;
+}
+
+#proposeBar {
+  width: 100%;
+  height: 100%;
+  background-color: #4CAF50;
+  text-align: center;
+  color: white;
+  border-radius: .3em;
+}
+
+.infoColumns {
+  width: 100%;
+  height: 70%;
+  display: flex;
+}
+
+.nameColumn {
+  width: 31%;
+  height: 100%;
+  padding-left: 1%;
+  padding-right: 1%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.shareColumn {
+  width: 31%;
+  height: 100%;
+  padding-left: 1%;
+  padding-right: 1%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.shareBar {
+  width: 100%;
+  height: 18%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: .3em;
+  background-color: #ffb711;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+
+.itemInColumn {
+  width: 100%;
+  height: 18%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 1%;
+  margin-bottom: 1%;
+}
+.responseColumn {
+  width: 31%;
+  height: 100%;
+  padding-left: 1%;
+  padding-right: 1%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.responseOption {
+  width: 98%;
+  height: 13%;
+  margin: 1%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.proposeHistory {
+  color: #ffffff;
+  height: 100%;
+  width: 20%;
+  display: flex;
+  /* display: none; */
+  flex-flow: column;
+}
+
+#proposeHistoryList {
+  display: flex;
+  flex-flow: column;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+  border-radius: .3em;
+  width: 100%;
+  height: 94%;
+  overflow-y: scroll;
+  align-items: center;
+  visibility: visible;
+
+}
+
+.proposeHistoryBar {
+  display: flex;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+  border-radius: .3em;
+  width: 100%;
+  height: 5%;
+  justify-content: center;
+  align-items: center;
+}
+
 .history {
   display: flex;
   flex-flow: column;
+  width: 90%;
+  height: 200px;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+  border-radius: .3em;
+  background-color: #cdcecc;
+  overflow-y: scroll;
+  align-items: flex-start;
+  margin: 1px;
+  padding: 3px;
+}
+
+::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+	background-color: #d8d8d8;
+}
+::-webkit-scrollbar
+{
+	width: 12px;
+	background-color: #F5F5F5;
+}
+::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	border-radius: 10px;
+	background-color: #F5F5F5;
+}
+
+@media screen and (max-width: 531px) {
+  .proposeHistory {
+    display: none;
+  }
+  .gamePlay {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+  }
+  .userList {
+    flex-direction: row;
+  }
+  .profitList {
+    background-color: red;
+    width: 100%;
+  }
+  .userList {
+    background-color: green;
+    width: 100%;
+    overflow-x: scroll;
+  }
+  .pendingPropose {
+    background-color: purple;
+  }
+  .avatar img {
+    width: 40px;
+    height: 40px;
+  }
+  .mainUserBox {
+    width: 90%;
+  }
+  .userBox {
+    height: 100%;
+  }
+
 }
 h1, h2 {
   font-weight: normal;
@@ -592,7 +1018,7 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-a {
+span {
   color: #42b983;
 }
 </style>
