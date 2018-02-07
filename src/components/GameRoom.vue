@@ -147,17 +147,37 @@ export default {
       userList: [],
       proposeWindowList: [],
       profitList: [ //hardcoded for testing
-        {name: 'Profit 1',stamina: '10',value: '10',},
-        {name: 'Profit 2',stamina: '20',value: '20',},
-        {name: 'Profit 3',stamina: '30',value: '30',},
+        {name: 'Profit 1',stamina: 10 ,value: 10,},
+        {name: 'Profit 2',stamina: 20 ,value: 20,},
+        {name: 'Profit 3',stamina: 30 ,value: 30,},
       ],
       proposeHistory: [],
       pendingPropose: [],
+      minStamina: 999,
+      totalPlayerStamina: 0,
 
     }
   },
 
   watch: {
+    userList () {
+      var numPlayer = 0
+      this.totalPlayerStamina = 0
+      this.userList.forEach(user => {
+        if (user.status === 'inPlay') {
+          numPlayer++
+          this.totalPlayerStamina += user.stamina
+        }
+      })
+      if (numPlayer === 1) {
+        console.log('End game because of number player = 1')
+        this.toEndGame()
+      }
+      if (this.totalPlayerStamina < this.minStamina) {
+        console.log('End game because of inefficient stamina')
+        this.toEndGame()
+      }
+    },
     showPendingPropose () {
       if (this.showPendingPropose) {
         //start the propose bar
@@ -184,6 +204,7 @@ export default {
         if (!this.isEndGame) {
           this.userScore = '0'
         } else if (this.canMakeDecision) {
+          console.log('End game because all yes')
           this.toEndGame()
         } else {
           this.isEndGame = false
@@ -219,7 +240,7 @@ export default {
         }
       })
       return ans
-    }
+    },
 
   },
 
@@ -333,7 +354,7 @@ export default {
           var ref = pendingProposeRef.doc(proposeTarget.uid)
           batch.set(ref, {
             name: proposeTarget.name,
-            share: proposeTarget.share,
+            share: Number(proposeTarget.share),
             response: 'None',
             taskName: this.currentTaskName,
             uid: proposeTarget.uid
@@ -396,6 +417,12 @@ export default {
       }))
       this.userList = users
       this.proposeWindowList = users
+      //update minStamina
+      this.profitList.forEach(profit => {
+        if (this.minStamina > profit.stamina) {
+          this.minStamina = profit.stamina
+        }
+      })
     })
 
     //get current pending propose
@@ -441,7 +468,10 @@ export default {
 
     //set time for game to end
     this.startGameBar()
-    setTimeout(() => { this.toEndGame() }, 300000) //5 minutes
+    setTimeout(() => {
+      console.log('End game because of time out')
+      this.toEndGame()
+    }, 300000) //5 minutes
   }
 }
 </script>
