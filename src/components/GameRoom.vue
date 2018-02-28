@@ -536,16 +536,17 @@ export default {
     try {
       //set listner on the status of the assigned game
       var gameRef = database.collection('games').doc(this.gameid)
-      var doc = await gameRef.get()
-      if (doc.exists) {
-        if (doc.data().status === 'waiting') {
-          this.isWaitingForPLayer = true;
+      gameRef.onSnapshot((doc) => {
+        if (doc.exists) {
+          if (doc.data().status === 'waiting') {
+            this.isWaitingForPLayer = true;
+          } else {
+            this.isWaitingForPLayer = false;
+          }
         } else {
-          this.isWaitingForPLayer = false;
+          console.log('game do not exists')
         }
-      } else {
-        console.log('game do not exists')
-      }
+      })
     } catch (err) {
       console.log('error gettting game info: ', err)
     }
