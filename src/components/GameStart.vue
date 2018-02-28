@@ -1,7 +1,7 @@
 <template>
   <div class="gamestart">
     <h1>The Adventure of Business Cats</h1>
-    <span>{{ gameData }}</span>
+
     <input type="text" placeholder="Name" v-model="pendingName">
     <input type="password" placeholder="Password" v-model="pendingPassword">
     <button @click="signInUser">Login</button>
@@ -26,7 +26,8 @@ export default {
       pendingName: '',
       pendingPassword: '',
       uid: '',
-      gameData: [],
+      gameid: '',
+      rank: '',
     }
   },
 
@@ -39,7 +40,7 @@ export default {
 
   methods: {
     toGameRoom () {
-      this.$router.push(`/gameRoom/${this.uid}`)
+      this.$router.push(`/gameRoom/${this.uid}/${this.gameid}/${this.rank}`)
     },
     //user already exists
     signInUser () {
@@ -47,8 +48,9 @@ export default {
       .then(async (user) => {
         this.uid = user.uid
         const response = await GamesServices.fetchPosts(this.uid)
-        this.gameData = response.data
-        //this.toGameRoom()
+        this.gameid = response.data.gameid
+        this.rank = response.data.rank
+        this.toGameRoom()
       })
       .catch((error) => {
         // Handle Errors here.

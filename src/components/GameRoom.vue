@@ -1,7 +1,10 @@
 <template>
   <div class="container">
+    <div class="waitingScreen" v-show="isWaitingForPLayer">
+      <h1>Waiting for other players...</h1>
+    </div>
 
-    <div class="userInfo">
+    <div class="userInfo" v-show="!isWaitingForPLayer">
       <div class="mainUserBox">
         <span class="avatar">
           <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
@@ -10,6 +13,9 @@
 
         <div class = "userBio">
           <span>{{ userName }}</span>
+          <!-- <span>{{ gameid }}</span>
+          <span>{{ rank }}</span> -->
+
 
           <span class="staminaBar" v-bind:style="{width: this.userStamina + '%'}">{{ userStamina }}</span>
 
@@ -23,7 +29,7 @@
       </div>
     </div>
 
-    <div class="gamePlay">
+    <div class="gamePlay" v-show="!isWaitingForPLayer">
       <div class="userList">
         <div
           v-for="(user, index) in userList"
@@ -206,7 +212,7 @@ var proposeBar //loading bar propose timer
 
 export default {
   name: 'GameRoom',
-  props: ['uid'],
+  props: ['uid', 'gameid', 'rank'],
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',
@@ -229,6 +235,7 @@ export default {
       totalPlayerStamina: 0,
       isHistoryHidden: true,
       errorMessage: '',
+      isWaitingForPLayer: true,
     }
   },
 
@@ -526,6 +533,23 @@ export default {
   },
 
   async mounted () {
+    try {
+      //set listner on the status of the assigned game
+      var gameRef = database.collection('games').doc(this.gameid)
+      var doc = await gameRef.get()
+      if (doc.exists) {
+        if (doc.data().status === 'waiting') {
+          this.isWaitingForPLayer = true;
+        } else {
+          this.isWaitingForPLayer = false;
+        }
+      } else {
+        console.log('game do not exists')
+      }
+    } catch (err) {
+      console.log('error gettting game info: ', err)
+    }
+
     //get list of users from database, also data observer
     var usersRef = database.collection('users')
     usersRef.onSnapshot((querySnapshot) => {
