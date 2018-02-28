@@ -51,7 +51,21 @@ export default {
         this.gameid = response.data.gameid
         this.weight = response.data.weight
         console.log(response.data)
-        this.toGameRoom()
+        //write user data to database
+        database.collection('games').doc(this.gameid).collection('users').doc(user.uid).set({
+          name: user.email,
+          stamina: this.weight,
+          uid: user.uid,
+          score: 0,
+          status: 'inPlay',
+        })
+        .then(() => {
+          console.log('Write user data successful')
+          this.toGameRoom()
+        })
+        .catch((err) => {
+          console.log('Error writing user data: ', err)
+        })
       })
       .catch((error) => {
         // Handle Errors here.
@@ -69,7 +83,7 @@ export default {
         this.gameid = response.data.gameid
         this.weight = response.data.weight
         //write user data to database
-        database.collection('users').doc(user.uid).set({
+        database.collection('games').doc(this.gameid).collection('users').doc(user.uid).set({
           name: user.email,
           stamina: this.weight,
           uid: user.uid,

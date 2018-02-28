@@ -249,14 +249,14 @@ export default {
           this.totalPlayerStamina += user.stamina
         }
       })
-      if (numPlayer === 1) {
-        console.log('End game because of number player = 1')
-        this.toEndGame()
-      }
-      if (this.totalPlayerStamina < this.minStamina) {
-        console.log('End game because of inefficient stamina')
-        this.toEndGame()
-      }
+      // if (numPlayer === 1) {
+      //   console.log('End game because of number player = 1')
+      //   this.toEndGame()
+      // }
+      // if (this.totalPlayerStamina < this.minStamina) {
+      //   console.log('End game because of inefficient stamina')
+      //   this.toEndGame()
+      // }
     },
     showPendingPropose () {
       if (this.showPendingPropose) {
@@ -394,7 +394,7 @@ export default {
     async toEndGame () {
       try {
         //update user score and in game status
-        await database.collection('users').doc(this.uid).update({
+        await database.collection('games').doc(this.gameid).collection('users').doc(this.uid).update({
           score: this.userScore,
           status: 'outPlay'
         })
@@ -409,14 +409,14 @@ export default {
         var batch = database.batch()
         //write to propose History
         var currentTime = '' + new Date().getTime()
-        batch.set(database.collection('proposeHistory').doc(currentTime), {
+        batch.set(database.collection('games').doc(this.gameid).collection('proposeHistory').doc(currentTime), {
           history: this.pendingPropose,
           taskName: this.pendingPropose[0].taskName,
           result: 'Accepted',
         })
         //delete all documents in pendingPropose collection
         this.userList.forEach(user => {
-          batch.delete(database.collection('pendingPropose').doc(user.uid))
+          batch.delete(database.collection('games').doc(this.gameid).collection('pendingPropose').doc(user.uid))
         })
         //commit the batch
         await batch.commit()
@@ -429,19 +429,19 @@ export default {
       try {
         var batch = database.batch()
         //update the response status
-        batch.update(database.collection('pendingPropose').doc(this.uid), {
+        batch.update(database.collection('games').doc(this.gameid).collection('pendingPropose').doc(this.uid), {
           response: 'No'
         })
         //write to propose History
         var currentTime = '' + new Date().getTime()
-        batch.set(database.collection('proposeHistory').doc(currentTime), {
+        batch.set(database.collection('games').doc(this.gameid).collection('proposeHistory').doc(currentTime), {
           history: this.pendingPropose,
           taskName: this.pendingPropose[0].taskName,
           result: 'Rejected',
         })
         //delete all documents in pendingPropose collection
         this.userList.forEach(user => {
-          batch.delete(database.collection('pendingPropose').doc(user.uid))
+          batch.delete(database.collection('games').doc(this.gameid).collection('pendingPropose').doc(user.uid))
         })
         //commit the batch
         await batch.commit()
@@ -453,7 +453,7 @@ export default {
 
     async acceptPropose () {
       try {
-        await database.collection('pendingPropose').doc(this.uid).update({
+        await database.collection('games').doc(this.gameid).collection('pendingPropose').doc(this.uid).update({
           response: 'Yes'
         })
         console.log('accept propose success')
@@ -467,7 +467,7 @@ export default {
     //send propose info to database to become pending propose
     async sendPropose () {
       console.log(this.proposeWindowList)
-      var pendingProposeRef = database.collection('pendingPropose')
+      var pendingProposeRef = database.collection('games').doc(this.gameid).collection('pendingPropose')
       var batch = database.batch()
       var timeCreated = '' + new Date().getTime()
       this.proposeWindowList.forEach(proposeTarget => {
@@ -501,14 +501,14 @@ export default {
           var batch = database.batch()
           //write to propose History
           var currentTime = '' + new Date().getTime()
-          batch.set(database.collection('proposeHistory').doc(currentTime), {
+          batch.set(database.collection('games').doc(this.gameid).collection('proposeHistory').doc(currentTime), {
             history: this.pendingPropose,
             taskName: this.pendingPropose[0].taskName,
             result: 'Out of Date',
           })
           //delete all documents in pendingPropose collection
           this.userList.forEach(user => {
-            batch.delete(database.collection('pendingPropose').doc(user.uid))
+            batch.delete(database.collection('games').doc(this.gameid).collection('pendingPropose').doc(user.uid))
           })
           //commit the batch
           await batch.commit()
@@ -552,7 +552,7 @@ export default {
     }
 
     //get list of users from database, also data observer
-    var usersRef = database.collection('users')
+    var usersRef = database.collection('games').doc(this.gameid).collection('users')
     usersRef.onSnapshot((querySnapshot) => {
       var users = querySnapshot.docs.map(doc => ({
         name: doc.data().name.substring(0, doc.data().name.lastIndexOf("@")),
@@ -573,7 +573,7 @@ export default {
     })
 
     //get current pending propose
-    var pendingProposeRef = database.collection('pendingPropose')
+    var pendingProposeRef = database.collection('games').doc(this.gameid).collection('pendingPropose')
     pendingProposeRef.onSnapshot((querySnapshot) => {
       var pendingPropose = querySnapshot.docs.map(doc => ({
         name: doc.data().name,
@@ -589,7 +589,7 @@ export default {
     })
 
     //get current propose History
-    var proposeHistoryRef = database.collection('proposeHistory')
+    var proposeHistoryRef = database.collection('games').doc(this.gameid).collection('proposeHistory')
     proposeHistoryRef.onSnapshot((querySnapshot) => {
       var proposeHistory = querySnapshot.docs.map(doc => ({
         history: doc.data().history,
@@ -602,7 +602,7 @@ export default {
 
     try {
       //get info of current logged in user
-      var userInfoRef = database.collection('users').doc(this.uid)
+      var userInfoRef = database.collection('games').doc(this.gameid).collection('users').doc(this.uid)
       var doc = await userInfoRef.get()
       if (doc.exists) {
         this.userName = doc.data().name.substring(0, doc.data().name.lastIndexOf("@"))
