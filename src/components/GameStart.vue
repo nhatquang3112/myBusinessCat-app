@@ -1,6 +1,7 @@
 <template>
   <div class="gamestart">
     <h1>The Adventure of Business Cats</h1>
+    <span>{{ gameData }}</span>
     <input type="text" placeholder="Name" v-model="pendingName">
     <input type="password" placeholder="Password" v-model="pendingPassword">
     <button @click="signInUser">Login</button>
@@ -12,6 +13,8 @@
 
 <script>
 import firebase from '@/config/firebase'
+import GamesServices from '@/services/GamesServices'
+
 // Constants
 const database = firebase.firestore() // firestore
 
@@ -23,6 +26,7 @@ export default {
       pendingName: '',
       pendingPassword: '',
       uid: '',
+      gameData: [],
     }
   },
 
@@ -40,9 +44,11 @@ export default {
     //user already exists
     signInUser () {
       firebase.auth().signInWithEmailAndPassword(this.pendingEmail, this.pendingPassword)
-      .then((user) => {
+      .then(async (user) => {
         this.uid = user.uid
-        this.toGameRoom()
+        const response = await GamesServices.fetchPosts(this.uid)
+        this.gameData = response.data
+        //this.toGameRoom()
       })
       .catch((error) => {
         // Handle Errors here.

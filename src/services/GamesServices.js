@@ -1,6 +1,6 @@
 import axios from 'axios'
 export default {
-  fetchPosts () {
-    return axios.get('assign?userid=12345')
+  fetchPosts (userId) {
+    return axios.get('assign?userid=' + userId);
   }
 }

@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     async getPosts () {
-      const response = await GamesServices.fetchPosts()
+      const response = await GamesServices.fetchPosts('9')
       this.gameid = response.data
     }
   }
