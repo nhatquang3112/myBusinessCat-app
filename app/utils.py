@@ -27,14 +27,17 @@ def get_game(userid):
         assigned_players = [userid]
         w_game = {u'id' : gameid, u'num_players': num_players, u'assigned_players' : assigned_players}
         db.collection(u'games').document(u'waiting_game').set(w_game)
-        return gameid, 0
+        return gameid, weights[0]
     else:
         gameid = waiting_game[u'id']
         num_players = int(waiting_game[u'num_players'])
         assigned_players = waiting_game["assigned_players"]
+        game = db.collection(u'games').document(gameid).get().to_dict()
+        weights = game[u'weights']
         if userid in assigned_players:
-            return gameid, assigned_players.index(userid)
+            return gameid, weights[assigned_players.index(userid)]
         rank = len(assigned_players)
+        weight = weights[rank]
         assigned_players.append(userid)
         if len(assigned_players) == num_players:
             data = {u'id' : firestore.DELETE_FIELD,
@@ -44,4 +47,4 @@ def get_game(userid):
             db.collection(u'games').document(gameid).update({u'status' : u'active'})
         else:
             db.collection(u'games').document(u'waiting_game').update({u'assigned_players' : assigned_players})
-        return gameid, rank
+        return gameid, weight

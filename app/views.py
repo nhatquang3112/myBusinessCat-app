@@ -13,7 +13,7 @@ from .utils import *
 def assign(request):
     userid = request.GET.get('userid')
     if request.method == 'GET':
-        gameid, rank = get_game(userid)
-        data = {"gameid" : gameid, "rank" : rank}
+        gameid, weight = get_game(userid)
+        data = {"gameid" : gameid, "weight" : weight}
         serializer = GameSerializer(data)
         return JsonResponse(serializer.data, safe=False)

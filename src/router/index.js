@@ -15,7 +15,7 @@ export default new Router({
       component: GameStart
     },
     {
-      path: '/gameRoom/:uid/:gameid/:rank',
+      path: '/gameRoom/:uid/:gameid/:weight',
       name: 'GameRoom',
       component: GameRoom,
       props: true

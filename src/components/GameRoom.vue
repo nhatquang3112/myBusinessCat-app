@@ -212,7 +212,7 @@ var proposeBar //loading bar propose timer
 
 export default {
   name: 'GameRoom',
-  props: ['uid', 'gameid', 'rank'],
+  props: ['uid', 'gameid', 'weight'],
   data () {
     return {
       msg: 'Welcome to Your Vue.js App',

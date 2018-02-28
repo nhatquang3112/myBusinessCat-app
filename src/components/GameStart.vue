@@ -27,7 +27,7 @@ export default {
       pendingPassword: '',
       uid: '',
       gameid: '',
-      rank: '',
+      weight: '',
     }
   },
 
@@ -40,7 +40,7 @@ export default {
 
   methods: {
     toGameRoom () {
-      this.$router.push(`/gameRoom/${this.uid}/${this.gameid}/${this.rank}`)
+      this.$router.push(`/gameRoom/${this.uid}/${this.gameid}/${this.weight}`)
     },
     //user already exists
     signInUser () {
@@ -49,7 +49,8 @@ export default {
         this.uid = user.uid
         const response = await GamesServices.fetchPosts(this.uid)
         this.gameid = response.data.gameid
-        this.rank = response.data.rank
+        this.weight = response.data.weight
+        console.log(response.data)
         this.toGameRoom()
       })
       .catch((error) => {
@@ -62,12 +63,15 @@ export default {
     //user has not existed
     async signUpUser () {
       firebase.auth().createUserWithEmailAndPassword(this.pendingEmail, this.pendingPassword)
-      .then((user) => {
+      .then(async (user) => {
         this.uid = user.uid
+        const response = await GamesServices.fetchPosts(this.uid)
+        this.gameid = response.data.gameid
+        this.weight = response.data.weight
         //write user data to database
         database.collection('users').doc(user.uid).set({
           name: user.email,
-          stamina: 9, //hardcoded for testing
+          stamina: this.weight,
           uid: user.uid,
           score: 0,
           status: 'inPlay',
