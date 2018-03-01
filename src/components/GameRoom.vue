@@ -399,11 +399,12 @@ export default {
           status: 'outPlay'
         })
 
-        this.$router.push(`/gameEnd/${this.userScore}`)
+        this.$router.push(`/gameEnd/${this.userScore}/${this.uid}`)
       } catch (err) {
         console.log('Error update score:', err)
       }
     },
+
     async writeSuccessPropose () {
       try {
         var batch = database.batch()

@@ -21,7 +21,7 @@ export default new Router({
       props: true
     },
     {
-      path: '/gameEnd/:score',
+      path: '/gameEnd/:score/:uid',
       name: 'GameEnd',
       component: GameEnd,
       props: true

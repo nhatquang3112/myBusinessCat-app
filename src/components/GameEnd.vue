@@ -3,26 +3,34 @@
     <h1>Game Over!</h1>
     <h2>Your score is {{ score }}!</h2>
 
-    <button @click="toGameStart">Restart the Game</button>
+    <button @click="playAgain()">Play Again</button>
   </div>
 </template>
 
 <script>
+import GamesServices from '@/services/GamesServices'
+
 export default {
   name: 'GameEnd',
-  props: ['score'],
+  props: ['score', 'uid'],
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      gameid: '',
+      weight: '',
     }
   },
 
   methods: {
-    toGameStart () {
-      this.$router.push({
-        path: '/',
-      })
+    toGameRoom () {
+      this.$router.push(`/gameRoom/${this.uid}/${this.gameid}/${this.weight}`)
     },
+    async playAgain () {
+      const response = await GamesServices.fetchPosts(this.uid)
+      this.gameid = response.data.gameid
+      this.weight = response.data.weight
+      this.toGameRoom();
+    }
   },
 }
 </script>
