@@ -583,9 +583,13 @@ export default {
         taskName: doc.data().taskName,
         timeCreated: doc.data().timeCreated,
       }))
-      this.pendingPropose = pendingPropose
-      this.pendingTaskName = this.pendingPropose[0].taskName
-      console.log(this.pendingPropose)
+      try {
+        this.pendingPropose = pendingPropose
+        this.pendingTaskName = this.pendingPropose[0].taskName
+        console.log(this.pendingPropose)
+      } catch (error) {
+        console.log('Error retrieving pending propose: ', error)
+      }
     })
 
     //get current propose History
