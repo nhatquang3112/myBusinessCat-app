@@ -224,11 +224,7 @@ export default {
       pendingTaskName: '',
       userList: [],
       proposeWindowList: [],
-      profitList: [ //hardcoded for testing
-        {name: 'Profit 1',stamina: 50 ,value: 10,},
-        {name: 'Profit 2',stamina: 20 ,value: 20,},
-        {name: 'Profit 3',stamina: 30 ,value: 30,},
-      ],
+      profitList: [],
       proposeHistory: [],
       pendingPropose: [],
       minStamina: 999,
@@ -615,7 +611,26 @@ export default {
     })
 
     //get profitList for the game
-
+    try {
+      var gameInfoRef = database.collection('games').doc(this.gameid)
+      var doc = await gameInfoRef.get()
+      if (doc.exists) {
+        console.log('profit list exits');
+        var thresholds = doc.data().thresholds
+        var values = doc.data().values
+        for (var i = 0; i < thresholds.length; i++) {
+          this.profitList[i] = {
+            name: 'Profit ' + i,
+            stamina: thresholds[i],
+            value: values[i],
+          }
+        }
+      } else {
+        console.log('game info not exist')
+      }
+    } catch (err) {
+      console.log('error gettting game info: ', err)
+    }
 
     //get current propose History
     var proposeHistoryRef = database.collection('games').doc(this.gameid).collection('proposeHistory')
