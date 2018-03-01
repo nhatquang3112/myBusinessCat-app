@@ -473,14 +473,25 @@ export default {
       this.proposeWindowList.forEach(proposeTarget => {
         if (proposeTarget.share!=='0') {
           var ref = pendingProposeRef.doc(proposeTarget.uid)
-          batch.set(ref, {
-            name: proposeTarget.name,
-            share: Number(proposeTarget.share),
-            response: 'None',
-            taskName: this.currentTaskName,
-            uid: proposeTarget.uid,
-            timeCreated: timeCreated
-          })
+          if (proposeTarget.name === this.userName) {
+            batch.set(ref, {
+              name: proposeTarget.name,
+              share: Number(proposeTarget.share),
+              response: 'Yes',
+              taskName: this.currentTaskName,
+              uid: proposeTarget.uid,
+              timeCreated: timeCreated
+            })
+          } else {
+            batch.set(ref, {
+              name: proposeTarget.name,
+              share: Number(proposeTarget.share),
+              response: 'None',
+              taskName: this.currentTaskName,
+              uid: proposeTarget.uid,
+              timeCreated: timeCreated
+            })
+          }
         }
       })
       try {
@@ -591,6 +602,9 @@ export default {
         console.log('Error retrieving pending propose: ', error)
       }
     })
+
+    //get profitList for the game
+
 
     //get current propose History
     var proposeHistoryRef = database.collection('games').doc(this.gameid).collection('proposeHistory')
