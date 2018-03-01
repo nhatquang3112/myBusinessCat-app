@@ -29,7 +29,7 @@ def get_game(userid):
             timestamp = str((datetime.utcnow() - datetime(1970, 1, 1)).total_seconds() * 1000)
             data = {u'status' : status, u'thresholds' : thresholds, u'values': values,u'weights': weights, u'timeStart' : timestamp}
             db.collection(u'games').document(gameid).set(data)
-            userdata = {u'name': username, u'score' : 0, u'stemina' : weights[0], u'status' : 'inPlay', u'uid' : userid}
+            userdata = {u'name': username, u'score' : 0, u'stamina' : weights[0], u'status' : 'inPlay', u'uid' : userid}
             db.collection(u'games').document(gameid).collection(u'users').document(userid).set(userdata)
             assigned_players = [userid]
             w_game = {u'id' : gameid, u'num_players': num_players, u'assigned_players' : assigned_players}
@@ -46,7 +46,7 @@ def get_game(userid):
             rank = len(assigned_players)
             weight = weights[rank]
             assigned_players.append(userid)
-            userdata = {u'name': username, u'score' : 0, u'stemina' : weight, u'status' : 'inPlay', u'uid' : userid}
+            userdata = {u'name': username, u'score' : 0, u'stamina' : weight, u'status' : 'inPlay', u'uid' : userid}
             db.collection(u'games').document(gameid).collection(u'users').document(userid).set(userdata)
             if len(assigned_players) == num_players:
                 data = {u'id' : firestore.DELETE_FIELD,
