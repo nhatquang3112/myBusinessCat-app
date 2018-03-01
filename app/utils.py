@@ -29,7 +29,7 @@ def get_game(userid):
             timestamp = str((datetime.utcnow() - datetime(1970, 1, 1)).total_seconds() * 1000)
             data = {u'status' : status, u'thresholds' : thresholds, u'values': values,u'weights': weights, u'timeStart' : timestamp}
             db.collection(u'games').document(gameid).set(data)
-            userdata = {u'name': username, u'score' : 0, u'stamina' : weights[0], u'status' : 'inPlay', u'uid' : userid}
+            userdata = {u'name': username, u'score' : 0, u'stamina' : weights[0], u'status' : 'inPlay', u'uid' : userid, u'nickname' : "Red Cat"}
             db.collection(u'games').document(gameid).collection(u'users').document(userid).set(userdata)
             assigned_players = [userid]
             w_game = {u'id' : gameid, u'num_players': num_players, u'assigned_players' : assigned_players}
@@ -46,7 +46,13 @@ def get_game(userid):
             rank = len(assigned_players)
             weight = weights[rank]
             assigned_players.append(userid)
-            userdata = {u'name': username, u'score' : 0, u'stamina' : weight, u'status' : 'inPlay', u'uid' : userid}
+            nickname = ""
+            if rank == 0: nickname = "Red Cat"
+            if rank == 1: nickname = "Blue Cat"
+            if rank == 2: nickname = "Green Cat"
+            if rank == 3: nickname = "Yellow Cat"
+            if rank == 4: nickname = "Brown Cat"
+            userdata = {u'name': username, u'score' : 0, u'stamina' : weight, u'status' : 'inPlay', u'uid' : userid, u'nickname' : nickname}
             db.collection(u'games').document(gameid).collection(u'users').document(userid).set(userdata)
             if len(assigned_players) == num_players:
                 data = {u'id' : firestore.DELETE_FIELD,

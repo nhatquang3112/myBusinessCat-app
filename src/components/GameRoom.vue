@@ -233,6 +233,7 @@ export default {
       errorMessage: '',
       isWaitingForPLayer: true,
       gameStartTime: '',
+      rank: '',
     }
   },
 
@@ -574,7 +575,8 @@ export default {
     var usersRef = database.collection('games').doc(this.gameid).collection('users')
     usersRef.onSnapshot((querySnapshot) => {
       var users = querySnapshot.docs.map(doc => ({
-        name: doc.data().name.substring(0, doc.data().name.lastIndexOf("@")),
+        //name: doc.data().name.substring(0, doc.data().name.lastIndexOf("@"),
+        name: doc.data().nickname,
         uid: doc.data().uid,
         stamina: doc.data().stamina,
         score: doc.data().score,
@@ -619,6 +621,8 @@ export default {
         console.log('profit list exits');
         var thresholds = doc.data().thresholds
         var values = doc.data().values
+        var weights = doc.data().weights
+        //get the actual profit list from database
         for (var i = 0; i < thresholds.length; i++) {
           this.profitList[i] = {
             name: 'Profit ' + i,
@@ -626,6 +630,18 @@ export default {
             value: values[i],
           }
         }
+
+        //indentify the rank of the current player
+        for (var j = 0; j < weights.length; j++) {
+          var currentWeight = weights[j] + ''
+          console.log(this.weight + ' vs ' + currentWeight)
+          if (this.weight === currentWeight) {
+            this.rank = j;
+            break;
+          }
+        }
+        console.log('Rank ',this.rank)
+
       } else {
         console.log('game info not exist')
       }
@@ -645,19 +661,39 @@ export default {
       console.log(this.proposeHistory)
     })
 
-    try {
-      //get info of current logged in user
-      var userInfoRef = database.collection('games').doc(this.gameid).collection('users').doc(this.uid)
-      var doc = await userInfoRef.get()
-      if (doc.exists) {
-        this.userName = doc.data().name.substring(0, doc.data().name.lastIndexOf("@"))
-        this.userStamina = doc.data().stamina
-      } else {
-        console.log('user info not exist')
-      }
-    } catch (err) {
-      console.log('error gettting user info: ', err)
+    //decide the userName of player based on rank
+    if (this.rank === 0) {
+      this.userName = 'Red Cat'
     }
+    if (this.rank === 1) {
+      this.userName = 'Blue Cat'
+    }
+    if (this.rank === 2) {
+      this.userName = 'Green Cat'
+    }
+    if (this.rank === 3) {
+      this.userName = 'Yellow Cat'
+    }
+    if (this.rank === 4) {
+      this.userName = 'Brown Cat'
+    }
+
+    //userStamina = weight
+    this.userStamina = this.weight + ''
+
+    // try {
+    //   //get info of current logged in user
+    //   var userInfoRef = database.collection('games').doc(this.gameid).collection('users').doc(this.uid)
+    //   var doc = await userInfoRef.get()
+    //   if (doc.exists) {
+    //     this.userName = doc.data().name.substring(0, doc.data().name.lastIndexOf("@"))
+    //     this.userStamina = doc.data().stamina
+    //   } else {
+    //     console.log('user info not exist')
+    //   }
+    // } catch (err) {
+    //   console.log('error gettting user info: ', err)
+    // }
   }
 }
 </script>
