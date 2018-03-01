@@ -22,7 +22,7 @@ def get_game(userid):
         thresholds, values, weights = create_game()
         num_players = len(weights)
         status = u'waiting'
-        timestamp = str(datetime.now())
+        timestamp = str((datetime.utcnow() - datetime(1970, 1, 1)).total_seconds() * 1000)
         data = {u'status' : status, u'thresholds' : thresholds, u'values': values,u'weights': weights, u'timeStart' : timestamp}
         db.collection(u'games').document(gameid).set(data)
         assigned_players = [userid]
@@ -45,7 +45,7 @@ def get_game(userid):
             u'num_players': firestore.DELETE_FIELD,
             u'assigned_players' : firestore.DELETE_FIELD}
             db.collection(u'games').document(u'waiting_game').update(data)
-            timestamp = str(datetime.now())
+            timestamp = str((datetime.utcnow() - datetime(1970, 1, 1)).total_seconds() * 1000)
             db.collection(u'games').document(gameid).update({u'status' : u'active', u'timeStart' : timestamp})
         else:
             db.collection(u'games').document(u'waiting_game').update({u'assigned_players' : assigned_players})
