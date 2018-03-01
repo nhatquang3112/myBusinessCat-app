@@ -10,19 +10,20 @@ firebase_admin.initialize_app(cred)
 
 def create_game():
     thresholds = [20,25,30]
-    weights = [15,16,17,18,19]
-    return thresholds, weights
+    values = [10,15,25]
+    weights = [15,16]
+    return thresholds, values, weights
     # to change
 def get_game(userid):
     db = firestore.client()
     waiting_game = db.collection(u'games').document(u'waiting_game').get().to_dict()
     if waiting_game == {}:
         gameid = str(uuid.uuid4())
-        thresholds, weights = create_game()
+        thresholds, values, weights = create_game()
         num_players = len(weights)
         status = u'waiting'
         timestamp = str(datetime.now())
-        data = {u'status' : status, u'thresholds' : thresholds, u'weights': weights, u'timeStart' : timestamp}
+        data = {u'status' : status, u'thresholds' : thresholds, u'values': values,u'weights': weights, u'timeStart' : timestamp}
         db.collection(u'games').document(gameid).set(data)
         assigned_players = [userid]
         w_game = {u'id' : gameid, u'num_players': num_players, u'assigned_players' : assigned_players}
