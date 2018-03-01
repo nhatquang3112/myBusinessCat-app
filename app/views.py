@@ -12,6 +12,7 @@ from .utils import *
 
 def assign(request):
     userid = request.GET.get('userid')
+    # username = request.GET.get('username')
     if request.method == 'GET':
         gameid, weight = get_game(userid)
         data = {"gameid" : gameid, "weight" : weight}
