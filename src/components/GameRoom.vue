@@ -236,6 +236,7 @@ export default {
       isHistoryHidden: true,
       errorMessage: '',
       isWaitingForPLayer: true,
+      gameStartTime: '',
     }
   },
 
@@ -364,7 +365,10 @@ export default {
     startGameBar () {
       console.log('game timer called')
       var elem = document.getElementById("gameBar");
-      var width = 300;
+      var currentTime = Number(new Date().getTime());
+      var timeCreated = Number(this.gameStartTime);
+      var width = 300 - Math.round(((currentTime - timeCreated)/1000));
+
       gameBar = setInterval(frame, 1000); //increase timer bar every 1 second
       function frame() {
         if (width > 0) { //5 minutes
@@ -553,6 +557,13 @@ export default {
             this.isWaitingForPLayer = true;
           } else {
             this.isWaitingForPLayer = false;
+            this.gameStartTime = doc.data().timeStart;
+            //set time for game to end
+            this.startGameBar()
+            // setTimeout(() => {a
+            //   console.log('End game because of time out')
+            //   this.toEndGame()
+            // }, 300000) //5 minutes
           }
         } else {
           console.log('game do not exists')
@@ -631,13 +642,6 @@ export default {
     } catch (err) {
       console.log('error gettting user info: ', err)
     }
-
-    //set time for game to end
-    this.startGameBar()
-    // setTimeout(() => {
-    //   console.log('End game because of time out')
-    //   this.toEndGame()
-    // }, 300000) //5 minutes
   }
 }
 </script>
