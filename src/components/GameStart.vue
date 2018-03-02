@@ -1,11 +1,19 @@
 <template>
-  <div class="gamestart">
-    <h1>The Adventure of Business Cats</h1>
+  <div class="container">
+    <img src="../assets/gameLogo.png"
+    width="500px"
 
-    <input type="text" placeholder="Name" v-model="pendingName">
-    <input type="password" placeholder="Password" v-model="pendingPassword">
-    <button @click="signInUser">Login</button>
-    <button @click="signUpUser">Sign Up</button>
+    alt="Avatar"/>
+
+    <div class="userInput">
+      <input class="customInputBox" type="text" placeholder="Name" v-model="pendingName">
+      <input class="customInputBox" type="password" placeholder="Password" v-model="pendingPassword">
+    </div>
+
+    <div class="userButton">
+      <button class="customButton" @click="signInUser">Login</button>
+      <button class="customButton" @click="signUpUser">Sign Up</button>
+    </div>
 
 
   </div>
@@ -133,6 +141,64 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+.userInput {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  width: 500px;
+  height: 200px
+}
+.userButton {
+  display: flex;
+  width: 500px;
+  height: 200px;
+  align-items: flex-start;
+  justify-content: center;
+
+
+}
+.customInputBox {
+  border-radius: 25px;
+  border: 2px solid #609;
+  margin: 5px;
+
+  padding: 20px;
+  width: 200px;
+  height: 15px;
+}
+
+.customButton {
+  background: #cb34d9;
+  background-image: -webkit-linear-gradient(top, #cb34d9, #662bb8);
+  background-image: -moz-linear-gradient(top, #cb34d9, #662bb8);
+  background-image: -ms-linear-gradient(top, #cb34d9, #662bb8);
+  background-image: -o-linear-gradient(top, #cb34d9, #662bb8);
+  background-image: linear-gradient(to bottom, #cb34d9, #662bb8);
+  -webkit-border-radius: 28;
+  -moz-border-radius: 28;
+  border-radius: 28px;
+  font-family: Arial;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+
+.customButton:hover {
+  background: #c43cfa;
+  text-decoration: none;
+}
+
 h1, h2 {
   font-weight: normal;
 }
