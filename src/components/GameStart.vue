@@ -6,13 +6,13 @@
     alt="Avatar"/>
 
     <div class="userInput">
-      <input class="customInputBox" type="text" placeholder="Name" v-model="pendingName">
+      <input class="customInputBox" type="text" placeholder="Username" v-model="pendingName">
       <input class="customInputBox" type="password" placeholder="Password" v-model="pendingPassword">
     </div>
 
     <div class="userButton">
-      <button class="customButton" @click="signInUser">Login</button>
-      <button class="customButton" @click="signUpUser">Sign Up</button>
+      <span class="customButton" @click="signInUser">Login</span>
+      <span class="customButton" @click="signUpUser">Sign Up</span>
     </div>
 
 
@@ -141,6 +141,21 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+/* Disable blue border focus in all basic form elements */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
+input[type="text"] {
+    font-size: 19px;
+}
+input[type="password"] {
+    font-size: 19px;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -148,6 +163,7 @@ export default {
   height: 100%;
   justify-content: center;
   align-items: center;
+  /* background-color: #b876cc;  */
 }
 .userInput {
   display: flex;
@@ -171,7 +187,6 @@ export default {
   border-radius: 25px;
   border: 2px solid #609;
   margin: 5px;
-
   padding: 20px;
   width: 200px;
   height: 15px;
@@ -184,14 +199,17 @@ export default {
   background-image: -ms-linear-gradient(top, #cb34d9, #662bb8);
   background-image: -o-linear-gradient(top, #cb34d9, #662bb8);
   background-image: linear-gradient(to bottom, #cb34d9, #662bb8);
-  -webkit-border-radius: 28;
-  -moz-border-radius: 28;
+  /* -webkit-border-radius: 28; */
+  /* -moz-border-radius: 28; */
   border-radius: 28px;
   font-family: Arial;
   color: #ffffff;
   font-size: 20px;
   padding: 10px 20px 10px 20px;
   text-decoration: none;
+  margin-left: 5px;
+  margin-right: 5px;
+  width: 75px;
 }
 
 .customButton:hover {
