@@ -52,29 +52,39 @@ export default {
     },
     //user already exists
     signInUser () {
-      firebase.auth().signInWithEmailAndPassword(this.pendingEmail, this.pendingPassword)
-      .then(async (user) => {
-        this.uid = user.uid
-        const response = await GamesServices.fetchPosts(this.uid)
-        this.gameid = response.data.gameid
-        this.weight = response.data.weight
-        console.log(response.data)
-        this.toGameRoom()
-        //write user data to database
-        // database.collection('games').doc(this.gameid).collection('users').doc(user.uid).set({
-        //   name: user.email,
-        //   stamina: this.weight,
-        //   uid: user.uid,
-        //   score: 0,
-        //   status: 'inPlay',
-        // })
-        // .then(() => {
-        //   console.log('Write user data successful')
-        //   this.toGameRoom()
-        // })
-        // .catch((err) => {
-        //   console.log('Error writing user data: ', err)
-        // })
+      var _this = this;
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .then(function() {
+        firebase.auth().signInWithEmailAndPassword(_this.pendingEmail, _this.pendingPassword)
+        .then(async (user) => {
+          _this.uid = user.uid
+          const response = await GamesServices.fetchPosts(_this.uid)
+          _this.gameid = response.data.gameid
+          _this.weight = response.data.weight
+          console.log(response.data)
+          _this.toGameRoom()
+          //write user data to database
+          // database.collection('games').doc(this.gameid).collection('users').doc(user.uid).set({
+          //   name: user.email,
+          //   stamina: this.weight,
+          //   uid: user.uid,
+          //   score: 0,
+          //   status: 'inPlay',
+          // })
+          // .then(() => {
+          //   console.log('Write user data successful')
+          //   this.toGameRoom()
+          // })
+          // .catch((err) => {
+          //   console.log('Error writing user data: ', err)
+          // })
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log(errorCode + ': ' + errorMessage)
+        })
       })
       .catch((error) => {
         // Handle Errors here.
@@ -85,28 +95,38 @@ export default {
     },
     //user has not existed
     async signUpUser () {
-      firebase.auth().createUserWithEmailAndPassword(this.pendingEmail, this.pendingPassword)
-      .then(async (user) => {
-        this.uid = user.uid
-        const response = await GamesServices.fetchPosts(this.uid)
-        this.gameid = response.data.gameid
-        this.weight = response.data.weight
-        this.toGameRoom();
-        //write user data to database
-        // database.collection('games').doc(this.gameid).collection('users').doc(user.uid).set({
-        //   name: user.email,
-        //   stamina: this.weight,
-        //   uid: user.uid,
-        //   score: 0,
-        //   status: 'inPlay',
-        // })
-        // .then(() => {
-        //   console.log('Write user data successful')
-        //   this.toGameRoom()
-        // })
-        // .catch((err) => {
-        //   console.log('Error writing user data: ', err)
-        // })
+      var _this = this;
+      firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .then(function() {
+        firebase.auth().createUserWithEmailAndPassword(_this.pendingEmail, _this.pendingPassword)
+        .then(async (user) => {
+          _this.uid = user.uid
+          const response = await GamesServices.fetchPosts(_this.uid)
+          _this.gameid = response.data.gameid
+          _this.weight = response.data.weight
+          _this.toGameRoom();
+          //write user data to database
+          // database.collection('games').doc(this.gameid).collection('users').doc(user.uid).set({
+          //   name: user.email,
+          //   stamina: this.weight,
+          //   uid: user.uid,
+          //   score: 0,
+          //   status: 'inPlay',
+          // })
+          // .then(() => {
+          //   console.log('Write user data successful')
+          //   this.toGameRoom()
+          // })
+          // .catch((err) => {
+          //   console.log('Error writing user data: ', err)
+          // })
+        })
+        .catch((error) => {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          console.log(errorCode + ': ' + errorMessage)
+        })
       })
       .catch((error) => {
         // Handle Errors here.
