@@ -5,6 +5,8 @@
 
     alt="Avatar"/>
 
+    <span class="notification">{{ message }}</span>
+
     <div class="userInput">
       <input class="customInputBox" type="text" placeholder="Username" v-model="pendingName">
       <input class="customInputBox" type="password" placeholder="Password" v-model="pendingPassword">
@@ -36,6 +38,7 @@ export default {
       uid: '',
       gameid: '',
       weight: '',
+      message: 'Did not know your cats could do business huh?',
     }
   },
 
@@ -81,6 +84,11 @@ export default {
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log(errorCode + ': ' + errorMessage)
+        if (errorMessage === 'The password is invalid or the user does not have a password.') {
+          this.message = 'Wrong password, meow';
+        } else if (errorMessage === 'There is no user record corresponding to this identifier. The user may have been deleted.') {
+          this.message = 'No such user, meow. Sign up first!';
+        }
       });
     },
     //user has not existed
@@ -113,6 +121,11 @@ export default {
         var errorCode = error.code;
         var errorMessage = error.message;
         console.log(errorCode + ': ' + errorMessage)
+        if (errorMessage === 'The email address is already in use by another account.') {
+          this.message = 'Username already taken, meow';
+        } else if (errorMessage === 'Password should be at least 6 characters') {
+          this.message = 'Password should be at least 6 characters, meow';
+        }
       });
 
 
@@ -165,6 +178,18 @@ input[type="password"] {
   align-items: center;
   /* background-color: #b876cc;  */
 }
+
+.notification {
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 500px;
+  height: 30px;
+  font-size: 15px;
+  font-family: sans-serif;
+  font-weight: bold;
+}
 .userInput {
   display: flex;
   flex-direction: column;
@@ -177,7 +202,7 @@ input[type="password"] {
 .userButton {
   display: flex;
   width: 500px;
-  height: 200px;
+  height: 100px;
   align-items: flex-start;
   justify-content: center;
 
