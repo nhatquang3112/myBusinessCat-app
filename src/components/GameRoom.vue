@@ -1,7 +1,8 @@
 <template>
   <div class="container">
     <div class="waitingScreen" v-show="isWaitingForPLayer">
-      <h1>Waiting for other players...</h1>
+      <h1>Waiting for {{ numPlayerWaitingFor }} more</h1>
+      <h1>to make business</h1>
     </div>
 
     <div class="userInfo" v-show="!isWaitingForPLayer">
@@ -234,6 +235,7 @@ export default {
       isWaitingForPLayer: true,
       gameStartTime: '',
       rank: '',
+      totalNumPlayer: 0,
     }
   },
 
@@ -295,6 +297,9 @@ export default {
   },
 
   computed: {
+    numPlayerWaitingFor () {
+      return this.totalNumPlayer - this.userList.length
+    },
     showPendingPropose () {
       return this.pendingPropose.length > 0
     },
@@ -571,28 +576,6 @@ export default {
       console.log('error gettting game info: ', err)
     }
 
-    //get list of users from database, also data observer
-    var usersRef = database.collection('games').doc(this.gameid).collection('users')
-    usersRef.onSnapshot((querySnapshot) => {
-      var users = querySnapshot.docs.map(doc => ({
-        //name: doc.data().name.substring(0, doc.data().name.lastIndexOf("@"),
-        name: doc.data().nickname,
-        uid: doc.data().uid,
-        stamina: doc.data().stamina,
-        score: doc.data().score,
-        status: doc.data().status,
-        share: '',
-      }))
-      this.userList = users
-      this.proposeWindowList = users
-      //update minStamina
-      this.profitList.forEach(profit => {
-        if (this.minStamina > profit.stamina) {
-          this.minStamina = profit.stamina
-        }
-      })
-    })
-
     //get current pending propose
     var pendingProposeRef = database.collection('games').doc(this.gameid).collection('pendingPropose')
     pendingProposeRef.onSnapshot((querySnapshot) => {
@@ -622,6 +605,7 @@ export default {
         var thresholds = doc.data().thresholds
         var values = doc.data().values
         var weights = doc.data().weights
+        this.totalNumPlayer = weights.length
         //get the actual profit list from database
         for (var i = 0; i < thresholds.length; i++) {
           this.profitList[i] = {
@@ -648,6 +632,28 @@ export default {
     } catch (err) {
       console.log('error gettting game info: ', err)
     }
+
+    //get list of users from database, also data observer
+    var usersRef = database.collection('games').doc(this.gameid).collection('users')
+    usersRef.onSnapshot((querySnapshot) => {
+      var users = querySnapshot.docs.map(doc => ({
+        //name: doc.data().name.substring(0, doc.data().name.lastIndexOf("@"),
+        name: doc.data().nickname,
+        uid: doc.data().uid,
+        stamina: doc.data().stamina,
+        score: doc.data().score,
+        status: doc.data().status,
+        share: '',
+      }))
+      this.userList = users
+      this.proposeWindowList = users
+      //update minStamina
+      this.profitList.forEach(profit => {
+        if (this.minStamina > profit.stamina) {
+          this.minStamina = profit.stamina
+        }
+      })
+    })
 
     //get current propose History
     var proposeHistoryRef = database.collection('games').doc(this.gameid).collection('proposeHistory')
@@ -700,6 +706,15 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.waitingScreen {
+  display: flex;
+  weight: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
 #gameProgress {
   width: 90%;
   height: 90%;
