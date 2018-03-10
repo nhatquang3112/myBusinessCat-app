@@ -6,6 +6,9 @@
     alt="Avatar"/>
 
     <span class="notification">{{ message }}</span>
+    <div class="loaderSection">
+      <span class="loader"></span>
+    </div>
 
     <div class="userInput">
       <input class="customInputBox" type="text" placeholder="Username" v-model="pendingName">
@@ -16,7 +19,6 @@
       <span class="customButton" @click="signInUser">Login</span>
       <span class="customButton" @click="signUpUser">Sign Up</span>
     </div>
-
 
   </div>
 </template>
@@ -38,7 +40,7 @@ export default {
       uid: '',
       gameid: '',
       weight: '',
-      message: 'Did not know your cats could do business huh?',
+      message: 'It is like doing business, but with cats!',
     }
   },
 
@@ -55,9 +57,12 @@ export default {
     },
     //user already exists
     signInUser () {
+      document.getElementsByClassName('loaderSection')[0].style.visibility = 'visible';
+      document.getElementsByClassName('notification')[0].style.visibility = 'hidden';
+
       var _this = this;
       firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
-      .then(function() {
+      .then(() => {
         firebase.auth().signInWithEmailAndPassword(_this.pendingEmail, _this.pendingPassword)
         .then(async (user) => {
           _this.uid = user.uid
@@ -83,13 +88,21 @@ export default {
           // })
         })
         .catch((error) => {
+          document.getElementsByClassName('loaderSection')[0].style.visibility = 'hidden';
           // Handle Errors here.
           var errorCode = error.code;
           var errorMessage = error.message;
-          console.log(errorCode + ': ' + errorMessage)
+          console.log(errorCode + ': ' + errorMessage);
+          if (errorMessage === 'The password is invalid or the user does not have a password.') {
+            this.message = 'Wrong password, meow';
+          } else if (errorMessage === 'There is no user record corresponding to this identifier. The user may have been deleted.') {
+            this.message = 'No such user, meow. Sign up first!';
+          }
+          document.getElementsByClassName('notification')[0].style.visibility = 'visible';
         })
       })
       .catch((error) => {
+        document.getElementsByClassName('loaderSection')[0].style.visibility = 'hidden'
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -99,13 +112,18 @@ export default {
         } else if (errorMessage === 'There is no user record corresponding to this identifier. The user may have been deleted.') {
           this.message = 'No such user, meow. Sign up first!';
         }
+        document.getElementsByClassName('notification')[0].style.visibility = 'visible';
+
       });
     },
     //user has not existed
     async signUpUser () {
+      document.getElementsByClassName('loaderSection')[0].style.visibility = 'visible';
+      document.getElementsByClassName('notification')[0].style.visibility = 'hidden';
+
       var _this = this;
       firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
-      .then(function() {
+      .then(() => {
         firebase.auth().createUserWithEmailAndPassword(_this.pendingEmail, _this.pendingPassword)
         .then(async (user) => {
           _this.uid = user.uid
@@ -130,13 +148,22 @@ export default {
           // })
         })
         .catch((error) => {
+          document.getElementsByClassName('loaderSection')[0].style.visibility = 'hidden';
           // Handle Errors here.
           var errorCode = error.code;
           var errorMessage = error.message;
           console.log(errorCode + ': ' + errorMessage)
+          if (errorMessage === 'The email address is already in use by another account.') {
+            this.message = 'Username already taken, meow';
+          } else if (errorMessage === 'Password should be at least 6 characters') {
+            this.message = 'Password should be at least 6 characters, meow';
+          }
+          document.getElementsByClassName('notification')[0].style.visibility = 'visible';
+
         })
       })
       .catch((error) => {
+        document.getElementsByClassName('loaderSection')[0].style.visibility = 'hidden';
         // Handle Errors here.
         var errorCode = error.code;
         var errorMessage = error.message;
@@ -146,6 +173,8 @@ export default {
         } else if (errorMessage === 'Password should be at least 6 characters') {
           this.message = 'Password should be at least 6 characters, meow';
         }
+        document.getElementsByClassName('notification')[0].style.visibility = 'visible';
+
       });
 
 
@@ -189,6 +218,20 @@ input[type="password"] {
     font-size: 19px;
 }
 
+.loader {
+    border: 4px solid #f3f3f3; /* Light grey */
+    border-top: 4px solid #609; /* Blue */
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -197,6 +240,14 @@ input[type="password"] {
   justify-content: center;
   align-items: center;
   /* background-color: #b876cc;  */
+}
+
+.loaderSection {
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .notification {
