@@ -83,7 +83,7 @@
           >
             <div class="profitInfo" @click = "makePropose(profit.value, profit.stamina, profit.name)">
               <span>Value: {{ profit.value }}</span>
-              <span><img src="https://d30y9cdsu7xlg0.cloudfront.net/png/53189-200.png" alt="ProfitIMG"></span>
+              <span><img src="../assets/Fish.png" alt="ProfitIMG"></span>
               <span class="ladder" v-bind:style="{height: profit.stamina + '%'}">
                 <span>{{ profit.stamina }}</span>
               </span>
@@ -736,6 +736,11 @@ textarea:focus,
 button:focus {
     outline: none;
 }
+
+input {
+  border: transparent;
+}
+
 .waitingScreen {
   display: flex;
   weight: 100%;
@@ -914,8 +919,7 @@ button:focus {
   transform: scale(1.1);
 }
 .profit img {
-  width: 100px;
-  height: 100px;
+  width: 150px;
 }
 .ladder {
   background-color: #ffa621;
@@ -944,10 +948,11 @@ button:focus {
   margin: 0.3rem;
 }
 .button {
-  background-color: #36e27e;
+  background-color: #609;
   border: none;
   border-radius: .2em;
-  border: solid 1px #1cbc5f ;
+  border: solid 1px #1609;
+  color: #ffffff;
 }
 .inputBox {
   display: flex;
@@ -1127,11 +1132,12 @@ button:focus {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
   border: solid 1px #e0e0e0;
   border-radius: .3em;
-  background-color: #cdcecc;
+  background-color: #ffffff;
   overflow-y: scroll;
   align-items: flex-start;
   margin: 1px;
   padding: 3px;
+  color: #ffffff;
 }
 
 ::-webkit-scrollbar-thumb
@@ -1201,6 +1207,6 @@ li {
   margin: 0 10px;
 }
 span {
-  color: #42b983;
+  color: #609;
 }
 </style>
