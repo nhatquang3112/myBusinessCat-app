@@ -258,7 +258,7 @@ input[type="password"] {
   width: 500px;
   height: 30px;
   font-size: 15px;
-  font-family: sans-serif;
+  font-family: "Comic Sans MS", cursive, sans-serif;
   font-weight: bold;
 }
 .userInput {

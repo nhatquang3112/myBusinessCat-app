@@ -1,8 +1,25 @@
 <template>
   <div class="container">
     <div class="waitingScreen" v-show="isWaitingForPLayer">
-      <h1>Waiting for {{ numPlayerWaitingFor }} more</h1>
-      <h1>to make business</h1>
+
+      <div class="loaderSection">
+        <span class="loader"></span>
+      </div>
+
+      <img src="../assets/LoadingCat.png"
+      width="250px"
+      alt="Avatar"/>
+
+      <div class="messageSection">
+        <span class="watingMessage">
+          Waiting for {{ numPlayerWaitingFor }} more to do business
+        </span>
+        <span class="watingMessage">
+          Please be patient, meow
+        </span>
+      </div>
+
+
     </div>
 
     <div class="userInfo" v-show="!isWaitingForPLayer">
@@ -715,6 +732,45 @@ export default {
   align-items: center;
 
 }
+
+.loaderSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width:500px;
+  height:100px;
+}
+
+.messageSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width:500px;
+  height:100px;
+}
+
+.watingMessage {
+  font-size: 19px;
+  color: #609;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.loader {
+    border: 4px solid #f3f3f3; /* Light grey */
+    border-top: 4px solid #609; /* Purple */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 #gameProgress {
   width: 90%;
   height: 90%;
