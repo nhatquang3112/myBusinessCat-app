@@ -25,8 +25,11 @@
     <div class="userInfo" v-show="!isWaitingForPLayer">
       <div class="mainUserBox">
         <span class="avatar">
-          <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
-          alt="Avatar"/>
+          <img v-if="userName === 'Red Cat'" src="../assets/RedCat.png" alt="Avatar"/>
+          <img v-if="userName === 'Blue Cat'" src="../assets/BlueCat.png" alt="Avatar"/>
+          <img v-if="userName === 'Brown Cat'" src="../assets/BrownCat.png" alt="Avatar"/>
+          <img v-if="userName === 'Yellow Cat'" src="../assets/YellowCat.png" alt="Avatar"/>
+          <img v-if="userName === 'Green Cat'" src="../assets/GreenCat.png" alt="Avatar"/>
         </span>
 
         <div class = "userBio">
@@ -56,8 +59,11 @@
           class = "userBox"
         >
           <span class="avatar">
-            <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
-            alt="Avatar"/>
+            <img v-if="user.name === 'Red Cat'" src="../assets/RedCat.png" alt="Avatar"/>
+            <img v-if="user.name === 'Blue Cat'" src="../assets/BlueCat.png" alt="Avatar"/>
+            <img v-if="user.name === 'Brown Cat'" src="../assets/BrownCat.png" alt="Avatar"/>
+            <img v-if="user.name === 'Yellow Cat'" src="../assets/YellowCat.png" alt="Avatar"/>
+            <img v-if="user.name === 'Green Cat'" src="../assets/GreenCat.png" alt="Avatar"/>
           </span>
 
           <div class = "userBio">
@@ -723,6 +729,13 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+/* Disable blue border focus in all basic form elements */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
 .waitingScreen {
   display: flex;
   weight: 100%;
@@ -846,7 +859,6 @@ export default {
 .avatar img {
   width: 60px;
   height: 60px;
-  border-radius: 50%;
 }
 .userBio {
   display: flex;
