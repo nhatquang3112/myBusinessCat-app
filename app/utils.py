@@ -8,12 +8,62 @@ import uuid
 from datetime import datetime
 cred = credentials.Certificate("app/task-based-app-firebase-adminsdk-xbkwi-45e8c764a2.json")
 firebase_admin.initialize_app(cred)
-
-def create_game():
-    thresholds = [20,25,30]
-    values = [10,15,25]
-    weights = [15,16]
+from random import randint
+def toBinList(C, n):
+    res = [0] * n
+    a = C
+    for i in range(n):
+        res[n-1-i] = 1 & a
+        a = a >> 1
+    return res
+def generateTTG(n, k, max_weight, max_quota, max_value, mode='random'):
+    weights = [randint(1, max_weight) for i in range(n)]
+    thresholds = [randint(1, max_quota) for i in range(k)]
+    thresholds = sorted(thresholds)
+    if mode == 'non_empty_core':
+        values = [max_value] * k
+        payoff = [randint(0, max_value - 1) for i in range(n)]
+        payoff = sorted(payoff)
+        for j in range(k-1,-1,-1):
+            for C in range(2**n):
+                coeffs = toBinList(C, n)
+                W = sum([weights[i] * coeffs[i] for i in range(n)])
+                X = sum([payoff[i] * coeffs[i] for i in range(n)])
+                if W >= thresholds[j]:
+                    values[j] = min(values[j], X)
+            if j < k - 1 and values[j] >= values[j + 1]:
+                values[j] = values[j + 1] - 1
+    if mode == 'empty_core': # not sure
+        values = [max_value] * k
+        random_noise = [0] * k
+        payoff = [randint(0, max_value - 1) for i in range(n)]
+        payoff = sorted(payoff)
+        for j in range(k-1,-1,-1):
+            for C in range(2**n):
+                coeffs = toBinList(C, n)
+                W = sum([weights[i] * coeffs[i] for i in range(n)])
+                X = sum([payoff[i] * coeffs[i] for i in range(n)])
+                if W >= thresholds[j]:
+                    values[j] = min(values[j], X)
+            if j < k - 1 and values[j] >= values[j + 1]:
+                values[j] = values[j + 1] - 1
+        a = max_value - values[-1]
+        for j in range(k):
+            random_noise[j] = randint(0,a)
+        random_noise = sorted(random_noise)
+        for j in range(k):
+            values[j] += random_noise[j]
+    else: # default to random
+        values = [randint(0, max_value) for i in range(k)]
+        values = sorted(values)
     return thresholds, values, weights
+def create_game():
+    n = randint(3,5)
+    k = randint(3,5)
+    max_quota = 50
+    max_value = 25
+    max_weight = 40
+    return generateTTG(n, k, max_weight, max_quota, max_value)
     # to change
 def get_game(userid):
     db = firestore.client()
