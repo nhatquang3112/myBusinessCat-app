@@ -325,6 +325,6 @@ li {
   margin: 0 10px;
 }
 a {
-  color: #609;
+  color: #000000;
 }
 </style>

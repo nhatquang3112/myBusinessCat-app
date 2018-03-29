@@ -87,7 +87,6 @@
               <span class="ladder" v-bind:style="{height: profit.stamina + '%'}">
                 <span>{{ profit.stamina }}</span>
               </span>
-              <span>{{ profit.name }}</span>
             </div>
 
 
@@ -188,14 +187,14 @@
           </div>
 
           <span class="pendingProposePlaceHolder" v-show="!showPendingPropose">
-            There is currently no propose
+            There is currently no proposal
           </span>
         </div>
       </div>
 
       <div class="proposeHistory">
         <div class="proposeHistoryBar">
-          <span>Propose History</span>
+          <span>Proposal History</span>
           <span v-show="!isHistoryHidden" @click="toggleHistoryVisibility()"><i class="fas fa-chevron-up"></i></span>
           <span v-show="isHistoryHidden" @click="toggleHistoryVisibility()"><i class="fas fa-chevron-down"></i></span>
         </div>
