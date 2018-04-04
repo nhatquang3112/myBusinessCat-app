@@ -221,10 +221,21 @@
     </div>
 
     <div class="catListAndFishList" v-show="!isWaitingForPLayer && isNewUi">
-      <span>catListAndFishList</span>
+      <div class="catList">
+        <div class="catYou"></div>
+        <div class="catOther"></div>
+        <div class="catOther"></div>
+        <div class="catOther"></div>
+        <div class="catOther"></div>
+      </div>
+      <div class="fishList">
+      </div>
     </div>
-    <div class="clockAndProposalHistory" v-show="!isWaitingForPLayer && isNewUi">
-      <span>clockAndProposalHistory</span>
+    <div class="clockAndProposalHistoryBox" v-show="!isWaitingForPLayer && isNewUi">
+      <div class="clock">
+      </div>
+      <div class="proposalHistoryBox">
+      </div>
     </div>
 
   </div>
@@ -756,11 +767,78 @@ input {
   flex-direction: row;
 }
 
-.clockAndProposalHistory {
+.catList {
+  display: flex;
+  width: 25%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.catYou {
+  width: 75%;
+  height: 20%;
+  background-image: url("../assets/catPlaceHolder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.catOther {
+  width: 55%;
+  height: 14.6%;
+  background-image: url("../assets/catPlaceHolder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.fishList {
+  display: flex;
+  width: 75%;
+  height: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.fish {
+  width: 20%;
+  height: 70%;
+}
+
+.clockAndProposalHistoryBox {
   display: flex;
   width: 100%;
   height: 35%;
   flex-direction: row;
+}
+
+.clock {
+  display: flex;
+  width: 30%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.watch {
+  width: 90%;
+  height: 90%;
+}
+
+.proposalHistoryBox {
+  display: flex;
+  width: 70%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.historyBox {
+  width: 90%;
+  height: 90%;
 }
 
 /* end  new Ui */
