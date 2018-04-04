@@ -22,7 +22,7 @@
 
     </div>
 
-    <div class="userInfo" v-show="!isWaitingForPLayer">
+    <div class="userInfo" v-show="!isWaitingForPLayer && !isNewUi">
       <div class="mainUserBox">
         <span class="avatar">
           <img v-if="userName === 'Red Cat'" src="../assets/RedCat.png" alt="Avatar"/>
@@ -50,7 +50,7 @@
       </div>
     </div>
 
-    <div class="gamePlay" v-show="!isWaitingForPLayer">
+    <div class="gamePlay" v-show="!isWaitingForPLayer && !isNewUi">
       <div class="userList">
         <div
           v-for="(user, index) in userList"
@@ -220,6 +220,13 @@
 
     </div>
 
+    <div class="catListAndFishList" v-show="!isWaitingForPLayer && isNewUi">
+      <span>catListAndFishList</span>
+    </div>
+    <div class="clockAndProposalHistory" v-show="!isWaitingForPLayer && isNewUi">
+      <span>clockAndProposalHistory</span>
+    </div>
+
   </div>
 </template>
 
@@ -258,6 +265,7 @@ export default {
       gameStartTime: '',
       rank: '',
       totalNumPlayer: 0,
+      isNewUi: true,
     }
   },
 
@@ -739,6 +747,23 @@ button:focus {
 input {
   border: transparent;
 }
+
+/* start new Ui */
+.catListAndFishList {
+  display: flex;
+  width: 100%;
+  height: 65%;
+  flex-direction: row;
+}
+
+.clockAndProposalHistory {
+  display: flex;
+  width: 100%;
+  height: 35%;
+  flex-direction: row;
+}
+
+/* end  new Ui */
 
 .waitingScreen {
   display: flex;
