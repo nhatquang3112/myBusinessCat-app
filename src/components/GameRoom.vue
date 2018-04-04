@@ -238,8 +238,11 @@
     </div>
     <div class="clockAndProposalHistoryBox" v-show="!isWaitingForPLayer && isNewUi">
       <div class="clock">
+        <div class="watch"></div>
       </div>
       <div class="proposalHistoryBox">
+        <div class="historyBox"></div>
+
       </div>
     </div>
 
@@ -814,7 +817,12 @@ input {
   background-image: url("../assets/fishPlaceHolder.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  margin: 2px;
+  margin: 7px;
+  transition: all .2s ease-in-out;
+}
+
+.fish:hover {
+  transform: scale(1.1);
 }
 
 .clockAndProposalHistoryBox {
@@ -836,6 +844,9 @@ input {
 .watch {
   width: 90%;
   height: 90%;
+  background-image: url("../assets/clockPlaceHolder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 .proposalHistoryBox {
@@ -850,6 +861,9 @@ input {
 .historyBox {
   width: 90%;
   height: 90%;
+  background-image: url("../assets/historyBoxPlaceHolder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 /* end  new Ui */
