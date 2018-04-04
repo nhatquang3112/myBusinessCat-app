@@ -229,6 +229,11 @@
         <div class="catOther"></div>
       </div>
       <div class="fishList">
+        <div class="fish"></div>
+        <div class="fish"></div>
+        <div class="fish"></div>
+        <div class="fish"></div>
+        <div class="fish"></div>
       </div>
     </div>
     <div class="clockAndProposalHistoryBox" v-show="!isWaitingForPLayer && isNewUi">
@@ -782,6 +787,7 @@ input {
   background-image: url("../assets/catPlaceHolder.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
+  margin: 2px;
 }
 
 .catOther {
@@ -790,6 +796,7 @@ input {
   background-image: url("../assets/catPlaceHolder.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
+  margin: 2px;
 }
 
 .fishList {
@@ -802,8 +809,12 @@ input {
 }
 
 .fish {
-  width: 20%;
+  width: 15%;
   height: 70%;
+  background-image: url("../assets/fishPlaceHolder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin: 2px;
 }
 
 .clockAndProposalHistoryBox {
