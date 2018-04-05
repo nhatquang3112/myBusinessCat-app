@@ -299,8 +299,12 @@
           <div class="historyBoxName">
             <span style="color: white">Proposal History</span>
           </div>
-          <div class="historyBoxHistory"></div>
-          <div class="historyBoxPendingPropose"></div>
+          <div class="historyBoxHistory">
+            <span style="color: #808080">Empty History</span>
+          </div>
+          <div class="historyBoxPendingPropose">
+            <span style="color: white">There is no pending proposal. Let's do business!</span>
+          </div>
         </div>
       </div>
     </div>
