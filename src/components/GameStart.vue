@@ -220,7 +220,7 @@ input[type="password"] {
 
 .loader {
     border: 4px solid #f3f3f3; /* Light grey */
-    border-top: 4px solid #22b573; /* Blue */
+    border-top: 4px solid #609; /* Blue */
     border-radius: 50%;
     width: 30px;
     height: 30px;
@@ -281,7 +281,7 @@ input[type="password"] {
 }
 .customInputBox {
   border-radius: 25px;
-  border: 2px solid #22b573;
+  border: 2px solid #609;
   margin: 5px;
   padding: 20px;
   width: 200px;

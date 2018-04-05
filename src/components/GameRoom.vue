@@ -288,6 +288,11 @@
     <div class="clockAndProposalHistoryBox" v-show="!isWaitingForPLayer && isNewUi">
       <div class="clock">
         <div class="watch"></div>
+        <div class="watchInfo">
+          <span style="color: black; font-size: 5vw; font-family: Impact, Charcoal, sans-serif">300</span>
+          <span style="color: black; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">seconds</span>
+          <span style="color: black; font-size: 1.5vw; font-family: Impact, Charcoal, sans-serif">left for business</span>
+        </div>
       </div>
       <div class="proposalHistoryBox">
         <div class="historyBox"></div>
@@ -946,17 +951,26 @@ input {
   display: flex;
   width: 30%;
   height: 100%;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
 }
 
 .watch {
-  width: 90%;
+  width: 50%;
   height: 90%;
-  background-image: url("../assets/clockPlaceHolder.png");
+  background-image: url("../assets/clock.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
+}
+
+.watchInfo {
+  width: 50%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .proposalHistoryBox {
