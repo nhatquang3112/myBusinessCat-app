@@ -295,8 +295,13 @@
         </div>
       </div>
       <div class="proposalHistoryBox">
-        <div class="historyBox"></div>
-
+        <div class="historyBox">
+          <div class="historyBoxName">
+            <span style="color: white">Proposal History</span>
+          </div>
+          <div class="historyBoxHistory"></div>
+          <div class="historyBoxPendingPropose"></div>
+        </div>
       </div>
     </div>
 
@@ -983,11 +988,50 @@ input {
 }
 
 .historyBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
   width: 90%;
   height: 90%;
-  background-image: url("../assets/historyBoxPlaceHolder.png");
+  background-image: url("../assets/historyBox.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
+}
+
+.historyBoxName {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 25px;
+  background: #333333;
+  width: 95%;
+  height: 10%;
+  margin: 1%;
+}
+
+.historyBoxHistory {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  background: #333333;
+  width: 95%;
+  height: 50%;
+}
+
+.historyBoxPendingPropose {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  background: #333333;
+  width: 95%;
+  height: 20%;
+  margin: 0.5%;
 }
 
 /* end  new Ui */
