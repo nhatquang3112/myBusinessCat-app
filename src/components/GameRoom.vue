@@ -229,18 +229,32 @@
           <img class="catIcon" v-if="userName === 'Yellow Cat'" src="../assets/catYellow.png" alt="Avatar"/>
           <img class="catIcon" v-if="userName === 'Green Cat'" src="../assets/catGreen.png" alt="Avatar"/>
           <div class="catInfo">
-            <div class="catName">{{ userName }} (You)</div>
+            <div class="catName" style="color: white; font-size: 1vw">{{ userName }} (You)</div>
             <div class="catClimbInfo">
-              <span style="color: black">Can climb</span>
+              <span style="color: black; font-size: 1vw">Can climb</span>
               <span class="ladderIcon"></span>
-              <span style="color: white; font-size: 25px">{{ userStamina }}</span>
+              <span style="color: white; font-size: 2vw">{{ userStamina }}</span>
             </div>
           </div>
         </div>
-        <div class="catOther"></div>
-        <div class="catOther"></div>
-        <div class="catOther"></div>
-        <div class="catOther"></div>
+        <div class="catOther"
+          v-for="(user, index) in userList"
+          :key="index"
+          v-if="user.name!==userName">
+          <img class="catIcon" v-if="user.name === 'Red Cat'" src="../assets/catRed.png" alt="Avatar"/>
+          <img class="catIcon" v-if="user.name === 'Blue Cat'" src="../assets/catBlue.png" alt="Avatar"/>
+          <img class="catIcon" v-if="user.name === 'Brown Cat'" src="../assets/catBrown.png" alt="Avatar"/>
+          <img class="catIcon" v-if="user.name === 'Yellow Cat'" src="../assets/catYellow.png" alt="Avatar"/>
+          <img class="catIcon" v-if="user.name === 'Green Cat'" src="../assets/catGreen.png" alt="Avatar"/>
+          <div class="catInfo">
+            <div class="catName" style="color: white; font-size: 1vw">{{ user.name }}</div>
+            <div class="catClimbInfo">
+              <span style="color: black; font-size: 1vw">Can climb</span>
+              <span class="ladderIcon"></span>
+              <span style="color: white; font-size: 1.5vw">{{ user.stamina }}</span>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="fishList">
         <div class="fish"></div>
@@ -845,9 +859,13 @@ input {
 }
 
 .catOther {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   width: 55%;
   height: 14.6%;
-  background-image: url("../assets/catPlaceHolder.png");
+  background-image: url("../assets/catBox.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   margin: 2px;
