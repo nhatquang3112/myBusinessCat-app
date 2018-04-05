@@ -296,7 +296,7 @@
       </div>
       <div class="proposalHistoryBox">
         <div class="historyBox">
-          <div class="historyBoxName">
+          <!-- <div class="historyBoxName">
             <span style="color: white">Proposal History</span>
           </div>
           <div class="historyBoxHistory">
@@ -304,7 +304,7 @@
           </div>
           <div class="historyBoxPendingPropose">
             <span style="color: white">There is no pending proposal. Let's do business!</span>
-          </div>
+          </div> -->
         </div>
       </div>
     </div>
@@ -998,7 +998,7 @@ input {
   align-items: center;
   width: 90%;
   height: 90%;
-  background-image: url("../assets/historyBox.png");
+  background-image: url("../assets/historyBoxPlaceHolder.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
