@@ -222,7 +222,21 @@
 
     <div class="catListAndFishList" v-show="!isWaitingForPLayer && isNewUi">
       <div class="catList">
-        <div class="catYou"></div>
+        <div class="catYou">
+          <img class="catIcon" v-if="userName === 'Red Cat'" src="../assets/catRed.png" alt="Avatar"/>
+          <img class="catIcon" v-if="userName === 'Blue Cat'" src="../assets/catBlue.png" alt="Avatar"/>
+          <img class="catIcon" v-if="userName === 'Brown Cat'" src="../assets/catBrown.png" alt="Avatar"/>
+          <img class="catIcon" v-if="userName === 'Yellow Cat'" src="../assets/catYellow.png" alt="Avatar"/>
+          <img class="catIcon" v-if="userName === 'Green Cat'" src="../assets/catGreen.png" alt="Avatar"/>
+          <div class="catInfo">
+            <div class="catName">{{ userName }} (You)</div>
+            <div class="catClimbInfo">
+              <span style="color: black">Can climb</span>
+              <span class="ladderIcon"></span>
+              <span style="color: white; font-size: 25px">{{ userStamina }}</span>
+            </div>
+          </div>
+        </div>
         <div class="catOther"></div>
         <div class="catOther"></div>
         <div class="catOther"></div>
@@ -785,12 +799,49 @@ input {
 }
 
 .catYou {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   width: 75%;
   height: 20%;
-  background-image: url("../assets/catPlaceHolder.png");
+  background-image: url("../assets/catBox.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   margin: 2px;
+}
+
+.catIcon {
+  width: 28%;
+  height: 66%;
+}
+
+.catInfo {
+  width: 55%;
+  height: 66%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-left: 5%;
+}
+
+.catName {
+  color: white;
+}
+
+.catClimbInfo {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 75%;
+}
+
+.ladderIcon {
+  width: 20%;
+  background-image: url("../assets/ladderIcon.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 .catOther {
