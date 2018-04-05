@@ -49,7 +49,6 @@
         </div>
       </div>
     </div>
-
     <div class="gamePlay" v-show="!isWaitingForPLayer && !isNewUi">
       <div class="userList">
         <div
@@ -257,11 +256,15 @@
         </div>
       </div>
       <div class="fishList">
-        <div class="fish"></div>
-        <div class="fish"></div>
-        <div class="fish"></div>
-        <div class="fish"></div>
-        <div class="fish"></div>
+        <div class="fishSection"
+          v-for="(profit, index) in profitList"
+          :key="index">
+          <div class="fish">
+            <span style="color: #6D4620; font-size: 3vw; font-family: Impact, Charcoal, sans-serif">{{ profit.value }}</span>
+          </div>
+          <span class="ladderFish"></span>
+          <span style="color: #6D4620; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{ profit.stamina }}</span>
+        </div>
       </div>
     </div>
     <div class="clockAndProposalHistoryBox" v-show="!isWaitingForPLayer && isNewUi">
@@ -880,18 +883,38 @@ input {
   align-items: center;
 }
 
-.fish {
+.fishSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   width: 15%;
   height: 70%;
-  background-image: url("../assets/fishPlaceHolder.png");
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
   margin: 7px;
   transition: all .2s ease-in-out;
 }
 
-.fish:hover {
+.fishSection:hover {
   transform: scale(1.1);
+}
+
+.fish {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 30%;
+  background-image: url("../assets/fishPlate.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.ladderFish {
+  width: 50%;
+  height: 60%;
+  background-image: url("../assets/ladder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 .clockAndProposalHistoryBox {
