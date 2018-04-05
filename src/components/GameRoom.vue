@@ -259,11 +259,29 @@
         <div class="fishSection"
           v-for="(profit, index) in profitList"
           :key="index">
-          <div class="fish">
+          <div class="fish" @click = "makePropose(profit.value, profit.stamina, profit.name)">
             <span style="color: #6D4620; font-size: 3vw; font-family: Impact, Charcoal, sans-serif">{{ profit.value }}</span>
           </div>
-          <span class="ladderFish"></span>
+          <span class="ladderFish" @click = "makePropose(profit.value, profit.stamina, profit.name)"></span>
           <span style="color: #6D4620; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{ profit.stamina }}</span>
+          <div class="proposeWindow" v-show="currentTaskName===profit.name">
+            <a
+              v-for="(proposeTarget, index) in proposeWindowList"
+              :key="index"
+            >
+            <div class="proposeWindowElement">
+              <span>{{ proposeTarget.name }}</span>
+              <div class="inputBox" v-show="proposeTarget.share!=='0'">
+                <span><input type="text" v-model="proposeTarget.share" placeholder="Share"></span>
+                <span class="closeButton" @click="proposeTarget.share='0'"><i class="fas fa-times-circle"></i></span>
+              </div>
+              <span v-show="proposeTarget.share==='0'" @click="proposeTarget.share=''"><i class="fas fa-plus-circle"></i></span>
+            </div>
+            </a>
+            <span><button class="button"v-if="!showPendingPropose" @click="checkPropose()">Submit</button></span>
+            <span>{{ errorMessage }}</span>
+            <span v-if="showPendingPropose">Cannot make propose now</span>
+          </div>
         </div>
       </div>
     </div>
@@ -889,7 +907,7 @@ input {
   justify-content: center;
   align-items: center;
   width: 15%;
-  height: 70%;
+  height: 100%;
   margin: 7px;
   transition: all .2s ease-in-out;
 }
@@ -904,14 +922,14 @@ input {
   justify-content: center;
   align-items: center;
   width: 100%;
-  height: 30%;
+  height: 20%;
   background-image: url("../assets/fishPlate.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
 .ladderFish {
   width: 50%;
-  height: 60%;
+  height: 40%;
   background-image: url("../assets/ladder.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
@@ -990,13 +1008,13 @@ input {
 
 .watingMessage {
   font-size: 19px;
-  color: #609;
+  color: #22b573;
   font-family: "Comic Sans MS", cursive, sans-serif;
 }
 
 .loader {
     border: 4px solid #f3f3f3; /* Light grey */
-    border-top: 4px solid #609; /* Purple */
+    border-top: 4px solid #22b573; /* Purple */
     border-radius: 50%;
     width: 50px;
     height: 50px;
@@ -1167,7 +1185,7 @@ input {
   margin: 0.3rem;
 }
 .button {
-  background-color: #609;
+  background-color: #22b573;
   border: none;
   border-radius: .2em;
   border: solid 1px #1609;
@@ -1426,6 +1444,6 @@ li {
   margin: 0 10px;
 }
 span {
-  color: #609;
+  color: #22b573;
 }
 </style>

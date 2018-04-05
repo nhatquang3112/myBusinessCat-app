@@ -17,7 +17,7 @@ export default {
   text-align: center;
   width: 100%;
   height: 100%;
-  color: #609;
+  color: #22b573;
   font-family: "Comic Sans MS", cursive, sans-serif;
 }
 </style>
