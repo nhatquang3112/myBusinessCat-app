@@ -296,15 +296,36 @@
       </div>
       <div class="proposalHistoryBox">
         <div class="historyBox">
-          <!-- <div class="historyBoxName">
+          <div class="historyBoxName">
             <span style="color: white">Proposal History</span>
           </div>
           <div class="historyBoxHistory">
             <span style="color: #808080">Empty History</span>
           </div>
           <div class="historyBoxPendingPropose">
-            <span style="color: white">There is no pending proposal. Let's do business!</span>
-          </div> -->
+            <span style="color: white" v-show="!showPendingPropose">There is no pending proposal. Let's do business!</span>
+            <div class="totalShare" v-show="showPendingPropose">
+              <span style="color: white; font-size: 1.5vw; font-family: Impact, Charcoal, sans-serif">Total share</span>
+              <span style="color: green; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">18</span>
+            </div>
+            <div class="lishOfEachShare" v-show="showPendingPropose">
+              <div class="eachShare"
+                v-for="(pendingTarget, index) in pendingPropose"
+                :key="index"
+              >
+                <img v-if="pendingTarget.name === 'Red Cat'" src="../assets/catRed.png" alt="Avatar" width="50%" height="70%"/>
+                <img v-if="pendingTarget.name === 'Blue Cat'" src="../assets/catBlue.png" alt="Avatar" width="50%" height="70%"/>
+                <img v-if="pendingTarget.name === 'Yellow Cat'" src="../assets/catYellow.png" alt="Avatar" width="50%" height="70%"/>
+                <img v-if="pendingTarget.name === 'Brown Cat'" src="../assets/catBrown.png" alt="Avatar" width="50%" height="70%"/>
+                <img v-if="pendingTarget.name === 'Green Cat'" src="../assets/catGreen.png" alt="Avatar" width="50%" height="70%"/>
+                <span style="color: green; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">{{ pendingTarget.share }}</span>
+              </div>
+            </div>
+            <div class="selectionButton" v-show="showPendingPropose">
+              <span class="yesButton"></span>
+              <span class="noButton"></span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -998,7 +1019,7 @@ input {
   align-items: center;
   width: 90%;
   height: 90%;
-  background-image: url("../assets/historyBoxPlaceHolder.png");
+  background-image: url("../assets/historyBox.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
@@ -1037,6 +1058,59 @@ input {
   height: 20%;
   margin: 0.5%;
 }
+
+.totalShare {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 15%;
+  height: 100%;
+}
+
+.listOfEachShare {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  height: 100%;
+}
+
+.eachShare {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 15%;
+  height: 100%;
+}
+
+.selectionButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 15%;
+  height: 100%;
+}
+
+.yesButton {
+  background-image: url("../assets/yesButton.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 50%;
+  height: 100%;
+}
+
+.noButton {
+  background-image: url("../assets/noButton.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 50%;
+  height: 100%;
+}
+
 
 /* end  new Ui */
 
