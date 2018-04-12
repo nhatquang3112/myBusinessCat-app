@@ -300,8 +300,43 @@
             <span style="color: white">Proposal History</span>
           </div>
           <div class="historyBoxHistory">
-            <span style="color: #808080">Empty History</span>
+            <span style="color: #808080" v-show="!this.isThereAnyHistory">Empty History</span>
+            <div
+              v-for="(propose, index) in proposeHistory"
+              :key="index"
+              v-if="showProposeHistory"
+              class="proposeHistoryItem"
+            >
+              <div class="totalShare">
+                <span style="color: #CCCCCC; font-size: 1vw; font-family: Impact, Charcoal, sans-serif">Total share</span>
+                <span style="color: #CCCCCC; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">18</span>
+              </div>
+
+              <div class="listOfEachShare">
+                <div class="eachShare"
+                  v-for="(target, index) in propose.history"
+                  :key="index"
+                >
+                  <img v-if="target.name === 'Red Cat'" src="../assets/catRed.png" alt="Avatar" width="50%" height="70%"/>
+                  <img v-if="target.name === 'Blue Cat'" src="../assets/catBlue.png" alt="Avatar" width="50%" height="70%"/>
+                  <img v-if="target.name === 'Yellow Cat'" src="../assets/catYellow.png" alt="Avatar" width="50%" height="70%"/>
+                  <img v-if="target.name === 'Brown Cat'" src="../assets/catBrown.png" alt="Avatar" width="50%" height="70%"/>
+                  <img v-if="target.name === 'Green Cat'" src="../assets/catGreen.png" alt="Avatar" width="50%" height="70%"/>
+                  <span style="color: #CCCCCC; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{ target.share }}</span>
+                  <span class="responseStatus" width="40%" height="70%">
+                    <i class="far fa-question-circle" v-show="target.response==='None'" color=black></i>
+                    <i class="far fa-check-circle" v-show="target.response==='Yes'" color=black></i>
+                    <i class="far fa-times-circle" v-show="target.response==='No'" color=black></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="selectionButton">
+                <span style="color: #CCCCCC;">{{ propose.result }}</span>
+              </div>
+            </div>
           </div>
+
           <div class="historyBoxPendingPropose">
             <span style="color: white" v-show="!showPendingPropose">There is no pending proposal. Let's do business!</span>
 
@@ -474,6 +509,9 @@ export default {
         }
       })
       return ans
+    },
+    isThereAnyHistory() {
+      return this.proposeHistory.length > 0
     },
 
   },
@@ -1055,14 +1093,27 @@ input {
 }
 
 .historyBoxHistory {
-  display: flex;
+  /* display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
   border-radius: 15px;
   background: #333333;
   width: 95%;
   height: 45%;
+  overflow-y: scroll
+}
+
+.proposeHistoryItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  background: #808080;
+  width: 99%;
+  height: 40%;
+  margin: 0.5%;
 }
 
 .historyBoxPendingPropose {
