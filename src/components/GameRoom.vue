@@ -304,11 +304,13 @@
           </div>
           <div class="historyBoxPendingPropose">
             <span style="color: white" v-show="!showPendingPropose">There is no pending proposal. Let's do business!</span>
+
             <div class="totalShare" v-show="showPendingPropose">
               <span style="color: white; font-size: 1.5vw; font-family: Impact, Charcoal, sans-serif">Total share</span>
-              <span style="color: green; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">18</span>
+              <span style="color: #CCCCCC; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">18</span>
             </div>
-            <div class="lishOfEachShare" v-show="showPendingPropose">
+
+            <div class="listOfEachShare" v-show="showPendingPropose">
               <div class="eachShare"
                 v-for="(pendingTarget, index) in pendingPropose"
                 :key="index"
@@ -318,13 +320,29 @@
                 <img v-if="pendingTarget.name === 'Yellow Cat'" src="../assets/catYellow.png" alt="Avatar" width="50%" height="70%"/>
                 <img v-if="pendingTarget.name === 'Brown Cat'" src="../assets/catBrown.png" alt="Avatar" width="50%" height="70%"/>
                 <img v-if="pendingTarget.name === 'Green Cat'" src="../assets/catGreen.png" alt="Avatar" width="50%" height="70%"/>
-                <span style="color: green; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">{{ pendingTarget.share }}</span>
+                <span style="color: #CCCCCC; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">{{ pendingTarget.share }}</span>
+                <span class="responseStatus" width="40%" height="70%">
+                  <i class="far fa-question-circle" v-show="pendingTarget.response==='None'" color=grey></i>
+                  <i class="far fa-check-circle" v-show="pendingTarget.response==='Yes'" color=green></i>
+                  <i class="far fa-times-circle" v-show="pendingTarget.response==='No'" color=red></i>
+                </span>
               </div>
             </div>
+
             <div class="selectionButton" v-show="showPendingPropose">
-              <span class="yesButton"></span>
-              <span class="noButton"></span>
+              <span v-show="canMakeDecision && !hasDecided" class="yesButton" @click="acceptPropose()"></span>
+              <span v-show="canMakeDecision && !hasDecided" class="noButton" @click="rejectPropose()"></span>
+              <span v-show="!canMakeDecision">You cannot make decision</span>
+              <span v-show="hasDecided">You have decided!</span>
             </div>
+          </div>
+          <div class="pendingProposeTimer" v-show="showPendingPropose">
+            <span class="clockIcon"><i class="far fa-clock"></i></span>
+            <span class="timer">
+              <span id="proposeProgress">
+                <span id="proposeBar"></span>
+              </span>
+            </span>
           </div>
         </div>
       </div>
@@ -637,7 +655,7 @@ export default {
       try {
         batch.commit()
         console.log('batch wrote successful')
-        this.setTimeToDeletePropose() //delete propose incase no response is received in 30 seconds
+        //this.setTimeToDeletePropose() //delete propose incase no response is received in 30 seconds
       } catch (err) {
         console.log('Error sending propose: ', err)
       }
@@ -1044,7 +1062,7 @@ input {
   border-radius: 15px;
   background: #333333;
   width: 95%;
-  height: 50%;
+  height: 45%;
 }
 
 .historyBoxPendingPropose {
@@ -1099,19 +1117,35 @@ input {
   background-image: url("../assets/yesButton.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  width: 50%;
-  height: 100%;
+  width: 40%;
+  height: 90%;
+  margin: 2%;
 }
 
 .noButton {
   background-image: url("../assets/noButton.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
-  width: 50%;
-  height: 100%;
+  width: 40%;
+  height: 90%;
+  margin: 2%;
 }
 
+.pendingProposeTimer {
+  width: 95%;
+  height: 5%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
 
+.timer {
+  width: 95%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
 /* end  new Ui */
 
 .waitingScreen {
@@ -1363,19 +1397,14 @@ input {
   align-items: center;
 }
 .clockIcon {
-  width: 10%;
+  width: 5%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #333333;
 }
-.timer {
-  width: 60%;
-  height: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
+
 #proposeProgress {
   width: 100%;
   height: 70%;
