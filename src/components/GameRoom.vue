@@ -366,7 +366,7 @@
 
             <div class="selectionButton" v-show="showPendingPropose">
               <span v-show="canMakeDecision && !hasDecided" class="yesButton" @click="acceptPropose()"></span>
-              <span v-show="canMakeDecision && !hasDecided" class="noButton" @click="rejectPropose()"></span>
+              <span v-show="canMakeDecision && !hasDecided" class="noButton" @click="rejectPropose(userName)"></span>
               <span v-show="!canMakeDecision">You cannot make decision</span>
               <span v-show="hasDecided">You have decided!</span>
             </div>
@@ -625,10 +625,17 @@ export default {
         console.log('Error write success propose: ', err)
       }
     },
-    async rejectPropose () {
+    async rejectPropose (nameOfRefuseOne) {
       try {
+        //update the response status locally
+        for (var i = 0; i < this.pendingPropose.length; i++) {
+          if (this.pendingPropose[i].name === nameOfRefuseOne) {
+            this.pendingPropose[i].response = 'No'
+          }
+        }
+
         var batch = database.batch()
-        //update the response status
+        //update the response status on firestore
         batch.update(database.collection('games').doc(this.gameid).collection('pendingPropose').doc(this.uid), {
           response: 'No'
         })
