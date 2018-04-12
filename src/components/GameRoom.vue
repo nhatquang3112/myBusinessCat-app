@@ -701,7 +701,7 @@ export default {
       try {
         batch.commit()
         console.log('batch wrote successful')
-        //this.setTimeToDeletePropose() //delete propose incase no response is received in 30 seconds
+        this.setTimeToDeletePropose() //delete propose incase no response is received in 30 seconds
       } catch (err) {
         console.log('Error sending propose: ', err)
       }
