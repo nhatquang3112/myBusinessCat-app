@@ -299,7 +299,7 @@
           <div class="historyBoxName">
             <span style="color: white">Proposal History</span>
           </div>
-          <div class="historyBoxHistory">
+          <div class="historyBoxHistory" v-chat-scroll>
             <span style="color: #808080" v-show="!this.isThereAnyHistory">Empty History</span>
             <div
               v-for="(propose, index) in proposeHistory"
@@ -388,13 +388,17 @@
 
 <script>
 //import
+import Vue from 'vue'
 import firebase from '@/config/firebase'
+import VueChatScroll from 'vue-chat-scroll'
 //Constants
 const database = firebase.firestore(); //store data in firestore
 //global variables
 var proposeTimer
 var gameBar //loading bar for game timer
 var proposeBar //loading bar propose timer
+
+Vue.use(VueChatScroll)
 
 export default {
   name: 'GameRoom',
@@ -905,6 +909,11 @@ button:focus {
 
 input {
   border: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
 }
 
 /* start new Ui */
