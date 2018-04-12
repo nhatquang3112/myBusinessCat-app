@@ -309,7 +309,7 @@
             >
               <div class="totalShare">
                 <span style="color: #CCCCCC; font-size: 1vw; font-family: Impact, Charcoal, sans-serif">Total share</span>
-                <span style="color: #CCCCCC; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">18</span>
+                <span style="color: #CCCCCC; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{propose.taskName}}</span>
               </div>
 
               <div class="listOfEachShare">
@@ -342,7 +342,7 @@
 
             <div class="totalShare" v-show="showPendingPropose">
               <span style="color: white; font-size: 1.5vw; font-family: Impact, Charcoal, sans-serif">Total share</span>
-              <span style="color: #CCCCCC; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">18</span>
+              <span style="color: #CCCCCC; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">{{ pendingTaskName }}</span>
             </div>
 
             <div class="listOfEachShare" v-show="showPendingPropose">
@@ -524,10 +524,12 @@ export default {
     checkPropose () {
       var value = 0
       var neededStamina = 0
+      var originalValue = 0
       this.profitList.forEach(profit => {
         if (profit.name === this.currentTaskName) {
           value = profit.value
           neededStamina = profit.stamina
+          originalValue = value
         }
       })
       this.proposeWindowList.forEach(element => {
@@ -544,7 +546,7 @@ export default {
         this.errorMessage = 'Inefficient stamina!'
       } else {
         this.errorMessage = ''
-        this.sendPropose()
+        this.sendPropose(originalValue)
       }
     },
     toggleHistoryVisibility () {
@@ -633,12 +635,7 @@ export default {
             this.pendingPropose[i].response = 'No'
           }
         }
-
         var batch = database.batch()
-        //update the response status on firestore
-        batch.update(database.collection('games').doc(this.gameid).collection('pendingPropose').doc(this.uid), {
-          response: 'No'
-        })
         //write to propose History
         var currentTime = '' + new Date().getTime()
         batch.set(database.collection('games').doc(this.gameid).collection('proposeHistory').doc(currentTime), {
@@ -672,7 +669,7 @@ export default {
       }
     },
     //send propose info to database to become pending propose
-    async sendPropose () {
+    async sendPropose (taskValue) {
       console.log(this.proposeWindowList)
       var pendingProposeRef = database.collection('games').doc(this.gameid).collection('pendingPropose')
       var batch = database.batch()
@@ -685,7 +682,7 @@ export default {
               name: proposeTarget.name,
               share: Number(proposeTarget.share),
               response: 'Yes',
-              taskName: this.currentTaskName,
+              taskName: taskValue + '',
               uid: proposeTarget.uid,
               timeCreated: timeCreated
             })
@@ -694,7 +691,7 @@ export default {
               name: proposeTarget.name,
               share: Number(proposeTarget.share),
               response: 'None',
-              taskName: this.currentTaskName,
+              taskName: taskValue + '',
               uid: proposeTarget.uid,
               timeCreated: timeCreated
             })
