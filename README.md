@@ -17,5 +17,8 @@ npm run build
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
+# run Server at localhost:8000
+python manage.py migrate
+python manage.py runserver
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).

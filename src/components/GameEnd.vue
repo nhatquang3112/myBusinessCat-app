@@ -1,21 +1,37 @@
 <template>
   <div class="gameend">
-  <h1>Game Over!</h1>
-  <img src="https://i.imgur.com/qUIxJ0n.png" alt = "Title">
-  <div>
-     <router-link to = "/">Restart</router-link>
-  </div>
+    <h1>Game Over!</h1>
+    <h2>Your score is {{ score }}!</h2>
+
+    <button @click="playAgain()">Play Again</button>
   </div>
 </template>
 
 <script>
+import GamesServices from '@/services/GamesServices'
+
 export default {
-  name: 'GameStart',
+  name: 'GameEnd',
+  props: ['score', 'uid'],
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App'
+      msg: 'Welcome to Your Vue.js App',
+      gameid: '',
+      weight: '',
     }
-  }
+  },
+
+  methods: {
+    toGameRoom () {
+      this.$router.push(`/gameRoom/${this.uid}/${this.gameid}/${this.weight}`)
+    },
+    async playAgain () {
+      const response = await GamesServices.fetchPosts(this.uid)
+      this.gameid = response.data.gameid
+      this.weight = response.data.weight
+      this.toGameRoom();
+    }
+  },
 }
 </script>
 

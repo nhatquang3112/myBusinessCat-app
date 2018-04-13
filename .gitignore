@@ -12,3 +12,7 @@ yarn-error.log*
 *.ntvs*
 *.njsproj
 *.sln
+/*/__pycache__
+/*/*/__pycache__
+app/task-based-app-firebase-adminsdk-xbkwi-45e8c764a2.json
+src/config/firebase.config.js
