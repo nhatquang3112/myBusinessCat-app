@@ -580,7 +580,7 @@ export default {
       }
     },
     startProposeBar () {
-      console.log('propose timer called')
+      console.log('propose timer bar called')
       var elem = document.getElementById("proposeBar");
       var currentTime = Number(new Date().getTime())
       var timeCreated = Number(this.pendingPropose[0].timeCreated);
@@ -591,6 +591,7 @@ export default {
       function frame() {
         if (width > 0) { //30 seconds
           width--;
+          // console.log(width)
           elem.style.width = ((width*10)/3) + '%';
           elem.innerHTML = width * 1;
         }
@@ -1499,7 +1500,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 #proposeBar {
-  width: 100%;
+  width: 50%;
   height: 100%;
   background-color: #4CAF50;
   text-align: center;
