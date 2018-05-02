@@ -295,6 +295,10 @@
         </div>
       </div>
       <div class="proposalHistoryBox">
+        <div class="currentProposalLabelBox">
+          <div class="currentProposalLabel">
+          </div>
+        </div>
         <div class="historyBox">
           <div class="historyBoxName">
             <span style="color: white">Proposal History</span>
@@ -1048,7 +1052,7 @@ body::-webkit-scrollbar-thumb {
 
 .clock {
   display: flex;
-  width: 30%;
+  width: 20%;
   height: 100%;
   flex-direction: row;
   justify-content: center;
@@ -1072,11 +1076,27 @@ body::-webkit-scrollbar-thumb {
   align-items: flex-start;
 }
 
+.currentProposalLabelBox {
+  width: 10%;
+  height: 65%;
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
+}
+
+.currentProposalLabel {
+  width: 100%;
+  height: 55%;
+  background-image: url("../assets/currentProposalLabel.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
 .proposalHistoryBox {
   display: flex;
-  width: 70%;
+  width: 90%;
   height: 100%;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: center;
   align-items: center;
 }
@@ -1086,7 +1106,7 @@ body::-webkit-scrollbar-thumb {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  width: 90%;
+  width: 85%;
   height: 90%;
   background-image: url("../assets/historyBox.png");
   background-repeat: no-repeat;
