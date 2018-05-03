@@ -287,7 +287,17 @@
     </div>
     <div class="clockAndProposalHistoryBox" v-show="!isWaitingForPLayer && isNewUi">
       <div class="clock">
-        <div class="watch"></div>
+        <!-- <div class="watch"></div> -->
+        <div class="ldBar label-center" data-type="fill" data-img="https://orig00.deviantart.net/1378/f/2012/281/5/5/8_bit_kirby_sprite_by_toshirofrog-d5h7rpp.png"></div>
+        <!-- <div
+          class="ldBar label-center"
+          style="width:50%;height:50%;margin:auto"
+          data-value="50"
+          data-preset="circle"
+          data-type="fill"
+          data-img="../assets/clock.png"
+          data-fill-dir="ttb"
+        ></div> -->
         <div class="watchInfo">
           <span style="color: black; font-size: 5vw; font-family: Impact, Charcoal, sans-serif">300</span>
           <span style="color: black; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">seconds</span>
