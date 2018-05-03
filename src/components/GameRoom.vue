@@ -140,7 +140,7 @@
               <span class="clockIcon"><i class="far fa-clock"></i></span>
               <span class="timer">
                 <span id="proposeProgress">
-                  <span id="proposeBar"></span>
+                  <!-- <span id="proposeBar"></span> -->
                 </span>
             </span>
             </div>
@@ -591,9 +591,8 @@ export default {
       function frame() {
         if (width > 0) { //30 seconds
           width--;
-          // console.log(width)
           elem.style.width = ((width*10)/3) + '%';
-          elem.innerHTML = width * 1;
+          // elem.innerHTML = width * 1;
         }
       }
     },
@@ -1500,7 +1499,7 @@ body::-webkit-scrollbar-thumb {
 }
 
 #proposeBar {
-  width: 50%;
+  width: 100%;
   height: 100%;
   background-color: #4CAF50;
   text-align: center;
