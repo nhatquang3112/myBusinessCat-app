@@ -287,8 +287,8 @@
     </div>
     <div class="clockAndProposalHistoryBox" v-show="!isWaitingForPLayer && isNewUi">
       <div class="clock">
-        <!-- <div class="watch"></div> -->
-        <div class="ldBar label-center" data-type="fill" data-img="https://orig00.deviantart.net/1378/f/2012/281/5/5/8_bit_kirby_sprite_by_toshirofrog-d5h7rpp.png"></div>
+        <div class="watch"></div>
+        <!-- <div class="ldBar label-center" data-type="fill" data-img="https://orig00.deviantart.net/1378/f/2012/281/5/5/8_bit_kirby_sprite_by_toshirofrog-d5h7rpp.png"></div> -->
         <!-- <div
           class="ldBar label-center"
           style="width:50%;height:50%;margin:auto"
