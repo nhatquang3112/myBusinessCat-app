@@ -816,6 +816,7 @@ export default {
         var thresholds = doc.data().thresholds
         var values = doc.data().values
         var weights = doc.data().weights
+
         this.totalNumPlayer = weights.length
         //get the actual profit list from database
         for (var i = 0; i < thresholds.length; i++) {
@@ -824,6 +825,12 @@ export default {
             stamina: thresholds[i],
             value: values[i],
           }
+        }
+        //decide the value rank of each profit
+        values.sort()
+
+        for (var i = 0; i < this.profitList.length; i++) {
+          this.profitList[i].rank = values.indexOf(this.profitList[i].value)
         }
 
         //indentify the rank of the current player
