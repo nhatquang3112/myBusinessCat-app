@@ -259,8 +259,9 @@
         <div class="fishSection"
           v-for="(profit, index) in profitList"
           :key="index">
-          <div class="fish" @click = "makePropose(profit.value, profit.stamina, profit.name)">
-            <span style="color: #6D4620; font-size: 3vw; font-family: Impact, Charcoal, sans-serif">{{ profit.value }}</span>
+          <div v-bind:class="{ 'fishSize0': profit.rank===0, 'fishSize1': profit.rank===1, 'fishSize2': profit.rank===2, 'fishSize3': profit.rank===3, 'fishSize4': profit.rank===4}"
+            @click = "makePropose(profit.value, profit.stamina, profit.name)">
+            <span style="color: #6D4620; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">{{ profit.value }}</span>
           </div>
           <span class="ladderFish" @click = "makePropose(profit.value, profit.stamina, profit.name)"></span>
           <span style="color: #6D4620; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{ profit.stamina }}</span>
@@ -1029,7 +1030,7 @@ body::-webkit-scrollbar-thumb {
 .fishSection {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   width: 15%;
   height: 100%;
@@ -1041,13 +1042,57 @@ body::-webkit-scrollbar-thumb {
   transform: scale(1.1);
 }
 
-.fish {
+.fishSize4 {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
+  height: 30%;
+  background-image: url("../assets/fishPlate.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.fishSize3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 85%;
+  height: 25%;
+  background-image: url("../assets/fishPlate.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.fishSize2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  height: 23%;
+  background-image: url("../assets/fishPlate.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.fishSize1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
   height: 20%;
+  background-image: url("../assets/fishPlate.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.fishSize0 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40%;
+  height: 13%;
   background-image: url("../assets/fishPlate.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
