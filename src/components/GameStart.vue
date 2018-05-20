@@ -258,7 +258,7 @@ input[type="password"] {
   width: 500px;
   height: 30px;
   font-size: 15px;
-  font-family: sans-serif;
+  font-family: "Comic Sans MS", cursive, sans-serif;
   font-weight: bold;
 }
 .userInput {
@@ -325,6 +325,6 @@ li {
   margin: 0 10px;
 }
 a {
-  color: #42b983;
+  color: #000000;
 }
 </style>

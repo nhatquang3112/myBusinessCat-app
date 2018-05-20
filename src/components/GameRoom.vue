@@ -1,14 +1,35 @@
 <template>
   <div class="container">
     <div class="waitingScreen" v-show="isWaitingForPLayer">
-      <h1>Waiting for other players...</h1>
+
+      <div class="loaderSection">
+        <span class="loader"></span>
+      </div>
+
+      <img src="../assets/LoadingCat.png"
+      width="250px"
+      alt="Avatar"/>
+
+      <div class="messageSection">
+        <span class="watingMessage">
+          Waiting for {{ numPlayerWaitingFor }} more to do business
+        </span>
+        <span class="watingMessage">
+          Please be patient, meow
+        </span>
+      </div>
+
+
     </div>
 
-    <div class="userInfo" v-show="!isWaitingForPLayer">
+    <div class="userInfo" v-show="!isWaitingForPLayer && !isNewUi">
       <div class="mainUserBox">
         <span class="avatar">
-          <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
-          alt="Avatar"/>
+          <img v-if="userName === 'Red Cat'" src="../assets/RedCat.png" alt="Avatar"/>
+          <img v-if="userName === 'Blue Cat'" src="../assets/BlueCat.png" alt="Avatar"/>
+          <img v-if="userName === 'Brown Cat'" src="../assets/BrownCat.png" alt="Avatar"/>
+          <img v-if="userName === 'Yellow Cat'" src="../assets/YellowCat.png" alt="Avatar"/>
+          <img v-if="userName === 'Green Cat'" src="../assets/GreenCat.png" alt="Avatar"/>
         </span>
 
         <div class = "userBio">
@@ -28,8 +49,7 @@
         </div>
       </div>
     </div>
-
-    <div class="gamePlay" v-show="!isWaitingForPLayer">
+    <div class="gamePlay" v-show="!isWaitingForPLayer && !isNewUi">
       <div class="userList">
         <div
           v-for="(user, index) in userList"
@@ -38,8 +58,11 @@
           class = "userBox"
         >
           <span class="avatar">
-            <img src="https://pbs.twimg.com/profile_images/706844157093027840/2Aan_aSU_400x400.jpg"
-            alt="Avatar"/>
+            <img v-if="user.name === 'Red Cat'" src="../assets/RedCat.png" alt="Avatar"/>
+            <img v-if="user.name === 'Blue Cat'" src="../assets/BlueCat.png" alt="Avatar"/>
+            <img v-if="user.name === 'Brown Cat'" src="../assets/BrownCat.png" alt="Avatar"/>
+            <img v-if="user.name === 'Yellow Cat'" src="../assets/YellowCat.png" alt="Avatar"/>
+            <img v-if="user.name === 'Green Cat'" src="../assets/GreenCat.png" alt="Avatar"/>
           </span>
 
           <div class = "userBio">
@@ -59,11 +82,10 @@
           >
             <div class="profitInfo" @click = "makePropose(profit.value, profit.stamina, profit.name)">
               <span>Value: {{ profit.value }}</span>
-              <span><img src="https://d30y9cdsu7xlg0.cloudfront.net/png/53189-200.png" alt="ProfitIMG"></span>
+              <span><img src="../assets/Fish.png" alt="ProfitIMG"></span>
               <span class="ladder" v-bind:style="{height: profit.stamina + '%'}">
                 <span>{{ profit.stamina }}</span>
               </span>
-              <span>{{ profit.name }}</span>
             </div>
 
 
@@ -118,7 +140,7 @@
               <span class="clockIcon"><i class="far fa-clock"></i></span>
               <span class="timer">
                 <span id="proposeProgress">
-                  <span id="proposeBar"></span>
+                  <!-- <span id="proposeBar"></span> -->
                 </span>
             </span>
             </div>
@@ -164,14 +186,14 @@
           </div>
 
           <span class="pendingProposePlaceHolder" v-show="!showPendingPropose">
-            There is currently no propose
+            There is currently no proposal
           </span>
         </div>
       </div>
 
       <div class="proposeHistory">
         <div class="proposeHistoryBar">
-          <span>Propose History</span>
+          <span>Proposal History</span>
           <span v-show="!isHistoryHidden" @click="toggleHistoryVisibility()"><i class="fas fa-chevron-up"></i></span>
           <span v-show="isHistoryHidden" @click="toggleHistoryVisibility()"><i class="fas fa-chevron-down"></i></span>
         </div>
@@ -197,18 +219,200 @@
 
     </div>
 
+    <div class="catListAndFishList" v-show="!isWaitingForPLayer && isNewUi">
+      <div class="catList">
+        <div class="catYou">
+          <img class="catIcon" v-if="userName === 'Red Cat'" src="../assets/catRed.png" alt="Avatar"/>
+          <img class="catIcon" v-if="userName === 'Blue Cat'" src="../assets/catBlue.png" alt="Avatar"/>
+          <img class="catIcon" v-if="userName === 'Brown Cat'" src="../assets/catBrown.png" alt="Avatar"/>
+          <img class="catIcon" v-if="userName === 'Yellow Cat'" src="../assets/catYellow.png" alt="Avatar"/>
+          <img class="catIcon" v-if="userName === 'Green Cat'" src="../assets/catGreen.png" alt="Avatar"/>
+          <div class="catInfo">
+            <div class="catName" style="color: white; font-size: 1vw">{{ userName }} (You)</div>
+            <div class="catClimbInfo">
+              <span style="color: black; font-size: 1vw">Can climb</span>
+              <span class="ladderIcon"></span>
+              <span style="color: white; font-size: 2vw">{{ userStamina }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="catOther"
+          v-for="(user, index) in userList"
+          :key="index"
+          v-if="user.name!==userName">
+          <img class="catIcon" v-if="user.name === 'Red Cat'" src="../assets/catRed.png" alt="Avatar"/>
+          <img class="catIcon" v-if="user.name === 'Blue Cat'" src="../assets/catBlue.png" alt="Avatar"/>
+          <img class="catIcon" v-if="user.name === 'Brown Cat'" src="../assets/catBrown.png" alt="Avatar"/>
+          <img class="catIcon" v-if="user.name === 'Yellow Cat'" src="../assets/catYellow.png" alt="Avatar"/>
+          <img class="catIcon" v-if="user.name === 'Green Cat'" src="../assets/catGreen.png" alt="Avatar"/>
+          <div class="catInfo">
+            <div class="catName" style="color: white; font-size: 1vw">{{ user.name }}</div>
+            <div class="catClimbInfo">
+              <span style="color: black; font-size: 1vw">Can climb</span>
+              <span class="ladderIcon"></span>
+              <span style="color: white; font-size: 1.5vw">{{ user.stamina }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fishList">
+        <div class="fishSection"
+          v-for="(profit, index) in profitList"
+          :key="index">
+          <div class="fish" @click = "makePropose(profit.value, profit.stamina, profit.name)">
+            <span style="color: #6D4620; font-size: 3vw; font-family: Impact, Charcoal, sans-serif">{{ profit.value }}</span>
+          </div>
+          <span class="ladderFish" @click = "makePropose(profit.value, profit.stamina, profit.name)"></span>
+          <span style="color: #6D4620; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{ profit.stamina }}</span>
+          <div class="proposeWindow" v-show="currentTaskName===profit.name">
+            <a
+              v-for="(proposeTarget, index) in proposeWindowList"
+              :key="index"
+            >
+            <div class="proposeWindowElement">
+              <span>{{ proposeTarget.name }}</span>
+              <div class="inputBox" v-show="proposeTarget.share!=='0'">
+                <span><input type="text" v-model="proposeTarget.share" placeholder="Share"></span>
+                <span class="closeButton" @click="proposeTarget.share='0'"><i class="fas fa-times-circle"></i></span>
+              </div>
+              <span v-show="proposeTarget.share==='0'" @click="proposeTarget.share=''"><i class="fas fa-plus-circle"></i></span>
+            </div>
+            </a>
+            <span><button class="button"v-if="!showPendingPropose" @click="checkPropose()">Submit</button></span>
+            <span>{{ errorMessage }}</span>
+            <span v-if="showPendingPropose">Cannot make propose now</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="clockAndProposalHistoryBox" v-show="!isWaitingForPLayer && isNewUi">
+      <div class="clock">
+        <div class="watch"></div>
+        <!-- <div class="ldBar label-center" data-type="fill" data-img="https://orig00.deviantart.net/1378/f/2012/281/5/5/8_bit_kirby_sprite_by_toshirofrog-d5h7rpp.png"></div> -->
+        <!-- <div
+          class="ldBar label-center"
+          style="width:50%;height:50%;margin:auto"
+          data-value="50"
+          data-preset="circle"
+          data-type="fill"
+          data-img="../assets/clock.png"
+          data-fill-dir="ttb"
+        ></div> -->
+        <div class="watchInfo">
+          <span style="color: black; font-size: 5vw; font-family: Impact, Charcoal, sans-serif">300</span>
+          <span style="color: black; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">seconds</span>
+          <span style="color: black; font-size: 1.5vw; font-family: Impact, Charcoal, sans-serif">left for business</span>
+        </div>
+      </div>
+      <div class="proposalHistoryBox">
+        <div class="currentProposalLabelBox">
+          <div class="currentProposalLabel">
+          </div>
+        </div>
+        <div class="historyBox">
+          <div class="historyBoxName">
+            <span style="color: white">Proposal History</span>
+          </div>
+          <div class="historyBoxHistory" v-chat-scroll>
+            <span style="color: #808080" v-show="!this.isThereAnyHistory">Empty History</span>
+            <div
+              v-for="(propose, index) in proposeHistory"
+              :key="index"
+              v-if="showProposeHistory"
+              class="proposeHistoryItem"
+            >
+              <div class="totalShare">
+                <span style="color: #CCCCCC; font-size: 1vw; font-family: Impact, Charcoal, sans-serif">Total share</span>
+                <span style="color: #CCCCCC; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{propose.taskName}}</span>
+              </div>
+
+              <div class="listOfEachShare">
+                <div class="eachShare"
+                  v-for="(target, index) in propose.history"
+                  :key="index"
+                >
+                  <img v-if="target.name === 'Red Cat'" src="../assets/catRed.png" alt="Avatar" width="50%" height="70%"/>
+                  <img v-if="target.name === 'Blue Cat'" src="../assets/catBlue.png" alt="Avatar" width="50%" height="70%"/>
+                  <img v-if="target.name === 'Yellow Cat'" src="../assets/catYellow.png" alt="Avatar" width="50%" height="70%"/>
+                  <img v-if="target.name === 'Brown Cat'" src="../assets/catBrown.png" alt="Avatar" width="50%" height="70%"/>
+                  <img v-if="target.name === 'Green Cat'" src="../assets/catGreen.png" alt="Avatar" width="50%" height="70%"/>
+                  <span style="color: #CCCCCC; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{ target.share }}</span>
+                  <span class="responseStatus" width="40%" height="70%">
+                    <i class="far fa-question-circle" v-show="target.response==='None'" color=black></i>
+                    <i class="far fa-check-circle" v-show="target.response==='Yes'" color=black></i>
+                    <i class="far fa-times-circle" v-show="target.response==='No'" color=black></i>
+                  </span>
+                </div>
+              </div>
+
+              <div class="selectionButton">
+                <span style="color: #CCCCCC;">{{ propose.result }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="historyBoxPendingPropose">
+            <span style="color: white" v-show="!showPendingPropose">There is no pending proposal. Let's do business!</span>
+
+            <div class="totalShare" v-show="showPendingPropose">
+              <span style="color: white; font-size: 1.5vw; font-family: Impact, Charcoal, sans-serif">Total share</span>
+              <span style="color: #CCCCCC; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">{{ pendingTaskName }}</span>
+            </div>
+
+            <div class="listOfEachShare" v-show="showPendingPropose">
+              <div class="eachShare"
+                v-for="(pendingTarget, index) in pendingPropose"
+                :key="index"
+              >
+                <img v-if="pendingTarget.name === 'Red Cat'" src="../assets/catRed.png" alt="Avatar" width="50%" height="70%"/>
+                <img v-if="pendingTarget.name === 'Blue Cat'" src="../assets/catBlue.png" alt="Avatar" width="50%" height="70%"/>
+                <img v-if="pendingTarget.name === 'Yellow Cat'" src="../assets/catYellow.png" alt="Avatar" width="50%" height="70%"/>
+                <img v-if="pendingTarget.name === 'Brown Cat'" src="../assets/catBrown.png" alt="Avatar" width="50%" height="70%"/>
+                <img v-if="pendingTarget.name === 'Green Cat'" src="../assets/catGreen.png" alt="Avatar" width="50%" height="70%"/>
+                <span style="color: #CCCCCC; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">{{ pendingTarget.share }}</span>
+                <span class="responseStatus" width="40%" height="70%">
+                  <i class="far fa-question-circle" v-show="pendingTarget.response==='None'" color=grey></i>
+                  <i class="far fa-check-circle" v-show="pendingTarget.response==='Yes'" color=green></i>
+                  <i class="far fa-times-circle" v-show="pendingTarget.response==='No'" color=red></i>
+                </span>
+              </div>
+            </div>
+
+            <div class="selectionButton" v-show="showPendingPropose">
+              <span v-show="canMakeDecision && !hasDecided" class="yesButton" @click="acceptPropose()"></span>
+              <span v-show="canMakeDecision && !hasDecided" class="noButton" @click="rejectPropose(userName)"></span>
+              <span v-show="!canMakeDecision">You cannot make decision</span>
+              <span v-show="hasDecided">You have decided!</span>
+            </div>
+          </div>
+          <div class="pendingProposeTimer" v-show="showPendingPropose">
+            <span class="clockIcon"><i class="far fa-clock"></i></span>
+            <span class="timer">
+              <span id="proposeProgress">
+                <span id="proposeBar"></span>
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script>
 //import
+import Vue from 'vue'
 import firebase from '@/config/firebase'
+import VueChatScroll from 'vue-chat-scroll'
 //Constants
 const database = firebase.firestore(); //store data in firestore
 //global variables
 var proposeTimer
 var gameBar //loading bar for game timer
 var proposeBar //loading bar propose timer
+
+Vue.use(VueChatScroll)
 
 export default {
   name: 'GameRoom',
@@ -234,6 +438,8 @@ export default {
       isWaitingForPLayer: true,
       gameStartTime: '',
       rank: '',
+      totalNumPlayer: 0,
+      isNewUi: true,
     }
   },
 
@@ -295,6 +501,9 @@ export default {
   },
 
   computed: {
+    numPlayerWaitingFor () {
+      return this.totalNumPlayer - this.userList.length
+    },
     showPendingPropose () {
       return this.pendingPropose.length > 0
     },
@@ -319,6 +528,9 @@ export default {
       })
       return ans
     },
+    isThereAnyHistory() {
+      return this.proposeHistory.length > 0
+    },
 
   },
 
@@ -326,10 +538,12 @@ export default {
     checkPropose () {
       var value = 0
       var neededStamina = 0
+      var originalValue = 0
       this.profitList.forEach(profit => {
         if (profit.name === this.currentTaskName) {
           value = profit.value
           neededStamina = profit.stamina
+          originalValue = value
         }
       })
       this.proposeWindowList.forEach(element => {
@@ -346,7 +560,7 @@ export default {
         this.errorMessage = 'Inefficient stamina!'
       } else {
         this.errorMessage = ''
-        this.sendPropose()
+        this.sendPropose(originalValue)
       }
     },
     toggleHistoryVisibility () {
@@ -376,7 +590,7 @@ export default {
       }
     },
     startProposeBar () {
-      console.log('propose timer called')
+      console.log('propose timer bar called')
       var elem = document.getElementById("proposeBar");
       var currentTime = Number(new Date().getTime())
       var timeCreated = Number(this.pendingPropose[0].timeCreated);
@@ -388,7 +602,7 @@ export default {
         if (width > 0) { //30 seconds
           width--;
           elem.style.width = ((width*10)/3) + '%';
-          elem.innerHTML = width * 1;
+          // elem.innerHTML = width * 1;
         }
       }
     },
@@ -427,13 +641,15 @@ export default {
         console.log('Error write success propose: ', err)
       }
     },
-    async rejectPropose () {
+    async rejectPropose (nameOfRefuseOne) {
       try {
+        //update the response status locally
+        for (var i = 0; i < this.pendingPropose.length; i++) {
+          if (this.pendingPropose[i].name === nameOfRefuseOne) {
+            this.pendingPropose[i].response = 'No'
+          }
+        }
         var batch = database.batch()
-        //update the response status
-        batch.update(database.collection('games').doc(this.gameid).collection('pendingPropose').doc(this.uid), {
-          response: 'No'
-        })
         //write to propose History
         var currentTime = '' + new Date().getTime()
         batch.set(database.collection('games').doc(this.gameid).collection('proposeHistory').doc(currentTime), {
@@ -467,7 +683,7 @@ export default {
       }
     },
     //send propose info to database to become pending propose
-    async sendPropose () {
+    async sendPropose (taskValue) {
       console.log(this.proposeWindowList)
       var pendingProposeRef = database.collection('games').doc(this.gameid).collection('pendingPropose')
       var batch = database.batch()
@@ -480,7 +696,7 @@ export default {
               name: proposeTarget.name,
               share: Number(proposeTarget.share),
               response: 'Yes',
-              taskName: this.currentTaskName,
+              taskName: taskValue + '',
               uid: proposeTarget.uid,
               timeCreated: timeCreated
             })
@@ -489,7 +705,7 @@ export default {
               name: proposeTarget.name,
               share: Number(proposeTarget.share),
               response: 'None',
-              taskName: this.currentTaskName,
+              taskName: taskValue + '',
               uid: proposeTarget.uid,
               timeCreated: timeCreated
             })
@@ -571,28 +787,6 @@ export default {
       console.log('error gettting game info: ', err)
     }
 
-    //get list of users from database, also data observer
-    var usersRef = database.collection('games').doc(this.gameid).collection('users')
-    usersRef.onSnapshot((querySnapshot) => {
-      var users = querySnapshot.docs.map(doc => ({
-        //name: doc.data().name.substring(0, doc.data().name.lastIndexOf("@"),
-        name: doc.data().nickname,
-        uid: doc.data().uid,
-        stamina: doc.data().stamina,
-        score: doc.data().score,
-        status: doc.data().status,
-        share: '',
-      }))
-      this.userList = users
-      this.proposeWindowList = users
-      //update minStamina
-      this.profitList.forEach(profit => {
-        if (this.minStamina > profit.stamina) {
-          this.minStamina = profit.stamina
-        }
-      })
-    })
-
     //get current pending propose
     var pendingProposeRef = database.collection('games').doc(this.gameid).collection('pendingPropose')
     pendingProposeRef.onSnapshot((querySnapshot) => {
@@ -622,6 +816,7 @@ export default {
         var thresholds = doc.data().thresholds
         var values = doc.data().values
         var weights = doc.data().weights
+        this.totalNumPlayer = weights.length
         //get the actual profit list from database
         for (var i = 0; i < thresholds.length; i++) {
           this.profitList[i] = {
@@ -648,6 +843,28 @@ export default {
     } catch (err) {
       console.log('error gettting game info: ', err)
     }
+
+    //get list of users from database, also data observer
+    var usersRef = database.collection('games').doc(this.gameid).collection('users')
+    usersRef.onSnapshot((querySnapshot) => {
+      var users = querySnapshot.docs.map(doc => ({
+        //name: doc.data().name.substring(0, doc.data().name.lastIndexOf("@"),
+        name: doc.data().nickname,
+        uid: doc.data().uid,
+        stamina: doc.data().stamina,
+        score: doc.data().score,
+        status: doc.data().status,
+        share: '',
+      }))
+      this.userList = users
+      this.proposeWindowList = users
+      //update minStamina
+      this.profitList.forEach(profit => {
+        if (this.minStamina > profit.stamina) {
+          this.minStamina = profit.stamina
+        }
+      })
+    })
 
     //get current propose History
     var proposeHistoryRef = database.collection('games').doc(this.gameid).collection('proposeHistory')
@@ -700,6 +917,379 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+/* Disable blue border focus in all basic form elements */
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none;
+}
+
+input {
+  border: transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: darkgrey;
+  outline: 1px solid slategrey;
+}
+
+/* start new Ui */
+.catListAndFishList {
+  display: flex;
+  width: 100%;
+  height: 65%;
+  flex-direction: row;
+}
+
+.catList {
+  display: flex;
+  width: 25%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.catYou {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 75%;
+  height: 20%;
+  background-image: url("../assets/catBox.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin: 2px;
+}
+
+.catIcon {
+  width: 28%;
+  height: 66%;
+}
+
+.catInfo {
+  width: 55%;
+  height: 66%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  margin-left: 5%;
+}
+
+.catName {
+  color: white;
+}
+
+.catClimbInfo {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 75%;
+}
+
+.ladderIcon {
+  width: 20%;
+  background-image: url("../assets/ladderIcon.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.catOther {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 55%;
+  height: 14.6%;
+  background-image: url("../assets/catBox.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin: 2px;
+}
+
+.fishList {
+  display: flex;
+  width: 75%;
+  height: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.fishSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 15%;
+  height: 100%;
+  margin: 7px;
+  transition: all .2s ease-in-out;
+}
+
+.fishSection:hover {
+  transform: scale(1.1);
+}
+
+.fish {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 20%;
+  background-image: url("../assets/fishPlate.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.ladderFish {
+  width: 50%;
+  height: 40%;
+  background-image: url("../assets/ladder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.clockAndProposalHistoryBox {
+  display: flex;
+  width: 100%;
+  height: 35%;
+  flex-direction: row;
+}
+
+.clock {
+  display: flex;
+  width: 20%;
+  height: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.watch {
+  width: 50%;
+  height: 90%;
+  background-image: url("../assets/clock.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.watchInfo {
+  width: 50%;
+  height: 90%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.currentProposalLabelBox {
+  width: 10%;
+  height: 65%;
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
+}
+
+.currentProposalLabel {
+  width: 100%;
+  height: 55%;
+  background-image: url("../assets/currentProposalLabel.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.proposalHistoryBox {
+  display: flex;
+  width: 90%;
+  height: 100%;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.historyBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 85%;
+  height: 90%;
+  background-image: url("../assets/historyBox.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.historyBoxName {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 25px;
+  background: #333333;
+  width: 95%;
+  height: 10%;
+  margin: 1%;
+}
+
+.historyBoxHistory {
+  /* display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center; */
+  border-radius: 15px;
+  background: #333333;
+  width: 95%;
+  height: 45%;
+  overflow-y: scroll
+}
+
+.proposeHistoryItem {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  background: #808080;
+  width: 99%;
+  height: 40%;
+  margin: 0.5%;
+}
+
+.historyBoxPendingPropose {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+  background: #333333;
+  width: 95%;
+  height: 20%;
+  margin: 0.5%;
+}
+
+.totalShare {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 15%;
+  height: 100%;
+}
+
+.listOfEachShare {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  height: 100%;
+}
+
+.eachShare {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 15%;
+  height: 100%;
+}
+
+.selectionButton {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 15%;
+  height: 100%;
+}
+
+.yesButton {
+  background-image: url("../assets/yesButton.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 40%;
+  height: 90%;
+  margin: 2%;
+}
+
+.noButton {
+  background-image: url("../assets/noButton.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  width: 40%;
+  height: 90%;
+  margin: 2%;
+}
+
+.pendingProposeTimer {
+  width: 95%;
+  height: 5%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.timer {
+  width: 95%;
+  height: 100%;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+/* end  new Ui */
+
+.waitingScreen {
+  display: flex;
+  weight: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.loaderSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width:500px;
+  height:100px;
+}
+
+.messageSection {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width:500px;
+  height:100px;
+}
+
+.watingMessage {
+  font-size: 19px;
+  color: #22b573;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+}
+
+.loader {
+    border: 4px solid #f3f3f3; /* Light grey */
+    border-top: 4px solid #22b573; /* Purple */
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 #gameProgress {
   width: 90%;
   height: 90%;
@@ -775,7 +1365,6 @@ export default {
 .avatar img {
   width: 60px;
   height: 60px;
-  border-radius: 50%;
 }
 .userBio {
   display: flex;
@@ -831,8 +1420,7 @@ export default {
   transform: scale(1.1);
 }
 .profit img {
-  width: 100px;
-  height: 100px;
+  width: 150px;
 }
 .ladder {
   background-color: #ffa621;
@@ -861,10 +1449,11 @@ export default {
   margin: 0.3rem;
 }
 .button {
-  background-color: #36e27e;
+  background-color: #22b573;
   border: none;
   border-radius: .2em;
-  border: solid 1px #1cbc5f ;
+  border: solid 1px #1609;
+  color: #ffffff;
 }
 .inputBox {
   display: flex;
@@ -902,19 +1491,14 @@ export default {
   align-items: center;
 }
 .clockIcon {
-  width: 10%;
+  width: 5%;
   height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  color: #333333;
 }
-.timer {
-  width: 60%;
-  height: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
+
 #proposeProgress {
   width: 100%;
   height: 70%;
@@ -1044,11 +1628,12 @@ export default {
   box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
   border: solid 1px #e0e0e0;
   border-radius: .3em;
-  background-color: #cdcecc;
+  background-color: #ffffff;
   overflow-y: scroll;
   align-items: flex-start;
   margin: 1px;
   padding: 3px;
+  color: #ffffff;
 }
 
 ::-webkit-scrollbar-thumb
@@ -1118,6 +1703,6 @@ li {
   margin: 0 10px;
 }
 span {
-  color: #42b983;
+  color: #22b573;
 }
 </style>
