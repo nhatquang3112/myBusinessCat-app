@@ -266,7 +266,8 @@
           <span v-bind:class="{ 'ladderSize0': profit.rank===0, 'ladderSize1': profit.rank===1, 'ladderSize2': profit.rank===2, 'ladderSize3': profit.rank===3, 'ladderSize4': profit.rank===4}"
             @click = "makePropose(profit.value, profit.stamina, profit.name)"></span>
           <span style="color: #6D4620; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{ profit.stamina }}</span>
-          <div class="proposeWindow" v-show="currentTaskName===profit.name">
+
+          <!-- <div class="proposeWindow" v-show="currentTaskName===profit.name">
             <a
               v-for="(proposeTarget, index) in proposeWindowList"
               :key="index"
@@ -283,7 +284,33 @@
             <span><button class="button"v-if="!showPendingPropose" @click="checkPropose()">Submit</button></span>
             <span>{{ errorMessage }}</span>
             <span v-if="showPendingPropose">Cannot make propose now</span>
+          </div> -->
+
+          <div class="proposeBox" v-show="currentTaskName===profit.name">
+            <a
+              v-for="(proposeTarget, index) in proposeWindowList"
+              :key="index"
+            >
+            <div class="proposeBoxElement">
+              <span class="proposeBoxRedCat" v-if="proposeTarget.name==='Red Cat'"></span>
+              <span class="proposeBoxBlueCat" v-if="proposeTarget.name==='Blue Cat'"></span>
+              <span class="proposeBoxGreenCat" v-if="proposeTarget.name==='Green Cat'"></span>
+              <span class="proposeBoxYellowCat" v-if="proposeTarget.name==='Yellow Cat'"></span>
+              <span class="proposeBoxBrownCat" v-if="proposeTarget.name==='Brown Cat'"></span>
+              <range-slider
+                class="slider"
+                min="10"
+                max="1000"
+                step="10"
+                v-model="sliderValue">
+              </range-slider>
+
+
+            </div>
+            </a>
           </div>
+
+
         </div>
       </div>
     </div>
@@ -407,6 +434,8 @@
 import Vue from 'vue'
 import firebase from '@/config/firebase'
 import VueChatScroll from 'vue-chat-scroll'
+import RangeSlider from 'vue-range-slider'
+import 'vue-range-slider/dist/vue-range-slider.css'
 //Constants
 const database = firebase.firestore(); //store data in firestore
 //global variables
@@ -442,7 +471,12 @@ export default {
       rank: '',
       totalNumPlayer: 0,
       isNewUi: true,
+      sliderValue: 0,
     }
+  },
+
+  components: {
+    RangeSlider
   },
 
   watch: {
