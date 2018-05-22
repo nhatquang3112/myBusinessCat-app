@@ -263,7 +263,8 @@
             @click = "makePropose(profit.value, profit.stamina, profit.name)">
             <span style="color: #6D4620; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">{{ profit.value }}</span>
           </div>
-          <span class="ladderFish" @click = "makePropose(profit.value, profit.stamina, profit.name)"></span>
+          <span v-bind:class="{ 'ladderSize0': profit.rank===0, 'ladderSize1': profit.rank===1, 'ladderSize2': profit.rank===2, 'ladderSize3': profit.rank===3, 'ladderSize4': profit.rank===4}"
+            @click = "makePropose(profit.value, profit.stamina, profit.name)"></span>
           <span style="color: #6D4620; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{ profit.stamina }}</span>
           <div class="proposeWindow" v-show="currentTaskName===profit.name">
             <a
@@ -830,6 +831,7 @@ export default {
         //decide the value rank of each profit
         values.sort()
 
+
         for (var i = 0; i < this.profitList.length; i++) {
           this.profitList[i].rank = values.indexOf(this.profitList[i].value)
         }
@@ -1097,13 +1099,42 @@ body::-webkit-scrollbar-thumb {
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
-.ladderFish {
+.ladderSize4 {
+  width: 50%;
+  height: 45%;
+  background-image: url("../assets/ladder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.ladderSize3 {
   width: 50%;
   height: 40%;
   background-image: url("../assets/ladder.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
+.ladderSize2 {
+  width: 50%;
+  height: 35%;
+  background-image: url("../assets/ladder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.ladderSize1 {
+  width: 50%;
+  height: 30%;
+  background-image: url("../assets/ladder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.ladderSize0 {
+  width: 50%;
+  height: 25%;
+  background-image: url("../assets/ladder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
 
 .clockAndProposalHistoryBox {
   display: flex;
