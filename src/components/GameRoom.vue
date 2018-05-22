@@ -287,6 +287,7 @@
           </div> -->
 
           <div class="proposeBox" v-show="currentTaskName===profit.name">
+            <span>Divide the fish!</span>
             <a
               v-for="(proposeTarget, index) in proposeWindowList"
               :key="index"
@@ -300,7 +301,7 @@
                 <range-slider
                   class="slider"
                   min="0"
-                  max="100"
+                  :max= "profit.value"
                   step="1"
                   v-model="proposeTarget.share">
                 </range-slider>
@@ -796,6 +797,10 @@ export default {
       } else {
         this.currentTaskName = taskName
       }
+
+      this.proposeWindowList.forEach(proposeElement => {
+        proposeElement.share = 0
+      })
     },
 
   },
@@ -1074,6 +1079,7 @@ body::-webkit-scrollbar-thumb {
   width: 15%;
   height: 100%;
   margin: 7px;
+  margin-bottom: 25px;
   transition: all .2s ease-in-out;
 }
 
@@ -1175,15 +1181,25 @@ body::-webkit-scrollbar-thumb {
 .proposeBox {
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 20%;
+  width: 200px;
+  height: 200px;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: .3em;
+  padding: 0.5rem;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
 }
 
 .proposeBoxElement {
   display: flex;
   flex-direction: row;
-  width: 200px;
+  width: 100%;
   height: 15%;
+  justify-content: center;
+  align-items: center;
+
 
 }
 
