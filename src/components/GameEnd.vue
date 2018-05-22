@@ -1,9 +1,11 @@
 <template>
-  <div class="gameend">
-    <h1>Game Over!</h1>
-    <h2>Your score is {{ score }}!</h2>
-
-    <button @click="playAgain()">Play Again</button>
+  <div class="gameEnd">
+    <span style="color: #000000; font-size: 3.5vw; font-family: Impact, Charcoal, sans-serif">Game Over!</span>
+    <div class="catIcon">
+      <span style="color: #6D4620; font-size: 3.5vw; font-family: Impact, Charcoal, sans-serif; margin-bottom: 10px">{{ score }}</span>
+    </div>
+    <span style="color: #000000; font-size: 1.5vw; font-family: Impact, Charcoal, sans-serif">Your fish score is {{ score }}</span>
+    <span class="playAgainButton" @click="playAgain()"></span>
   </div>
 </template>
 
@@ -37,6 +39,42 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+
+.gameEnd {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.playAgainButton {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 60px;
+  background-image: url("../assets/playAgainButton.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin-top: 50px;
+}
+
+.catIcon {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  width: 220px;
+  height: 300px;
+  background-image: url("../assets/gameOverCatIcon.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  margin-top: 50px;
+}
+
 h1, h2 {
   font-weight: normal;
 }
