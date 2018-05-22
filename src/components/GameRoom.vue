@@ -291,23 +291,27 @@
               v-for="(proposeTarget, index) in proposeWindowList"
               :key="index"
             >
-            <div class="proposeBoxElement">
-              <span class="proposeBoxRedCat" v-if="proposeTarget.name==='Red Cat'"></span>
-              <span class="proposeBoxBlueCat" v-if="proposeTarget.name==='Blue Cat'"></span>
-              <span class="proposeBoxGreenCat" v-if="proposeTarget.name==='Green Cat'"></span>
-              <span class="proposeBoxYellowCat" v-if="proposeTarget.name==='Yellow Cat'"></span>
-              <span class="proposeBoxBrownCat" v-if="proposeTarget.name==='Brown Cat'"></span>
-              <range-slider
-                class="slider"
-                min="10"
-                max="1000"
-                step="10"
-                v-model="sliderValue">
-              </range-slider>
+              <div class="proposeBoxElement">
+                <span class="proposeBoxRedCat" v-if="proposeTarget.name==='Red Cat'"></span>
+                <span class="proposeBoxBlueCat" v-if="proposeTarget.name==='Blue Cat'"></span>
+                <span class="proposeBoxGreenCat" v-if="proposeTarget.name==='Green Cat'"></span>
+                <span class="proposeBoxYellowCat" v-if="proposeTarget.name==='Yellow Cat'"></span>
+                <span class="proposeBoxBrownCat" v-if="proposeTarget.name==='Brown Cat'"></span>
+                <range-slider
+                  class="slider"
+                  min="0"
+                  max="100"
+                  step="1"
+                  v-model="proposeTarget.share">
+                </range-slider>
+                <span>{{ proposeTarget.share }}</span>
 
 
-            </div>
+              </div>
             </a>
+            <span><button class="button"v-if="!showPendingPropose" @click="checkPropose()">Submit</button></span>
+            <span>{{ errorMessage }}</span>
+            <span v-if="showPendingPropose">Cannot make propose now</span>
           </div>
 
 
@@ -471,7 +475,6 @@ export default {
       rank: '',
       totalNumPlayer: 0,
       isNewUi: true,
-      sliderValue: 0,
     }
   },
 
@@ -898,7 +901,7 @@ export default {
         stamina: doc.data().stamina,
         score: doc.data().score,
         status: doc.data().status,
-        share: '',
+        share: 0,
       }))
       this.userList = users
       this.proposeWindowList = users
@@ -1169,7 +1172,60 @@ body::-webkit-scrollbar-thumb {
   background-size: 100% 100%;
 }
 
+.proposeBox {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 20%;
+}
 
+.proposeBoxElement {
+  display: flex;
+  flex-direction: row;
+  width: 200px;
+  height: 15%;
+
+}
+
+.proposeBoxRedCat {
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/RedCat.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.proposeBoxBlueCat {
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/BlueCat.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.proposeBoxGreenCat {
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/GreenCat.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.proposeBoxYellowCat {
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/YellowCat.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.proposeBoxBrownCat {
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/BrownCat.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
 .clockAndProposalHistoryBox {
   display: flex;
   width: 100%;
