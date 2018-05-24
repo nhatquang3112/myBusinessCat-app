@@ -259,12 +259,15 @@
         <div class="fishSection"
           v-for="(profit, index) in profitList"
           :key="index">
-          <div class="fish" @click = "makePropose(profit.value, profit.stamina, profit.name)">
-            <span style="color: #6D4620; font-size: 3vw; font-family: Impact, Charcoal, sans-serif">{{ profit.value }}</span>
+          <div v-bind:class="{ 'fishSize0': profit.rank===0, 'fishSize1': profit.rank===1, 'fishSize2': profit.rank===2, 'fishSize3': profit.rank===3, 'fishSize4': profit.rank===4}"
+            @click = "makePropose(profit.value, profit.stamina, profit.name)">
+            <span style="color: #6D4620; font-size: 2.5vw; font-family: Impact, Charcoal, sans-serif">{{ profit.value }}</span>
           </div>
-          <span class="ladderFish" @click = "makePropose(profit.value, profit.stamina, profit.name)"></span>
+          <span v-bind:class="{ 'ladderSize0': profit.rank===0, 'ladderSize1': profit.rank===1, 'ladderSize2': profit.rank===2, 'ladderSize3': profit.rank===3, 'ladderSize4': profit.rank===4}"
+            @click = "makePropose(profit.value, profit.stamina, profit.name)"></span>
           <span style="color: #6D4620; font-size: 2vw; font-family: Impact, Charcoal, sans-serif">{{ profit.stamina }}</span>
-          <div class="proposeWindow" v-show="currentTaskName===profit.name">
+
+          <!-- <div class="proposeWindow" v-show="currentTaskName===profit.name">
             <a
               v-for="(proposeTarget, index) in proposeWindowList"
               :key="index"
@@ -281,7 +284,38 @@
             <span><button class="button"v-if="!showPendingPropose" @click="checkPropose()">Submit</button></span>
             <span>{{ errorMessage }}</span>
             <span v-if="showPendingPropose">Cannot make propose now</span>
+          </div> -->
+
+          <div class="proposeBox" v-show="currentTaskName===profit.name">
+            <span>Divide the fish!</span>
+            <a
+              v-for="(proposeTarget, index) in proposeWindowList"
+              :key="index"
+            >
+              <div class="proposeBoxElement">
+                <span class="proposeBoxRedCat" v-if="proposeTarget.name==='Red Cat'"></span>
+                <span class="proposeBoxBlueCat" v-if="proposeTarget.name==='Blue Cat'"></span>
+                <span class="proposeBoxGreenCat" v-if="proposeTarget.name==='Green Cat'"></span>
+                <span class="proposeBoxYellowCat" v-if="proposeTarget.name==='Yellow Cat'"></span>
+                <span class="proposeBoxBrownCat" v-if="proposeTarget.name==='Brown Cat'"></span>
+                <range-slider
+                  class="slider"
+                  min="0"
+                  :max= "profit.value"
+                  step="1"
+                  v-model="proposeTarget.share">
+                </range-slider>
+                <span>{{ proposeTarget.share }}</span>
+
+
+              </div>
+            </a>
+            <span><button class="button"v-if="!showPendingPropose" @click="checkPropose()">Submit</button></span>
+            <span>{{ errorMessage }}</span>
+            <span v-if="showPendingPropose">Cannot make propose now</span>
           </div>
+
+
         </div>
       </div>
     </div>
@@ -405,6 +439,8 @@
 import Vue from 'vue'
 import firebase from '@/config/firebase'
 import VueChatScroll from 'vue-chat-scroll'
+import RangeSlider from 'vue-range-slider'
+import 'vue-range-slider/dist/vue-range-slider.css'
 //Constants
 const database = firebase.firestore(); //store data in firestore
 //global variables
@@ -441,6 +477,10 @@ export default {
       totalNumPlayer: 0,
       isNewUi: true,
     }
+  },
+
+  components: {
+    RangeSlider
   },
 
   watch: {
@@ -757,6 +797,10 @@ export default {
       } else {
         this.currentTaskName = taskName
       }
+
+      this.proposeWindowList.forEach(proposeElement => {
+        proposeElement.share = 0
+      })
     },
 
   },
@@ -816,6 +860,7 @@ export default {
         var thresholds = doc.data().thresholds
         var values = doc.data().values
         var weights = doc.data().weights
+
         this.totalNumPlayer = weights.length
         //get the actual profit list from database
         for (var i = 0; i < thresholds.length; i++) {
@@ -824,6 +869,13 @@ export default {
             stamina: thresholds[i],
             value: values[i],
           }
+        }
+        //decide the value rank of each profit
+        values.sort()
+
+
+        for (var i = 0; i < this.profitList.length; i++) {
+          this.profitList[i].rank = values.indexOf(this.profitList[i].value)
         }
 
         //indentify the rank of the current player
@@ -854,7 +906,7 @@ export default {
         stamina: doc.data().stamina,
         score: doc.data().score,
         status: doc.data().status,
-        share: '',
+        share: 0,
       }))
       this.userList = users
       this.proposeWindowList = users
@@ -1022,11 +1074,12 @@ body::-webkit-scrollbar-thumb {
 .fishSection {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   width: 15%;
   height: 100%;
   margin: 7px;
+  margin-bottom: 25px;
   transition: all .2s ease-in-out;
 }
 
@@ -1034,25 +1087,161 @@ body::-webkit-scrollbar-thumb {
   transform: scale(1.1);
 }
 
-.fish {
+.fishSize4 {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
+  height: 30%;
+  background-image: url("../assets/fishPlate.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.fishSize3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 85%;
+  height: 25%;
+  background-image: url("../assets/fishPlate.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.fishSize2 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  height: 23%;
+  background-image: url("../assets/fishPlate.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.fishSize1 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 60%;
   height: 20%;
   background-image: url("../assets/fishPlate.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
-.ladderFish {
+.fishSize0 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 40%;
+  height: 13%;
+  background-image: url("../assets/fishPlate.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.ladderSize4 {
+  width: 50%;
+  height: 45%;
+  background-image: url("../assets/ladder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.ladderSize3 {
   width: 50%;
   height: 40%;
   background-image: url("../assets/ladder.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
 }
+.ladderSize2 {
+  width: 50%;
+  height: 35%;
+  background-image: url("../assets/ladder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.ladderSize1 {
+  width: 50%;
+  height: 30%;
+  background-image: url("../assets/ladder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+.ladderSize0 {
+  width: 50%;
+  height: 25%;
+  background-image: url("../assets/ladder.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
 
+.proposeBox {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  height: 200px;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: .3em;
+  padding: 0.5rem;
+  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.06);
+  border: solid 1px #e0e0e0;
+}
+
+.proposeBoxElement {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 15%;
+  justify-content: center;
+  align-items: center;
+
+
+}
+
+.proposeBoxRedCat {
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/RedCat.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.proposeBoxBlueCat {
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/BlueCat.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.proposeBoxGreenCat {
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/GreenCat.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.proposeBoxYellowCat {
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/YellowCat.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.proposeBoxBrownCat {
+  width: 25px;
+  height: 25px;
+  background-image: url("../assets/BrownCat.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
 .clockAndProposalHistoryBox {
   display: flex;
   width: 100%;
