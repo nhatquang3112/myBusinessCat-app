@@ -5,6 +5,7 @@ import GameStart from '@/components/GameStart'
 import GameRoom from '@/components/GameRoom'
 import GameEnd from '@/components/GameEnd'
 import HelloWorld from '@/components/HelloWorld'
+import waitingScreen from '@/components/WaitingScreen'
 Vue.use(Router)
 
 export default new Router({

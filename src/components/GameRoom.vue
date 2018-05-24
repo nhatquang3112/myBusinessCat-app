@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <div class="waitingScreen" v-show="isWaitingForPLayer">
+    <!-- <div class="waitingScreen" v-show="isWaitingForPLayer">
 
       <div class="loaderSection">
         <span class="loader"></span>
@@ -20,8 +20,8 @@
       </div>
 
 
-    </div>
-
+    </div> -->
+    <waitingscreen v-bind:isWaiting='isWaitingForPLayer' v-bind:numPlayers='numPlayerWaitingFor'></waitingscreen>
     <div class="userInfo" v-show="!isWaitingForPLayer && !isNewUi">
       <div class="mainUserBox">
         <span class="avatar">
@@ -441,6 +441,7 @@ import firebase from '@/config/firebase'
 import VueChatScroll from 'vue-chat-scroll'
 import RangeSlider from 'vue-range-slider'
 import 'vue-range-slider/dist/vue-range-slider.css'
+import WaitingScreen from './WaitingScreen.vue'
 //Constants
 const database = firebase.firestore(); //store data in firestore
 //global variables
@@ -480,7 +481,8 @@ export default {
   },
 
   components: {
-    RangeSlider
+    RangeSlider,
+    "waitingscreen": WaitingScreen
   },
 
   watch: {
