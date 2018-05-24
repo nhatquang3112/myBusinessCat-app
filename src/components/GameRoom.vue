@@ -1,225 +1,8 @@
 <template>
   <div class="container">
-    <!-- <div class="waitingScreen" v-show="isWaitingForPLayer">
-
-      <div class="loaderSection">
-        <span class="loader"></span>
-      </div>
-
-      <img src="../assets/LoadingCat.png"
-      width="250px"
-      alt="Avatar"/>
-
-      <div class="messageSection">
-        <span class="watingMessage">
-          Waiting for {{ numPlayerWaitingFor }} more to do business
-        </span>
-        <span class="watingMessage">
-          Please be patient, meow
-        </span>
-      </div>
-
-
-    </div> -->
     <waitingscreen v-bind:isWaiting='isWaitingForPLayer' v-bind:numPlayers='numPlayerWaitingFor'></waitingscreen>
-    <div class="userInfo" v-show="!isWaitingForPLayer && !isNewUi">
-      <div class="mainUserBox">
-        <span class="avatar">
-          <img v-if="userName === 'Red Cat'" src="../assets/RedCat.png" alt="Avatar"/>
-          <img v-if="userName === 'Blue Cat'" src="../assets/BlueCat.png" alt="Avatar"/>
-          <img v-if="userName === 'Brown Cat'" src="../assets/BrownCat.png" alt="Avatar"/>
-          <img v-if="userName === 'Yellow Cat'" src="../assets/YellowCat.png" alt="Avatar"/>
-          <img v-if="userName === 'Green Cat'" src="../assets/GreenCat.png" alt="Avatar"/>
-        </span>
 
-        <div class = "userBio">
-          <span>{{ userName }}</span>
-          <!-- <span>{{ gameid }}</span>
-          <span>{{ rank }}</span> -->
-
-
-          <span class="staminaBar" v-bind:style="{width: this.userStamina + '%'}">{{ userStamina }}</span>
-
-          <div class="gameTimer">
-            <span>Time</span>
-            <span id="gameProgress">
-              <span id="gameBar"></span>
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="gamePlay" v-show="!isWaitingForPLayer && !isNewUi">
-      <div class="userList">
-        <div
-          v-for="(user, index) in userList"
-          :key="index"
-          v-if="user.name!==userName"
-          class = "userBox"
-        >
-          <span class="avatar">
-            <img v-if="user.name === 'Red Cat'" src="../assets/RedCat.png" alt="Avatar"/>
-            <img v-if="user.name === 'Blue Cat'" src="../assets/BlueCat.png" alt="Avatar"/>
-            <img v-if="user.name === 'Brown Cat'" src="../assets/BrownCat.png" alt="Avatar"/>
-            <img v-if="user.name === 'Yellow Cat'" src="../assets/YellowCat.png" alt="Avatar"/>
-            <img v-if="user.name === 'Green Cat'" src="../assets/GreenCat.png" alt="Avatar"/>
-          </span>
-
-          <div class = "userBio">
-            <span>{{ user.name }}</span>
-            <span class="staminaBar" v-bind:style="{width: user.stamina + '%'}">{{ user.stamina }}</span>
-            <span>Score: {{ user.score }}</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="profitList">
-        <div class="profits">
-          <a
-            v-for="(profit, index) in profitList"
-            :key="index"
-            class="profit"
-          >
-            <div class="profitInfo" @click = "makePropose(profit.value, profit.stamina, profit.name)">
-              <span>Value: {{ profit.value }}</span>
-              <span><img src="../assets/Fish.png" alt="ProfitIMG"></span>
-              <span class="ladder" v-bind:style="{height: profit.stamina + '%'}">
-                <span>{{ profit.stamina }}</span>
-              </span>
-            </div>
-
-
-            <div class="proposeWindow" v-show="currentTaskName===profit.name">
-              <a
-                v-for="(proposeTarget, index) in proposeWindowList"
-                :key="index"
-              >
-              <div class="proposeWindowElement">
-                <span>{{ proposeTarget.name }}</span>
-                <div class="inputBox" v-show="proposeTarget.share!=='0'">
-                  <span><input type="text" v-model="proposeTarget.share" placeholder="Share"></span>
-                  <span class="closeButton" @click="proposeTarget.share='0'"><i class="fas fa-times-circle"></i></span>
-                </div>
-                <span v-show="proposeTarget.share==='0'" @click="proposeTarget.share=''"><i class="fas fa-plus-circle"></i></span>
-              </div>
-              </a>
-              <span><button class="button"v-if="!showPendingPropose" @click="checkPropose()">Submit</button></span>
-              <span>{{ errorMessage }}</span>
-              <span v-if="showPendingPropose">Cannot make propose now</span>
-            </div>
-          </a>
-        </div>
-
-
-        <div class="pendingPropose">
-          <!-- <span v-show="showPendingPropose">
-            <span id="proposeProgress">
-              <span id="proposeBar"></span>
-            </span>
-          </span>
-          <span v-show="showPendingPropose">{{ this.pendingTaskName }}</span>
-          <span v-show="!showPendingPropose">There is currently no propose</span>
-          <a
-            v-for="(pendingTarget, index) in pendingPropose"
-            :key="index"
-            v-show="showPendingPropose"
-          >
-            <span>{{ pendingTarget.name }}</span>
-            <span>Share: {{ pendingTarget.share }}</span>
-            <span>Response: {{ pendingTarget.response }}</span>
-          </a>
-          <div class="responseOption" v-show="showPendingPropose">
-            <button @click="acceptPropose()" v-show="canMakeDecision && !hasDecided">Yes</button>
-            <button @click="rejectPropose()" v-show="canMakeDecision && !hasDecided">No</button>
-            <span v-show="!canMakeDecision">You cannot make decision</span>
-            <span v-show="hasDecided">You have decided!</span>
-          </div> -->
-          <div class="pendingProposeInfo" v-show="showPendingPropose">
-            <div class="taskNameAndTimer">
-              <span class="taskName">{{ pendingTaskName }}</span>
-              <span class="clockIcon"><i class="far fa-clock"></i></span>
-              <span class="timer">
-                <span id="proposeProgress">
-                  <!-- <span id="proposeBar"></span> -->
-                </span>
-            </span>
-            </div>
-
-            <div class="infoColumns">
-              <span class="nameColumn">
-                <span
-                  v-for="(pendingTarget, index) in pendingPropose"
-                  :key="index"
-                  class="itemInColumn"
-                  >
-                  {{ pendingTarget.name }}
-                </span>
-              </span>
-              <span class="shareColumn">
-                <span
-                  v-for="(pendingTarget, index) in pendingPropose"
-                  :key="index"
-                  class="shareBar"
-                  v-bind:style="{width: pendingTarget.share + '%'}"
-                  >
-                  {{ pendingTarget.share }}
-                </span>
-              </span>
-              <span class="responseColumn">
-                <span
-                  v-for="(pendingTarget, index) in pendingPropose"
-                  :key="index"
-                  class="itemInColumn"
-                  >
-                  <span v-show="pendingTarget.response==='Yes'"><i class="fas fa-check"></i></span>
-                  <span v-show="pendingTarget.response==='None'">Waiting for response</span>
-                </span>
-              </span>
-            </div>
-
-            <div class="responseOption">
-              <span v-show="canMakeDecision && !hasDecided"><button class="button" @click="acceptPropose()">Yes</button></span>
-              <span v-show="canMakeDecision && !hasDecided"><button class="button" @click="rejectPropose()">No</button></span>
-              <span v-show="!canMakeDecision">You cannot make decision</span>
-              <span v-show="hasDecided">You have decided!</span>
-            </div>
-          </div>
-
-          <span class="pendingProposePlaceHolder" v-show="!showPendingPropose">
-            There is currently no proposal
-          </span>
-        </div>
-      </div>
-
-      <div class="proposeHistory">
-        <div class="proposeHistoryBar">
-          <span>Proposal History</span>
-          <span v-show="!isHistoryHidden" @click="toggleHistoryVisibility()"><i class="fas fa-chevron-up"></i></span>
-          <span v-show="isHistoryHidden" @click="toggleHistoryVisibility()"><i class="fas fa-chevron-down"></i></span>
-        </div>
-        <div id="proposeHistoryList" v-show="!isHistoryHidden">
-          <span
-            v-for="(propose, index) in proposeHistory"
-            :key="index"
-            v-if="showProposeHistory"
-            class="history"
-          >
-            <span>{{ propose.taskName }}</span>
-            <span
-              v-for="(info, index) in propose.history"
-              :key="index"
-            >
-              <span>{{ info.name }}</span>
-              <span>Share: {{ info.share }}</span>
-            </span>
-            <span>{{ propose.result }}</span>
-          </span>
-      </div>
-      </div>
-
-    </div>
-
-    <div class="catListAndFishList" v-show="!isWaitingForPLayer && isNewUi">
+    <div class="catListAndFishList" v-show="!isWaitingForPLayer">
       <div class="catList">
         <div class="catYou">
           <img class="catIcon" v-if="userName === 'Red Cat'" src="../assets/catRed.png" alt="Avatar"/>
@@ -319,7 +102,7 @@
         </div>
       </div>
     </div>
-    <div class="clockAndProposalHistoryBox" v-show="!isWaitingForPLayer && isNewUi">
+    <div class="clockAndProposalHistoryBox" v-show="!isWaitingForPLayer">
       <div class="clock">
         <div class="watch"></div>
         <!-- <div class="ldBar label-center" data-type="fill" data-img="https://orig00.deviantart.net/1378/f/2012/281/5/5/8_bit_kirby_sprite_by_toshirofrog-d5h7rpp.png"></div> -->
@@ -475,8 +258,7 @@ export default {
       isWaitingForPLayer: true,
       gameStartTime: '',
       rank: '',
-      totalNumPlayer: 0,
-      isNewUi: true,
+      totalNumPlayer: 0
     }
   },
 
